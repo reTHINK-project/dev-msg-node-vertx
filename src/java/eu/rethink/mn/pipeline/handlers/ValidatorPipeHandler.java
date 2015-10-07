@@ -27,10 +27,6 @@ public class ValidatorPipeHandler implements Handler<PipeContext> {
 				ctx.fail(new RuntimeException("No mandatory field 'type' in header"));
 			}
 			
-			if(!header.containsKey("comp")) {
-				ctx.fail(new RuntimeException("No mandatory field 'comp' in header"));
-			}
-			
 			final String from = header.getString("from");
 			if(from == null) {
 				ctx.fail(new RuntimeException("No mandatory field 'from' in header"));
