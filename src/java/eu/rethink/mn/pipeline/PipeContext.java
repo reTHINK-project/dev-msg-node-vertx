@@ -1,6 +1,7 @@
 package eu.rethink.mn.pipeline;
 
 import java.util.Iterator;
+
 import io.vertx.core.Handler;
 
 public class PipeContext {
@@ -19,23 +20,60 @@ public class PipeContext {
 		this.msg = msg;
 	}
 	
-	public Pipeline getPipeline() {return pipeline;}
-	public PipeResource getResource() {return resource;}
+	public PipeMessage getMessage() { return msg; }
+	public String getResourceUid() { return resource.getUid(); }
 	
-	public PipeMessage getMessage() {return msg;}
+	public void deliver() {
+		final PipeRegistry register = pipeline.getRegister();
+		final String uid = register.resolve(msg.getTo());
+		register.getEventBus().publish(uid, this);
+	}
+	
+	public void reply(PipeMessage reply) {
+		resource.reply(reply);
+	}
+	
+	public void replyOK(String from) {
+		final PipeMessage reply = new PipeMessage();
+		reply.setId(msg.getId());
+		reply.setFrom(from);
+		reply.setTo(msg.getFrom());
+		reply.setReplyCode("ok");
+		
+		reply(reply);
+	}
+	
+	public void replyError(String from, String error) {
+		final PipeMessage reply = new PipeMessage();
+		reply.setId(msg.getId());
+		reply.setFrom(from);
+		reply.setTo(msg.getFrom());
+		reply.setReplyCode("error");
+		reply.setErrorDescription(error);
+		
+		reply(reply);
+	}
+	
+	public void disconnect() {
+		resource.disconnect();
+	}
 	
 	public void next() {
-		if(!inFail && iter.hasNext()) {
-			iter.next().handle(this);
+		if(!inFail) {
+			if(iter.hasNext()) {
+				iter.next().handle(this);
+			} else {
+				deliver();
+			}
 		}
 	}
 	
-	public void fail(Throwable ex) {
+	public void fail(String from, String error) {
 		if(!inFail) {
 			inFail = true;
-			resource.replyError(msg, ex.getMessage());
+			replyError(from, error);
 			if(pipeline.failHandler != null) {
-				pipeline.failHandler.handle(ex);
+				pipeline.failHandler.handle(error);
 			}
 		}
 	}

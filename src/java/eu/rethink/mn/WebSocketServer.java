@@ -1,9 +1,9 @@
 package eu.rethink.mn;
 
 import static java.lang.System.out;
-import eu.rethink.mn.pipeline.PipeMessage;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.PipeResource;
+import eu.rethink.mn.pipeline.PipeMessage;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 
@@ -16,7 +16,14 @@ public class WebSocketServer {
 			}
 			
 			out.println("RESOURCE-OPEN");
-			final PipeResource resource = pipeline.createResource(ws.textHandlerID());
+			final PipeResource resource = pipeline.createResource(ws.textHandlerID(), 
+				close -> {
+					ws.close();
+				},
+				reply -> {
+					ws.writeFinalTextFrame(reply);
+				}
+			);
 			
 			ws.frameHandler(frame -> {
 				final JsonObject msg = new JsonObject(frame.textData());

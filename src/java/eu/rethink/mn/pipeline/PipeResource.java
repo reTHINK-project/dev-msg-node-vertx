@@ -1,17 +1,23 @@
 package eu.rethink.mn.pipeline;
 
-import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.Handler;
 
 public class PipeResource {
-	final Pipeline pipeline;
 	final String uid;
+	final Pipeline pipeline;
 	
-	PipeResource(Pipeline pipeline, String uid) {
-		this.pipeline = pipeline;
+	final Handler<Void> closeCallback;
+	final Handler<String> replyCallback;
+	
+	PipeResource(String uid, Pipeline pipeline, Handler<Void> closeCallback, Handler<String> replyCallback) {
 		this.uid = uid;
+		this.pipeline = pipeline;
+		
+		this.closeCallback = closeCallback;
+		this.replyCallback = replyCallback;
 	}
 	
-	public String getUid() {return uid;}
+	public String getUid() { return uid; }
 	
 	public void processMessage(PipeMessage msg) {
 		pipeline.process(this, msg);
@@ -19,30 +25,10 @@ public class PipeResource {
 	
 	public void reply(PipeMessage msg) {
 		msg.setType("reply");
-		sendMessage(msg);
+		replyCallback.handle(msg.toString());
 	}
 	
-	public void replyOK(PipeMessage original) {
-		final PipeMessage msg = new PipeMessage();
-		msg.setId(original.getId());
-		msg.setTo(original.getFrom());
-		msg.setReplyCode("ok");
-		
-		reply(msg);
-	}
-	
-	public void replyError(PipeMessage original, String error) {
-		final PipeMessage msg = new PipeMessage();
-		msg.setId(original.getId());
-		msg.setTo(original.getFrom());
-		msg.setReplyCode("error");
-		msg.setErrorDescription(error);
-		
-		reply(msg);
-	}
-	
-	public void sendMessage(PipeMessage msg) {
-		final EventBus eb = pipeline.getEventBus();
-		eb.send(uid, msg.toString());
+	public void disconnect() {
+		closeCallback.handle(null);
 	}
 }

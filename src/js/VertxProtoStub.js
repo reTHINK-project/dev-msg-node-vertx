@@ -1,26 +1,24 @@
 export default class VertxProtoStub {
   /* private
+    _continuousOpen: boolean
+
     _runtimeProtoStubURL: string
-    _msgNodeURL: string
     _msgCallback: (Message) => void
+    _config: { url, runtimeURL }
+
     _sock: (WebSocket | SockJS)
   */
 
-  /* note
-  1. a message is needed for runtime registration / protostub registration?
-  2. is the runtime registration managed by the ProtoStub? This is probably a need, because of connection recovery! So, it must save info about this registration message.
-  3. there is no msgNodeURL on the ProtoStub interface definition!
-  4. there are specific messages sent to the MessageBus that returns the ProtoStub status.
-   */
+  constructor(runtimeProtoStubURL, busPostMessage, config) {
+    this._id = 0;
+    this._continuousOpen = true;
 
-  constructor(runtimeProtoStubURL, busPostMessage, configuration) {
     this._runtimeProtoStubURL = runtimeProtoStubURL;
     this._msgCallback = busPostMessage;
-
-    this._msgNodeURL = configuration.url;
+    this._config = config;
   }
 
-  get url() { return this._msgNodeURL; }
+  get config() { return this._config; }
 
   postMessage(msg) {
     let _this = this;
@@ -30,11 +28,131 @@ export default class VertxProtoStub {
     });
   }
 
+  connect() {
+    let _this = this;
+
+    //TODO: get updated tokenID?
+    _this._continuousOpen = true;
+    _this._open(() => {});
+  }
+
   disconnect() {
-    if (this._sock) {
-      this._sock.close();
+    let _this = this;
+
+    _this._continuousOpen = false;
+    if (_this._sock) {
+      _this._sendClose();
     }
   }
+
+  _sendOpen(callback) {
+    let _this = this;
+
+    _this._id++;
+    let msg = {
+      header: {
+        id: _this._id,
+        type: 'open',
+        from: _this._config.runtimeURL,
+        to: 'mn:/session',
+        tokenID: '??'
+      }
+    };
+
+    //register and wait for open reply...
+    _this._sessionCallback = function(reply) {
+      if (reply.header.type === 'reply' & reply.header.id === msg.header.id) {
+        if (reply.body.code === 'ok') {
+          _this._sendStatus('connected');
+          callback();
+        } else {
+          _this._sendStatus('disconnected', reply.body.desc);
+        }
+      }
+    };
+
+    _this._sock.send(JSON.stringify(msg));
+  }
+
+  _sendClose() {
+    let _this = this;
+
+    _this._id++;
+    let msg = {
+      header: {
+        id: _this._id,
+        type: 'close',
+        from: _this._config.runtimeURL,
+        to: 'mn:/session',
+        tokenID: '??'
+      }
+    };
+
+    _this._sock.send(JSON.stringify(msg));
+  }
+
+  _sendStatus(value, reason) {
+    let _this = this;
+
+    let msg = {
+      header: {
+        type: 'update',
+        from: _this._runtimeProtoStubURL,
+        to: _this._runtimeProtoStubURL + '/status'
+      },
+      body: {
+        value: value
+      }
+    };
+
+    if (reason) {
+      msg.body.desc = reason;
+    }
+
+    _this._msgCallback(msg);
+  }
+
+  /*
+  _register(url) {
+    let _this = this;
+
+    _this._id++;
+    let msg = {
+      header: {
+        id: _this._id,
+        type: 'add',
+        from: _this._config.runtimeURL,
+        to: 'mn:/register',
+        tokenID: '??'
+      },
+      body: {
+        url: url
+      }
+    };
+
+    _this._sock.send(JSON.stringify(msg));
+  }
+
+  _unregister(url) {
+    let _this = this;
+
+    _this._id++;
+    let msg = {
+      header: {
+        id: _this._id,
+        type: 'delete',
+        from: _this._config.runtimeURL,
+        to: 'mn:/register',
+        tokenID: '??'
+      },
+      body: {
+        url: url
+      }
+    };
+
+    _this._sock.send(JSON.stringify(msg));
+  }
+  */
 
   _waitReady(callback) {
     let _this = this;
@@ -51,31 +169,33 @@ export default class VertxProtoStub {
   _open(callback) {
     let _this = this;
 
+    if (!this._continuousOpen) {
+      //TODO: send status (sent message error - disconnected)
+      return;
+    }
+
     if (!_this._sock) {
-      if (_this._msgNodeURL.substring(0, 2) === 'ws') {
-        _this._sock = new WebSocket(_this._msgNodeURL);
+      if (_this._config.url.substring(0, 2) === 'ws') {
+        _this._sock = new WebSocket(_this._config.url);
       } else {
-        _this._sock = new SockJS(_this._msgNodeURL);
+        _this._sock = new SockJS(_this._config.url);
       }
 
       _this._sock.onopen = function() {
-        _this._msgCallback({
-          header: {
-            type: 'update',
-            from: _this._runtimeProtoStubURL,
-            to: _this._runtimeProtoStubURL + '/status'
-          },
-          body: {
-            value: 'connected'
-          }
+        _this._sendOpen(() => {
+          callback();
         });
-
-        callback();
       };
 
       _this._sock.onmessage = function(e) {
         var msg = JSON.parse(e.data);
-        _this._msgCallback(msg);
+        if (msg.header.from === 'mn:/session') {
+          if (_this._sessionCallback) {
+            _this._sessionCallback(msg);
+          }
+        } else {
+          _this._msgCallback(msg);
+        }
       };
 
       _this._sock.onclose = function(e) {
@@ -112,18 +232,7 @@ export default class VertxProtoStub {
           reason = 'Unknown reason';
         }
 
-        _this._msgCallback({
-          header: {
-            type: 'update',
-            from: _this._runtimeProtoStubURL,
-            to: _this._runtimeProtoStubURL + '/status'
-          },
-          body: {
-            value: 'disconnected',
-            desc: reason
-          }
-        });
-
+        _this._sendStatus('disconnected', reason);
         delete _this._sock;
       };
     } else {
