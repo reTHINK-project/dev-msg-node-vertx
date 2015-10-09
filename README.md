@@ -13,5 +13,5 @@ If you have some trouble with the environment, you can open an issue;
 
 ####Java
 Follow the link to [Install Maven](https://maven.apache.org/install.html).
-*Build the project with: mvn package
-*Run vertx node with: mvn exec:java
+* Build the project with: mvn package
+* Run vertx node with: mvn exec:java
