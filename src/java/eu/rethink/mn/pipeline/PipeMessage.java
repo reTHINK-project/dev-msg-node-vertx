@@ -15,17 +15,21 @@ public class PipeMessage {
 		if(!msg.containsKey("header")) {
 			msg.put("header", new JsonObject());
 		}
-		
-		if(!msg.containsKey("body")) {
-			msg.put("body", new JsonObject());
-		}
 	}
 	
 	public JsonObject getJson() { return msg; }
-	public JsonObject getHeader() { return msg.getJsonObject("header"); }
-	public JsonObject getBody() { return msg.getJsonObject("body"); }
 	
-	public int getId() { return getHeader().getInteger("id"); }
+	public JsonObject getHeader() { return msg.getJsonObject("header"); }
+	
+	public JsonObject getBody() {
+		if(!msg.containsKey("body")) {
+			msg.put("body", new JsonObject());
+		}
+		
+		return msg.getJsonObject("body"); 
+	}
+	
+	public int getId() { return getHeader().getInteger("id", 0); }
 	public PipeMessage setId(int id) {
 		getHeader().put("id", id);
 		return this;

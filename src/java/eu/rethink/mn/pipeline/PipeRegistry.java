@@ -32,6 +32,7 @@ public class PipeRegistry {
 			
 			@Override
 			public void encodeToWire(Buffer buffer, PipeContext ctx) {
+				System.out.println("encodeToWire");
 				buffer.appendString(ctx.getMessage().toString());
 			}
 
@@ -65,8 +66,6 @@ public class PipeRegistry {
 	}
 	
 	public String resolve(String url) {
-		final String uid = address.get(url);
-		if(uid == null) return url;
 		return address.get(url);
 	}
 }

@@ -26,7 +26,13 @@ public class PipeContext {
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
 		final String uid = register.resolve(msg.getTo());
-		register.getEventBus().publish(uid, this);
+		
+		if(uid == null) {
+			//send to internal component...
+			register.getEventBus().publish(msg.getTo(), this);
+		} else {
+			register.getEventBus().publish(uid, getMessage().toString());
+		}
 	}
 	
 	public void reply(PipeMessage reply) {

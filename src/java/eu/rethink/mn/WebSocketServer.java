@@ -16,7 +16,7 @@ public class WebSocketServer {
 			}
 			
 			out.println("RESOURCE-OPEN");
-			final PipeResource resource = pipeline.createResource(ws.textHandlerID(), 
+			final PipeResource resource = pipeline.createResource(ws.textHandlerID(),
 				close -> {
 					ws.close();
 				},

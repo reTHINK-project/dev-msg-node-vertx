@@ -25,12 +25,12 @@ public class MsgNode extends AbstractVerticle {
 			System.out.println(msg);
 
 			if(msg.getType().equals("open")) {
-				//TODO: register runtime
+				register.bind(msg.getFrom(), ctx.getResourceUid());
 				ctx.replyOK("mn:/session");
 			}
 			
 			if(msg.getType().equals("close")) {
-				//TODO: unregister runtime
+				register.unbind(msg.getFrom());
 				ctx.disconnect();
 			}
 		});
