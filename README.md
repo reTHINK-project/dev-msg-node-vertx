@@ -2,7 +2,7 @@
 
 ### Setup Environment
 
-####JavaScript
+#### JavaScript
 On the first time you are cloning this repository, you need to run the command ```npm run init-setup```;
 
 After running successfully this command you will have 2 folders (node_modules and vendor), these folders are excluded from the commit process, and are only for development.
@@ -11,7 +11,10 @@ If you already have the project configured on your machine, you only need run th
 
 If you have some trouble with the environment, you can open an issue;
 
-####Java
+#### Java
 Follow the link to [Install Maven](https://maven.apache.org/install.html).
 * Build the project with: mvn package
 * Run vertx node with: mvn exec:java
+
+### Use of VertxProtoStub
+Once the MessageNode is active, we are able to connect with the ProtoStub. The best example of how this is done is in the test/VertxProtoStub.js in "runtime connectivity" test. It's important to send the "runtimeURL" in the config parameter, because it will be used to link the connection channel to the runtime.
