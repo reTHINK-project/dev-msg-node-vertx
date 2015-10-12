@@ -7,11 +7,18 @@ public class PipeMessage {
 	
 	public PipeMessage() {
 		this(new JsonObject());
+		msg.put("header", new JsonObject());
+	}
+
+	public PipeMessage(String json) {
+		this(new JsonObject(json));
+		if(!msg.containsKey("header")) {
+			msg.put("header", new JsonObject());
+		}
 	}
 	
 	public PipeMessage(JsonObject msg) {
 		this.msg = msg;
-		
 		if(!msg.containsKey("header")) {
 			msg.put("header", new JsonObject());
 		}

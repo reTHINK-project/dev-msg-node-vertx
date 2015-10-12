@@ -5,7 +5,6 @@ import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.PipeResource;
 import eu.rethink.mn.pipeline.PipeMessage;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.json.JsonObject;
 
 public class WebSocketServer {
 	
@@ -16,18 +15,14 @@ public class WebSocketServer {
 			}
 			
 			out.println("RESOURCE-OPEN");
-			final PipeResource resource = pipeline.createResource(ws.textHandlerID(),
-				close -> {
-					ws.close();
-				},
-				reply -> {
-					ws.writeFinalTextFrame(reply);
-				}
+			final PipeResource resource = pipeline.createResource(
+				ws.textHandlerID(),
+				close -> ws.close(),
+				reply -> ws.writeFinalTextFrame(reply)
 			);
 			
 			ws.frameHandler(frame -> {
-				final JsonObject msg = new JsonObject(frame.textData());
-				resource.processMessage(new PipeMessage(msg));
+				resource.processMessage(new PipeMessage(frame.textData()));
 			});
 						
 			ws.closeHandler(handler -> {

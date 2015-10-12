@@ -9,6 +9,13 @@ export default class VertxProtoStub {
     _sock: (WebSocket | SockJS)
   */
 
+  /**
+   * Vertx ProtoStub creation
+   * @param  {string} runtimeProtoStubURL - URL used internally for message delivery point. Not used for MessageNode deliver.
+   * @param  {PostMessage} busPostMessage - Callback used to send messages. Normally connected to the MessageBus.
+   * @param  {Object} config - Mandatory fields are: "url" of the MessageNode address and "runtimeURL".
+   * @return {VertxProtoStub}
+   */
   constructor(runtimeProtoStubURL, busPostMessage, config) {
     this._id = 0;
     this._continuousOpen = true;
@@ -18,8 +25,17 @@ export default class VertxProtoStub {
     this._config = config;
   }
 
+  /**
+   * Get the configuration for this ProtoStub
+   * @return {Object} - Mandatory fields are: "url" of the MessageNode address and "runtimeURL".
+   */
   get config() { return this._config; }
 
+  /**
+   * Method used to deliver messages to the MessageNode. Connection is auto managed, there is no need to call "connect()" explicitly.
+   * If not yet connected, it will connect and send a status message.
+   * @param  {Message} msg - Message to send.
+   */
   postMessage(msg) {
     let _this = this;
 
@@ -28,6 +44,11 @@ export default class VertxProtoStub {
     });
   }
 
+  /**
+   * Try to open the connection to the MessageNode. Connection is auto managed, there is no need to call this explicitly.
+   * However, if "disconnect()" is called, it's necessary to call this to enable connections again.
+   * A status message is sent to "runtimeProtoStubURL/status", containing the value "connected" if successful, or "disconnected" if some error occurs.
+   */
   connect() {
     let _this = this;
 
@@ -36,6 +57,10 @@ export default class VertxProtoStub {
     _this._open(() => {});
   }
 
+  /**
+   * It will disconnect and order to stay disconnected. Reconnection tries, will not be attempted, unless "connect()" is called.
+   * A status message is sent to "runtimeProtoStubURL/status" with value "disconnected".
+   */
   disconnect() {
     let _this = this;
 
@@ -60,8 +85,10 @@ export default class VertxProtoStub {
     };
 
     //register and wait for open reply...
+    let hasResponse = false;
     _this._sessionCallback = function(reply) {
       if (reply.header.type === 'reply' & reply.header.id === msg.header.id) {
+        hasResponse = true;
         if (reply.body.code === 'ok') {
           _this._sendStatus('connected');
           callback();
@@ -72,6 +99,12 @@ export default class VertxProtoStub {
     };
 
     _this._sock.send(JSON.stringify(msg));
+    setTimeout(() => {
+      if (!hasResponse) {
+        //no response after x seconds...
+        _this._sendStatus('disconnected', 'Timeout from mn:/session');
+      }
+    }, 3000);
   }
 
   _sendClose() {
@@ -240,3 +273,9 @@ export default class VertxProtoStub {
     }
   }
 }
+
+/**
+* Callback used to send messages
+* @callback PostMessage
+* @param {Message} msg - Message to send
+*/

@@ -1,6 +1,5 @@
 package eu.rethink.mn.pipeline;
 
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
@@ -8,6 +7,8 @@ import io.vertx.core.eventbus.MessageCodec;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import eu.rethink.mn.IComponent;
 
 public class PipeRegistry {
 	final EventBus eb;
@@ -47,9 +48,9 @@ public class PipeRegistry {
 	
 	public EventBus getEventBus() { return eb; }
 	
-	public PipeRegistry install(String url, Handler<PipeContext> handler) {
-		eb.consumer(url, msg -> {
-			handler.handle((PipeContext)msg.body());
+	public PipeRegistry install(IComponent component) {
+		eb.consumer(component.getName(), msg -> {
+			component.handle((PipeContext)msg.body());
 		});
 		
 		return this;

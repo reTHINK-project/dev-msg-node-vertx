@@ -1,7 +1,8 @@
 package eu.rethink.mn;
 
 import static java.lang.System.out;
-import eu.rethink.mn.pipeline.PipeMessage;
+import eu.rethink.mn.component.RegistryManager;
+import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.ValidatorPipeHandler;
@@ -20,41 +21,11 @@ public class MsgNode extends AbstractVerticle {
 	public void start() throws Exception {
 		final PipeRegistry register = new PipeRegistry(vertx);
 		
-		register.install("mn:/session", ctx -> {
-			final PipeMessage msg = ctx.getMessage();
-			System.out.println(msg);
-
-			if(msg.getType().equals("open")) {
-				register.bind(msg.getFrom(), ctx.getResourceUid());
-				ctx.replyOK("mn:/session");
-			}
-			
-			if(msg.getType().equals("close")) {
-				register.unbind(msg.getFrom());
-				ctx.disconnect();
-			}
-		});
+		final SessionManager sm = new SessionManager(register);
+		register.install(sm);
 		
-		register.install("mn:/register", ctx -> {
-			final PipeMessage msg = ctx.getMessage();
-			System.out.println(msg);
-			
-			final String url = msg.getBody().getString("url");
-			if(url != null) {
-				ctx.fail("mn:/register", "No url present in body!");
-				return;
-			}
-			
-			if(msg.getType().equals("add")) {
-				register.bind(url, ctx.getResourceUid());
-				ctx.replyOK("mn:/register");
-			}
-			
-			if(msg.getType().equals("remove")) {
-				register.unbind(url);
-				ctx.replyOK("mn:/register");
-			}
-		});
+		final RegistryManager rm = new RegistryManager(register);
+		register.install(rm);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())
