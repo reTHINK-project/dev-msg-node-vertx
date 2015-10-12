@@ -18,3 +18,8 @@ Follow the link to [Install Maven](https://maven.apache.org/install.html).
 
 ### Use of VertxProtoStub
 Once the MessageNode is active, we are able to connect with the ProtoStub. The best example of how this is done is in the test/VertxProtoStub.js in "runtime connectivity" test. It's important to send the "runtimeURL" in the config parameter, because it will be used to link the connection channel to the runtime.
+
+With this it's possible to send messages between runtimes, but Hyperty registration is something that should be done externally.
+
+The connection is auto managed. It means, there is no need to call "connect()" explicitly, and it will always try to be in "connected" until "disconnect()" is called. Status messages are sent to "runtimeProtoStubURL/status".
+
