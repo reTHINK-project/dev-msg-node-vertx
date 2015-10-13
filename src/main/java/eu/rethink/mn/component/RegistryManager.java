@@ -6,14 +6,16 @@ import eu.rethink.mn.pipeline.PipeMessage;
 import eu.rethink.mn.pipeline.PipeRegistry;
 
 public class RegistryManager implements IComponent {
+	final String name;
 	final PipeRegistry register;
 	
-	public RegistryManager(PipeRegistry register) {
+	public RegistryManager(String name, PipeRegistry register) {
+		this.name = name;
 		this.register = register;
 	}
 	
 	@Override
-	public String getName() { return "mn:/registry"; }
+	public String getName() { return name; }
 	
 	@Override
 	public void handle(PipeContext ctx) {

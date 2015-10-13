@@ -18,7 +18,6 @@ public class SessionManager implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
-		System.out.println(msg);
 
 		if(msg.getType().equals("open")) {
 			register.bind(msg.getFrom(), ctx.getResourceUid());

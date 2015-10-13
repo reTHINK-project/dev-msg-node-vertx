@@ -13,15 +13,16 @@ public class PipeContext {
 	final Iterator<Handler<PipeContext>> iter;
 	final PipeMessage msg;
 	
+	public PipeMessage getMessage() { return msg; }
+	public String getResourceUid() { return resource.getUid(); }
+	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
+		System.out.println("IN: " + msg);
 		this.pipeline = pipeline;
 		this.resource = resource;
 		this.iter = iter;
 		this.msg = msg;
 	}
-	
-	public PipeMessage getMessage() { return msg; }
-	public String getResourceUid() { return resource.getUid(); }
 	
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
@@ -31,11 +32,13 @@ public class PipeContext {
 			//send to internal component...
 			register.getEventBus().publish(msg.getTo(), this);
 		} else {
-			register.getEventBus().publish(uid, getMessage().toString());
+			System.out.println("OUT: " + msg);
+			register.getEventBus().publish(uid, msg.toString());
 		}
 	}
 	
 	public void reply(PipeMessage reply) {
+		System.out.println("REPLY: " + reply);
 		resource.reply(reply);
 	}
 	

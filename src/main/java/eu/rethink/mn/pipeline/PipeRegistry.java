@@ -15,10 +15,16 @@ public class PipeRegistry {
 	
 	//TODO: persistence maps?
 	
-	//<url, resourceUID>
-	final Map<String, String> address;
+	final String domain; 
 	
-	public PipeRegistry(Vertx vertx) {
+	//<RuntimeURL, resourceUID>
+	final Map<String, String> runtimeSpace;
+	
+	//<URL, RuntimeURL>
+	final Map<String, String> urlSpace;
+	
+	public PipeRegistry(Vertx vertx, String domain) {
+		this.domain = domain;
 		this.eb = vertx.eventBus();
 		this.eb.registerDefaultCodec(PipeContext.class, new MessageCodec<PipeContext, PipeContext>() {
 
@@ -43,8 +49,11 @@ public class PipeRegistry {
 			}
 		});
 		
-		this.address = new HashMap<String, String>(); //TODO: transform into ClusterMap
+		this.runtimeSpace = new HashMap<String, String>(); //TODO: transform into ClusterMap
+		this.urlSpace = new HashMap<String, String>(); //TODO: transform into ClusterMap
 	}
+	
+	public String getDomain() { return domain; }
 	
 	public EventBus getEventBus() { return eb; }
 	
@@ -56,17 +65,33 @@ public class PipeRegistry {
 		return this;
 	}
 	
-	public PipeRegistry bind(String url, String resourceUID) {
-		address.put(url, resourceUID);
+	public PipeRegistry bind(String runtimeURL, String resourceUID) {
+		runtimeSpace.put(runtimeURL, resourceUID);
 		return this;
 	}
 	
-	public PipeRegistry unbind(String url) {
-		address.remove(url);
+	public PipeRegistry unbind(String runtimeURL) {
+		runtimeSpace.remove(runtimeURL);
+		return this;
+	}
+
+	public PipeRegistry allocate(String url, String runtimeURL) {
+		urlSpace.put(url, runtimeURL);
+		return this;
+	}
+	
+	public PipeRegistry deallocate(String url) {
+		urlSpace.remove(url);
 		return this;
 	}
 	
 	public String resolve(String url) {
-		return address.get(url);
+		final String uid = runtimeSpace.get(url);
+		if(uid != null) {
+			return uid;
+		} else {
+			final String runtimeURL = urlSpace.get(url);
+			return runtimeSpace.get(runtimeURL);
+		}
 	}
 }

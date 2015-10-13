@@ -1,6 +1,7 @@
 package eu.rethink.mn;
 
 import static java.lang.System.out;
+import eu.rethink.mn.component.AddressAllocationManager;
 import eu.rethink.mn.component.RegistryManager;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
@@ -19,12 +20,15 @@ public class MsgNode extends AbstractVerticle {
 	
 	@Override
 	public void start() throws Exception {
-		final PipeRegistry register = new PipeRegistry(vertx);
+		final PipeRegistry register = new PipeRegistry(vertx, "ua.pt");
 		
 		final SessionManager sm = new SessionManager(register);
 		register.install(sm);
 		
-		final RegistryManager rm = new RegistryManager(register);
+		final AddressAllocationManager alm = new AddressAllocationManager("mn:/address-allocation", register);
+		register.install(alm);
+		
+		final RegistryManager rm = new RegistryManager("mn:/registry", register);
 		register.install(rm);
 
 		final Pipeline pipeline = new Pipeline(register)
