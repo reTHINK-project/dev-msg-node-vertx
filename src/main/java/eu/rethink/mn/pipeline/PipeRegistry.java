@@ -75,14 +75,16 @@ public class PipeRegistry {
 		return this;
 	}
 
-	public PipeRegistry allocate(String url, String runtimeURL) {
+	public boolean allocate(String url, String runtimeURL) {
+		if(urlSpace.containsKey(url))
+			return false;
+
 		urlSpace.put(url, runtimeURL);
-		return this;
+		return true;
 	}
 	
-	public PipeRegistry deallocate(String url) {
+	public void deallocate(String url) {
 		urlSpace.remove(url);
-		return this;
 	}
 	
 	public String resolve(String url) {

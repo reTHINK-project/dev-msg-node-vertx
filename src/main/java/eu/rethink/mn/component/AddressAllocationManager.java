@@ -52,10 +52,14 @@ public class AddressAllocationManager implements IComponent {
 
 	private List<String> allocate(PipeContext ctx, String runtimeRUL, int number) {
 		final ArrayList<String> list = new ArrayList<String>(number);
-		for(int i = 0; i < number; ++i) {
+		int i = 0;
+		while(i < number) {
+			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			list.add(url);
-			register.allocate(url, runtimeRUL);
+			if(register.allocate(url, runtimeRUL)) {
+				list.add(url);
+				i++;
+			}
 		}
 		
 		return list;
