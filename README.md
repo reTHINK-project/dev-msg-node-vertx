@@ -28,6 +28,8 @@ There are 2 types of components that can integrate in the Vertx Message Node imp
 * Addressable, based in one destination address. Messages are deliver based on the "header.to" field of the message.
 * Interceptors that can intercept and verify every message that enters the Message Node, whatever the destination address.
 
+![](vertx_impl_arch.png)
+
 #### Addressable Components
 These are implementations of the interface ```IComponent extends Handler<PipeContext>```, and are added to the MessageNode with the method ```PipeRegistry.install(IComponent component)```. The only difference on the interface (between IComponent and Handler\<PipeContext\>) is an additional method to get the component address name, used for EventBus registration.
 
