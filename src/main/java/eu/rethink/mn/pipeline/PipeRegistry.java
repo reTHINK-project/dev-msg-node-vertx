@@ -23,6 +23,8 @@ public class PipeRegistry {
 	//<URL, RuntimeURL>
 	final Map<String, String> urlSpace;
 	
+	EventBus getEventBus() { return eb; }
+	
 	public PipeRegistry(Vertx vertx, String domain) {
 		this.domain = domain;
 		this.eb = vertx.eventBus();
@@ -55,8 +57,10 @@ public class PipeRegistry {
 	
 	public String getDomain() { return domain; }
 	
-	public EventBus getEventBus() { return eb; }
-	
+	/** Install an addressable component.
+	 * @param component The IComponent interface, the handler is called when the message is to be deliver.
+	 * @return this
+	 */
 	public PipeRegistry install(IComponent component) {
 		eb.consumer(component.getName(), msg -> {
 			component.handle((PipeContext)msg.body());
@@ -65,16 +69,30 @@ public class PipeRegistry {
 		return this;
 	}
 	
+	/** Adds a runtimeURL relation with a channel resource UID.
+	 * @param runtimeURL The runtimeURL 
+	 * @param resourceUID The textUID address registered in the vertx EventBus.
+	 * @return this
+	 */
 	public PipeRegistry bind(String runtimeURL, String resourceUID) {
 		runtimeSpace.put(runtimeURL, resourceUID);
 		return this;
 	}
 	
+	/** Removes runtimeURL relation from the "whatever" resource channel that is registered.
+	 * @param runtimeURL The runtimeURL 
+	 * @return this
+	 */
 	public PipeRegistry unbind(String runtimeURL) {
 		runtimeSpace.remove(runtimeURL);
 		return this;
 	}
 
+	/** Creates a link between an URL (Hyperty, Resource, ...) and the runtimeURL. 
+	 * @param url Any unique identifiable resource URL
+	 * @param runtimeURL The runtimeURL 
+	 * @return <strong>true</strong> if the allocation is successful, <strong>false</strong> if the URL already exist.
+	 */
 	public boolean allocate(String url, String runtimeURL) {
 		if(urlSpace.containsKey(url))
 			return false;
@@ -83,10 +101,17 @@ public class PipeRegistry {
 		return true;
 	}
 	
+	/** Removes the link between an URL (Hyperty, Resource, ...) and the runtimeURL.
+	 * @param url Any unique identifiable resource URL
+	 */
 	public void deallocate(String url) {
 		urlSpace.remove(url);
 	}
 	
+	/** Try to resolve any URL given  to a channel UID.
+	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
+	 * @return textUID registered in the vertx EventBus.
+	 */
 	public String resolve(String url) {
 		final String uid = runtimeSpace.get(url);
 		if(uid != null) {
