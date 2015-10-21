@@ -4,6 +4,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.MessageCodec;
+import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.spi.cluster.ClusterManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,21 +14,21 @@ import eu.rethink.mn.IComponent;
 
 public class PipeRegistry {
 	final EventBus eb;
+	final ClusterManager mgr;
 	
-	//TODO: persistence maps?
+	final String domain;
+	final Map<String, IComponent> components; 				//<ComponentName, IComponent>
+	final Map<String, MessageConsumer<Object>> consumers;	//<RuntimeURL, MessageConsumer>
 	
-	final String domain; 
-	
-	//<RuntimeURL, resourceUID>
-	final Map<String, String> runtimeSpace;
-	
-	//<URL, RuntimeURL>
-	final Map<String, String> urlSpace;
+	//cluster maps...
+	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
 	
 	EventBus getEventBus() { return eb; }
 	
-	public PipeRegistry(Vertx vertx, String domain) {
+	public PipeRegistry(Vertx vertx, ClusterManager mgr, String domain) {
 		this.domain = domain;
+		this.mgr = mgr;
+		
 		this.eb = vertx.eventBus();
 		this.eb.registerDefaultCodec(PipeContext.class, new MessageCodec<PipeContext, PipeContext>() {
 
@@ -51,8 +53,9 @@ public class PipeRegistry {
 			}
 		});
 		
-		this.runtimeSpace = new HashMap<String, String>(); //TODO: transform into ClusterMap
-		this.urlSpace = new HashMap<String, String>(); //TODO: transform into ClusterMap
+		this.components = new HashMap<String, IComponent>();
+		this.consumers = new HashMap<String, MessageConsumer<Object>>();
+		this.urlSpace = mgr.getSyncMap("urlSpace");
 	}
 	
 	public String getDomain() { return domain; }
@@ -61,12 +64,17 @@ public class PipeRegistry {
 	 * @param component The IComponent interface, the handler is called when the message is to be deliver.
 	 * @return this
 	 */
-	public PipeRegistry install(IComponent component) {
-		eb.consumer(component.getName(), msg -> {
-			component.handle((PipeContext)msg.body());
-		});
-		
+	public PipeRegistry installComponent(IComponent component) {
+		components.put(component.getName(), component);
 		return this;
+	}
+	
+	/** Get a component interface for the name address registered.
+	 * @param url for the component
+	 * @return component registered for the URL
+	 */
+	public IComponent getComponent(String url) {
+		return components.get(url);
 	}
 	
 	/** Adds a runtimeURL relation with a channel resource UID.
@@ -75,7 +83,13 @@ public class PipeRegistry {
 	 * @return this
 	 */
 	public PipeRegistry bind(String runtimeURL, String resourceUID) {
-		runtimeSpace.put(runtimeURL, resourceUID);
+		final MessageConsumer<Object> consumer = eb.consumer(runtimeURL, msg -> {
+			eb.send(resourceUID, msg.body());
+		});
+		
+		urlSpace.put(runtimeURL, runtimeURL);
+		consumers.put(runtimeURL, consumer);
+		
 		return this;
 	}
 	
@@ -84,7 +98,12 @@ public class PipeRegistry {
 	 * @return this
 	 */
 	public PipeRegistry unbind(String runtimeURL) {
-		runtimeSpace.remove(runtimeURL);
+		urlSpace.remove(runtimeURL);
+		final MessageConsumer<Object> consumer = consumers.remove(runtimeURL);
+		if(consumer != null) {
+			consumer.unregister();
+		}
+		
 		return this;
 	}
 
@@ -108,17 +127,11 @@ public class PipeRegistry {
 		urlSpace.remove(url);
 	}
 	
-	/** Try to resolve any URL given  to a channel UID.
+	/** Try to resolve any URL given to a RuntimeURL.
 	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
-	 * @return textUID registered in the vertx EventBus.
+	 * @return RuntimeURL registered in the vertx EventBus.
 	 */
 	public String resolve(String url) {
-		final String uid = runtimeSpace.get(url);
-		if(uid != null) {
-			return uid;
-		} else {
-			final String runtimeURL = urlSpace.get(url);
-			return runtimeSpace.get(runtimeURL);
-		}
+		return urlSpace.get(url);
 	}
 }

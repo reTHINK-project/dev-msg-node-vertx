@@ -9,27 +9,54 @@ import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.ValidatorPipeHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.spi.cluster.ClusterManager;
+import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 public class MsgNode extends AbstractVerticle {
+	
 	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
-		vertx.deployVerticle(new MsgNode());
+		int port = 9090;
+		if(args.length > 0) {
+			port = Integer.parseInt(args[0]);
+		}
+		
+		final ClusterManager mgr = new HazelcastClusterManager();
+		final MsgNode msgNode = new MsgNode(mgr, port);
+		
+		final VertxOptions options = new VertxOptions().setClusterManager(mgr);
+		Vertx.clusteredVertx(options, res -> {
+			if (res.succeeded()) {
+				Vertx vertx = res.result();
+				vertx.deployVerticle(msgNode);
+			} else {
+				System.exit(-1);
+			}
+		});
+	}
+	
+	private final ClusterManager mgr;
+	private final int port;
+	
+	public MsgNode(ClusterManager mgr, int port) {
+		this.mgr = mgr;
+		this.port = port;
 	}
 	
 	@Override
 	public void start() throws Exception {
-		final PipeRegistry register = new PipeRegistry(vertx, "ua.pt");
+		final PipeRegistry register = new PipeRegistry(vertx, mgr, "ua.pt");
 		
 		final SessionManager sm = new SessionManager(register);
-		register.install(sm);
+		register.installComponent(sm);
 		
 		final AddressAllocationManager alm = new AddressAllocationManager("mn:/address-allocation", register);
-		register.install(alm);
+		register.installComponent(alm);
 		
 		final RegistryManager rm = new RegistryManager("mn:/registry", register);
-		register.install(rm);
+		register.installComponent(rm);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())
@@ -42,7 +69,7 @@ public class MsgNode extends AbstractVerticle {
 		
 		final HttpServer server = vertx.createHttpServer(httpOptions);
 		WebSocketServer.init(server, pipeline);
-		server.listen(9090);
-		System.out.println("Message Node -> port(9090)");
+		server.listen(port);
+		System.out.println("Message Node -> port(" + port + ")");
 	}
 }

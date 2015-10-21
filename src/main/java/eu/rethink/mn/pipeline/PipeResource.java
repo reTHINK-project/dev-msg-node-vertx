@@ -23,12 +23,12 @@ public class PipeResource {
 		pipeline.process(this, msg);
 	}
 	
-	public void reply(PipeMessage msg) {
+	void reply(PipeMessage msg) {
 		msg.setType("reply");
 		replyCallback.handle(msg.toString());
 	}
 	
-	public void disconnect() {
+	void disconnect() {
 		closeCallback.handle(null);
 	}
 }

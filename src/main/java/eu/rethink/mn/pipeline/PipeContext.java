@@ -2,6 +2,7 @@ package eu.rethink.mn.pipeline;
 
 import java.util.Iterator;
 
+import eu.rethink.mn.IComponent;
 import io.vertx.core.Handler;
 
 public class PipeContext {
@@ -29,14 +30,17 @@ public class PipeContext {
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
-		final String uid = register.resolve(msg.getTo());
+		final String url = register.resolve(msg.getTo());
 		
-		if(uid == null) {
+		if(url == null) {
 			//send to internal component...
-			register.getEventBus().publish(msg.getTo(), this);
+			final IComponent comp = register.getComponent(msg.getTo());
+			if(comp != null) {
+				comp.handle(this);
+			}
 		} else {
 			System.out.println("OUT: " + msg);
-			register.getEventBus().publish(uid, msg.toString());
+			register.getEventBus().publish(url, msg.toString());
 		}
 	}
 	
