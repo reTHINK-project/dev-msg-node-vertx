@@ -3,8 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.rethink</groupId>
 	<artifactId>dev-msg-node-vertx</artifactId>
-	<version>0.1</version>
-	
+	<version>0.3</version>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>	
+
 	<dependencies>
 		<dependency>
 			<groupId>io.vertx</groupId>
@@ -17,11 +23,6 @@
 			<version>3.1.0</version>
 		</dependency>
 	</dependencies>
-
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
 
 	<build>
 		<plugins>
