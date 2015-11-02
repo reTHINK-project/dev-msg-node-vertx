@@ -9,4 +9,7 @@ MAINTAINER paulo-g-chainho@telecom.pt
 #RUN cd /opt/reTHINK && git clone https://github.com/eclipse/leshan.git
 #RUN cd /opt/reTHINK/leshan && mvn install
 
+
+
+
 #CMD echo "LESHAN basic installation from github, including mvn install on leshan code, all code is unter /opt/reTHINK"
