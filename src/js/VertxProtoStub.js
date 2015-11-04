@@ -3,6 +3,7 @@ export default class VertxProtoStub {
     _continuousOpen: boolean
 
     _runtimeProtoStubURL: string
+    _bus: MiniBus
     _msgCallback: (Message) => void
     _config: { url, runtimeURL }
 
@@ -12,17 +13,25 @@ export default class VertxProtoStub {
   /**
    * Vertx ProtoStub creation
    * @param  {string} runtimeProtoStubURL - URL used internally for message delivery point. Not used for MessageNode deliver.
-   * @param  {PostMessage} busPostMessage - Callback used to send messages. Normally connected to the MessageBus.
+   * @param  {MiniBus} bus - MiniBus used to send/receive messages. Normally connected to the MessageBus.
    * @param  {Object} config - Mandatory fields are: "url" of the MessageNode address and "runtimeURL".
    * @return {VertxProtoStub}
    */
-  constructor(runtimeProtoStubURL, busPostMessage, config) {
+  constructor(runtimeProtoStubURL, bus, config) {
     this._id = 0;
     this._continuousOpen = true;
 
     this._runtimeProtoStubURL = runtimeProtoStubURL;
-    this._msgCallback = busPostMessage;
+    this._bus = bus;
     this._config = config;
+
+    bus.addListener(runtimeProtoStubURL, (msg) => {
+      let _this = this;
+
+      _this._open(() => {
+        _this._sock.send(JSON.stringify(msg));
+      });
+    });
   }
 
   /**
@@ -30,19 +39,6 @@ export default class VertxProtoStub {
    * @return {Object} - Mandatory fields are: "url" of the MessageNode address and "runtimeURL".
    */
   get config() { return this._config; }
-
-  /**
-   * Method used to deliver messages to the MessageNode. Connection is auto managed, there is no need to call "connect()" explicitly.
-   * If not yet connected, it will connect and send a status message.
-   * @param  {Message} msg - Message to send.
-   */
-  postMessage(msg) {
-    let _this = this;
-
-    _this._open(() => {
-      _this._sock.send(JSON.stringify(msg));
-    });
-  }
 
   /**
    * Try to open the connection to the MessageNode. Connection is auto managed, there is no need to call this explicitly.
@@ -142,50 +138,8 @@ export default class VertxProtoStub {
       msg.body.desc = reason;
     }
 
-    _this._msgCallback(msg);
+    _this._bus.postMessage(msg);
   }
-
-  /*
-  _register(url) {
-    let _this = this;
-
-    _this._id++;
-    let msg = {
-      header: {
-        id: _this._id,
-        type: 'add',
-        from: _this._config.runtimeURL,
-        to: 'mn:/register',
-        tokenID: '??'
-      },
-      body: {
-        url: url
-      }
-    };
-
-    _this._sock.send(JSON.stringify(msg));
-  }
-
-  _unregister(url) {
-    let _this = this;
-
-    _this._id++;
-    let msg = {
-      header: {
-        id: _this._id,
-        type: 'delete',
-        from: _this._config.runtimeURL,
-        to: 'mn:/register',
-        tokenID: '??'
-      },
-      body: {
-        url: url
-      }
-    };
-
-    _this._sock.send(JSON.stringify(msg));
-  }
-  */
 
   _waitReady(callback) {
     let _this = this;
@@ -227,7 +181,7 @@ export default class VertxProtoStub {
             _this._sessionCallback(msg);
           }
         } else {
-          _this._msgCallback(msg);
+          _this._bus.postMessage(msg);
         }
       };
 
