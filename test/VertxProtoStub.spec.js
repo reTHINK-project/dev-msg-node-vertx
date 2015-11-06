@@ -76,6 +76,14 @@ describe('VertxProtoStub', function() {
         }
 
         if (seq === 1) {
+          /*expect something like -> {
+            header: {id: 1, type: 'reply', from: 'mn:/address-allocation', to: 'runtime:/alice'},
+            body: {code: 'ok', allocated: ['hyperty://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+          }*/
+          expect(msg.header).to.eql({id: 1, type: 'reply', from: 'mn:/address-allocation', to: 'runtime:/alice'});
+          expect(msg.body.code).to.eql('ok');
+          expect(msg.body.allocated).to.have.length(2);
+
           firstURL = msg.body.allocated[0];
           secondURL = msg.body.allocated[1];
 

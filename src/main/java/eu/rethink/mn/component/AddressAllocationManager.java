@@ -40,6 +40,7 @@ public class AddressAllocationManager implements IComponent {
 			reply.setId(msg.getId());
 			reply.setFrom(name);
 			reply.setTo(msg.getFrom());
+			reply.setReplyCode("ok");
 			
 			final JsonObject body = reply.getBody();
 			body.put("allocated", new JsonArray(allocated));
