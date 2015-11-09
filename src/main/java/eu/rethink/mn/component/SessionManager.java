@@ -21,6 +21,7 @@ public class SessionManager implements IComponent {
 
 		if(msg.getType().equals("open")) {
 			register.bind(msg.getFrom(), ctx.getResourceUid());
+			ctx.getResource().setRuntimeUrl(msg.getFrom());
 			ctx.replyOK(getName());
 		}
 		

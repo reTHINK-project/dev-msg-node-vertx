@@ -16,6 +16,9 @@ public class PipeContext {
 	
 	public PipeMessage getMessage() { return msg; }
 	public String getResourceUid() { return resource.getUid(); }
+	public String getRuntimeUrl() { return resource.getRuntimeUrl(); }
+	
+	public PipeResource getResource() {return resource;}
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		System.out.println("IN: " + msg);
@@ -39,7 +42,7 @@ public class PipeContext {
 				comp.handle(this);
 			}
 		} else {
-			System.out.println("OUT: " + msg);
+			System.out.println("OUT(" + url + "): " + msg);
 			register.getEventBus().publish(url, msg.toString());
 		}
 	}
@@ -48,6 +51,7 @@ public class PipeContext {
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
+		reply.setType("reply");
 		System.out.println("REPLY: " + reply);
 		resource.reply(reply);
 	}

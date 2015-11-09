@@ -52,7 +52,7 @@ public class MsgNode extends AbstractVerticle {
 		final SessionManager sm = new SessionManager(register);
 		register.installComponent(sm);
 		
-		final AddressAllocationManager alm = new AddressAllocationManager("mn:/address-allocation", register);
+		final AddressAllocationManager alm = new AddressAllocationManager(register);
 		register.installComponent(alm);
 		
 		final RegistryManager rm = new RegistryManager("mn:/registry", register);

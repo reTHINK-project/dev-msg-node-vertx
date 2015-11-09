@@ -77,10 +77,10 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           /*expect something like -> {
-            header: {id: 1, type: 'reply', from: 'mn:/address-allocation', to: 'runtime:/alice'},
-            body: {code: 'ok', allocated: ['hyperty://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+            header: {id: 1, type: 'reply', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation'},
+            body: {code: 'ok', allocated: ['hyperty-instance://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
           }*/
-          expect(msg.header).to.eql({id: 1, type: 'reply', from: 'mn:/address-allocation', to: 'runtime:/alice'});
+          expect(msg.header).to.eql({id: 1, type: 'reply', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation'});
           expect(msg.body.code).to.eql('ok');
           expect(msg.body.allocated).to.have.length(2);
 
@@ -117,7 +117,7 @@ describe('VertxProtoStub', function() {
     let proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
 
     send({
-      header: {id: 1, type: 'create', from: 'runtime:/alice', to: 'mn:/address-allocation'},
+      header: {id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation'},
       body: {number: 2}
     });
   });

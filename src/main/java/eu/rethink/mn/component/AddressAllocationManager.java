@@ -18,11 +18,10 @@ public class AddressAllocationManager implements IComponent {
 
 	final String baseURL;
 	
-	public AddressAllocationManager(String name, PipeRegistry register) {
-		this.name = name;
+	public AddressAllocationManager(PipeRegistry register) {
 		this.register = register;
-		
-		this.baseURL = "hyperty://" + register.getDomain() + "/";
+		this.name = "domain://msg-node." + register.getDomain()  + "/hyperty-address-allocation";
+		this.baseURL = "hyperty-instance://" + register.getDomain() + "/";
 	}
 	
 	@Override
@@ -34,7 +33,7 @@ public class AddressAllocationManager implements IComponent {
 		
 		if(msg.getType().equals("create")) {
 			int number = msg.getBody().getInteger("number", 5);
-			final List<String> allocated = allocate(ctx, msg.getFrom(), number);
+			final List<String> allocated = allocate(ctx, number);
 		
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
@@ -51,13 +50,13 @@ public class AddressAllocationManager implements IComponent {
 		}
 	}
 
-	private List<String> allocate(PipeContext ctx, String runtimeRUL, int number) {
+	private List<String> allocate(PipeContext ctx, int number) {
 		final ArrayList<String> list = new ArrayList<String>(number);
 		int i = 0;
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url, runtimeRUL)) {
+			if(register.allocate(url, ctx.getRuntimeUrl())) {
 				list.add(url);
 				i++;
 			}
