@@ -43,3 +43,8 @@ Both types receive a ```PipeContext``` in the **handle** method when a message s
 * ```fail(String from, String error)``` interrupts the pipeline flow and sends an error message back to the original "header.from". The "header.from" of the reply is configured with the first parameter.
 * ```reply(PipeMessage reply)``` does nothing to the pipeline flow and sends a reply back. Other similar and useful methods exists: ```replyOK(String from)``` and ```replyError(String from, String error)```
 * ```disconnect()``` order the underlying resource channel to disconnect.
+
+### Unit testing
+**DO NOT SUBMIT CODE WITHOUT ALL UNIT TESTS ARE OK**
+* Run 2 instances of the message-node: **mvn exec:java -Dexec.args="9090"** and **mvn exec:java -Dexec.args="9091"**
+* Run **karma start**
