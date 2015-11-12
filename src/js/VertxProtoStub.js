@@ -25,7 +25,7 @@ export default class VertxProtoStub {
     this._bus = bus;
     this._config = config;
 
-    bus.addListener(runtimeProtoStubURL, (msg) => {
+    bus.addListener('*', (msg) => {
       let _this = this;
 
       _this._open(() => {

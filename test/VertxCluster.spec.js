@@ -39,7 +39,7 @@ describe('Cluster', function() {
       },
 
       addListener: (url, callback) => {
-        expect(url).to.eql('hyperty-runtime://sp1/protostub/alice');
+        expect(url).to.eql('*');
       }
     };
 
