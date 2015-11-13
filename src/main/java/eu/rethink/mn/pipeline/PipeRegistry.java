@@ -83,6 +83,12 @@ public class PipeRegistry {
 	 * @return this
 	 */
 	public PipeRegistry bind(String runtimeURL, String resourceUID) {
+		//TODO: how to handle runtimeURL duplication from diferente clients?
+
+		//can't use this because of connection re-open after a lost connection!
+		//if(urlSpace.containsKey(runtimeURL))
+		//	throw new RuntimeException("RuntimeURL " + runtimeURL + " already exist!");
+			
 		final MessageConsumer<Object> consumer = eb.consumer(runtimeURL, msg -> {
 			eb.send(resourceUID, msg.body());
 		});

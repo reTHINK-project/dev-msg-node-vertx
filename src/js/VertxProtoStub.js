@@ -18,6 +18,8 @@ export default class VertxProtoStub {
    * @return {VertxProtoStub}
    */
   constructor(runtimeProtoStubURL, bus, config) {
+    let _this = this;
+
     this._id = 0;
     this._continuousOpen = true;
 
@@ -26,8 +28,6 @@ export default class VertxProtoStub {
     this._config = config;
 
     bus.addListener('*', (msg) => {
-      let _this = this;
-
       _this._open(() => {
         _this._sock.send(JSON.stringify(msg));
       });

@@ -39,7 +39,11 @@ public class PipeContext {
 			//send to internal component...
 			final IComponent comp = register.getComponent(msg.getTo());
 			if(comp != null) {
-				comp.handle(this);
+				try {
+					comp.handle(this);
+				} catch(RuntimeException ex) {
+					replyError(comp.getName(), ex.getMessage());
+				}
 			}
 		} else {
 			System.out.println("OUT(" + url + "): " + msg);
@@ -96,7 +100,11 @@ public class PipeContext {
 	public void next() {
 		if(!inFail) {
 			if(iter.hasNext()) {
-				iter.next().handle(this);
+				try {
+					iter.next().handle(this);
+				} catch(RuntimeException ex) {
+					fail("mn:/pipeline", ex.getMessage());
+				}
 			} else {
 				deliver();
 			}

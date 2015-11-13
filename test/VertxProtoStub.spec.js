@@ -20,14 +20,14 @@ describe('VertxProtoStub', function() {
 
           //send loopback ping
           send({
-            header: {id: 1, type: 'ping', from: 'runtime:/alice', to: 'runtime:/alice'}
+            header: {id: 1, type: 'ping', from: 'runtime:/alice1', to: 'runtime:/alice1'}
           });
         }
 
         if (seq === 1) {
           //if the runtime is registered, ping should arrive here
           expect(msg).to.eql({
-            header: {id: 1, type: 'ping', from: 'runtime:/alice', to: 'runtime:/alice'}
+            header: {id: 1, type: 'ping', from: 'runtime:/alice1', to: 'runtime:/alice1'}
           });
 
           proto.disconnect();
@@ -52,12 +52,48 @@ describe('VertxProtoStub', function() {
 
     let config = {
       url: 'ws://localhost:9090/ws',
-      runtimeURL: 'runtime:/alice'
+      runtimeURL: 'runtime:/alice1'
     };
 
     proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
     proto.connect();
   });
+
+  /*
+  it('runtime duplicated address', function(done) {
+    //TODO: requirement -> vertx MN must be online on ws://localhost:9090/ws
+
+    let bus1 = {
+      postMessage: (msg) => {
+        console.log(msg);
+      },
+
+      addListener: (url, callback) => {
+        console.log(url);
+      }
+    };
+
+    let bus2 = {
+      postMessage: (msg) => {
+        console.log(msg);
+      },
+
+      addListener: (url, callback) => {
+        console.log(url);
+      }
+    };
+
+    let config = {
+      url: 'ws://localhost:9090/ws',
+      runtimeURL: 'runtime:/alice-duplicated'
+    };
+
+    let proto1 = new VertxProtoStub('hyperty-runtime://sp1/protostub/1', bus1, config);
+    let proto2 = new VertxProtoStub('hyperty-runtime://sp1/protostub/2', bus2, config);
+    proto1.connect();
+    proto2.connect();
+  });
+  */
 
   it('hyperty registration', function(done) {
     let send;
@@ -111,7 +147,7 @@ describe('VertxProtoStub', function() {
 
     let config = {
       url: 'ws://localhost:9090/ws',
-      runtimeURL: 'runtime:/alice'
+      runtimeURL: 'runtime:/alice2'
     };
 
     let proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);

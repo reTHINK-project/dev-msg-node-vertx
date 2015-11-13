@@ -17,19 +17,19 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 
 gulp.task('build', function() {
-  var bundler = browserify('./src/js/VertxProtoStub.js', { debug: false }).transform(babel.configure({
-    optional: ['runtime'],
-    modules: 'ignore'
-  }));
+  var bundler = browserify('./src/js/VertxProtoStub.js', {
+    standalone: 'VertxProtoStub',
+    debug: false
+  }).transform(babel);
 
   function rebundle() {
     bundler.bundle()
-      .on('error', function(err) {
-        console.error(err);
-        this.emit('end');
-      })
-      .pipe(source('VertxProtoStub.js'))
-      .pipe(gulp.dest('./target'));
+    .on('error', function(err) {
+      console.error(err);
+      this.emit('end');
+    })
+    .pipe(source('VertxProtoStub.js'))
+    .pipe(gulp.dest('./target'));
   }
 
   rebundle();
