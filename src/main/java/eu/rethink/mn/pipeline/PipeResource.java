@@ -1,5 +1,6 @@
 package eu.rethink.mn.pipeline;
 
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.Handler;
 
 public class PipeResource {

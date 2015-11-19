@@ -3,6 +3,8 @@ package eu.rethink.mn.pipeline;
 import java.util.Iterator;
 
 import eu.rethink.mn.IComponent;
+import eu.rethink.mn.pipeline.message.PipeMessage;
+import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.Handler;
 
 public class PipeContext {
@@ -55,7 +57,7 @@ public class PipeContext {
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
-		reply.setType("reply");
+		reply.setType(PipeMessage.REPLY);
 		System.out.println("REPLY: " + reply);
 		resource.reply(reply);
 	}
@@ -68,7 +70,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("ok");
+		reply.setReplyCode(ReplyCode.OK);
 		
 		reply(reply);
 	}
@@ -82,7 +84,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("error");
+		reply.setReplyCode(ReplyCode.ERROR);
 		reply.setErrorDescription(error);
 		
 		reply(reply);

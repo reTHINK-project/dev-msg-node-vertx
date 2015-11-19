@@ -18,7 +18,7 @@ describe('Cluster', function() {
       postMessage: (msg) => {
         if (seq === 0) {
           expect(msg).to.eql({
-            header: {type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status'},
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status',
             body: {value: 'connected'}
           });
 
@@ -26,9 +26,7 @@ describe('Cluster', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({
-            header: {id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'}
-          });
+          expect(msg).to.eql({id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'});
 
           aliceProto.disconnect();
           bobProto.disconnect();
@@ -47,13 +45,11 @@ describe('Cluster', function() {
       postMessage: (msg) => {
         if (seq === 1) {
           expect(msg).to.eql({
-            header: {type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status'},
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status',
             body: {value: 'connected'}
           });
 
-          bobSend({
-            header: {id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'}
-          });
+          bobSend({id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'});
         }
 
         seq++;

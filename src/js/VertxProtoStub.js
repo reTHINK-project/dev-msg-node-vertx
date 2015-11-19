@@ -71,21 +71,19 @@ export default class VertxProtoStub {
 
     _this._id++;
     let msg = {
-      header: {
-        id: _this._id,
-        type: 'open',
-        from: _this._config.runtimeURL,
-        to: 'mn:/session',
-        tokenID: '??'
-      }
+      id: _this._id,
+      type: 'open',
+      from: _this._config.runtimeURL,
+      to: 'mn:/session',
+      tokenID: '??'
     };
 
     //register and wait for open reply...
     let hasResponse = false;
     _this._sessionCallback = function(reply) {
-      if (reply.header.type === 'reply' & reply.header.id === msg.header.id) {
+      if (reply.type === 'response' & reply.id === msg.id) {
         hasResponse = true;
-        if (reply.body.code === 'ok') {
+        if (reply.body.code === 200) {
           _this._sendStatus('connected');
           callback();
         } else {
@@ -108,13 +106,11 @@ export default class VertxProtoStub {
 
     _this._id++;
     let msg = {
-      header: {
-        id: _this._id,
-        type: 'close',
-        from: _this._config.runtimeURL,
-        to: 'mn:/session',
-        tokenID: '??'
-      }
+      id: _this._id,
+      type: 'close',
+      from: _this._config.runtimeURL,
+      to: 'mn:/session',
+      tokenID: '??'
     };
 
     _this._sock.send(JSON.stringify(msg));
@@ -124,11 +120,9 @@ export default class VertxProtoStub {
     let _this = this;
 
     let msg = {
-      header: {
-        type: 'update',
-        from: _this._runtimeProtoStubURL,
-        to: _this._runtimeProtoStubURL + '/status'
-      },
+      type: 'update',
+      from: _this._runtimeProtoStubURL,
+      to: _this._runtimeProtoStubURL + '/status',
       body: {
         value: value
       }
@@ -176,7 +170,7 @@ export default class VertxProtoStub {
 
       _this._sock.onmessage = function(e) {
         var msg = JSON.parse(e.data);
-        if (msg.header.from === 'mn:/session') {
+        if (msg.from === 'mn:/session') {
           if (_this._sessionCallback) {
             _this._sessionCallback(msg);
           }
