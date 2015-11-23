@@ -1,0 +1,24 @@
+var RegistryConnector = require('./registry/RegistryConnector');
+
+print("[Connectors] Registry Connector Loaded");
+
+var registry = new RegistryConnector('http://localhost:4567');
+
+vertx.eventBus().consumer("mn:/registry-connector-verticle", function (message) {
+  print("[Registry-Connector][Received]: " + message.body());
+
+  var msg = JSON.parse(message.body());
+
+  switch(msg.header.type) {
+      case "add-user":
+      print("[Registry-Connector] Add user with " + msg.body.userid);
+      registry.createUser(msg.body.userid);
+      break;
+
+      case "get-user":
+      print("[Registry-Connector] Get user with " + msg.body.userid);
+      registry.getUser(msg.body.userid);
+      break;
+  }
+
+});

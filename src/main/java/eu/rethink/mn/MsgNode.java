@@ -2,12 +2,14 @@ package eu.rethink.mn;
 
 import static java.lang.System.out;
 import eu.rethink.mn.component.AddressAllocationManager;
+import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.RegistryManager;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.ValidatorPipeHandler;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
@@ -31,6 +33,10 @@ public class MsgNode extends AbstractVerticle {
 			if (res.succeeded()) {
 				Vertx vertx = res.result();
 				vertx.deployVerticle(msgNode);
+
+				DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
+				vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
+
 			} else {
 				System.exit(-1);
 			}
@@ -48,7 +54,7 @@ public class MsgNode extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		final PipeRegistry register = new PipeRegistry(vertx, mgr, "ua.pt");
-		
+
 		final SessionManager sm = new SessionManager(register);
 		register.installComponent(sm);
 		
@@ -57,6 +63,9 @@ public class MsgNode extends AbstractVerticle {
 		
 		final RegistryManager rm = new RegistryManager("mn:/registry", register);
 		register.installComponent(rm);
+
+		final RegistryConnector rc = new RegistryConnector("mn:/registry-connector", register);
+		register.installComponent(rc);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())
