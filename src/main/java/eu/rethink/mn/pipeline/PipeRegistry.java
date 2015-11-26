@@ -23,7 +23,7 @@ public class PipeRegistry {
 	//cluster maps...
 	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
 	
-	EventBus getEventBus() { return eb; }
+	public EventBus getEventBus() { return eb; }
 	
 	public PipeRegistry(Vertx vertx, ClusterManager mgr, String domain) {
 		this.domain = domain;

@@ -22,25 +22,8 @@ public class RegistryConnector implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		System.out.println("Registry Connector: " + msg);
 
-		if(msg.getType().equals("get-user")) {
-			register.getEventBus().send("mn:/registry-connector-verticle", msg.getJson().encode());
-			ctx.replyOK(getName());
-		}
-
-		if(msg.getType().equals("add-user")) {
-			register.getEventBus().send("mn:/registry-connector-verticle", msg.getJson().encode());
-			ctx.replyOK(getName());
-		}
-
-		if(msg.getType().equals("remove-user")) {
-			register.getEventBus().send("mn:/registry-connector-verticle", msg.getJson().encode());
-			ctx.replyOK(getName());
-		}
-
-		if(msg.getType().equals("add-hiperty")) {
-			register.getEventBus().send("mn:/registry-connector-verticle", msg.getJson().encode());
-			ctx.replyOK(getName());
-		}
+		register.getEventBus().send("mn:/registry-connector-verticle", msg.getJson().encode());
+		ctx.replyOK(getName());
 
 	}
 }
