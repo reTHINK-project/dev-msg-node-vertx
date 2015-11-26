@@ -10,15 +10,17 @@ var RegistryConnector = function(registryURL) {
   this._registryURL = registryURL;
 };
 
-RegistryConnector.prototype.getUser = function(userid) {
+RegistryConnector.prototype.getUser = function(userid, callback) {
   this._request.get(this._registryURL + '/user_id/' + userid, function(err, response) {
     print("Get user: " + JSON.stringify(response));
+    callback(response);
   });
 };
 
-RegistryConnector.prototype.createUser = function(userid) {
+RegistryConnector.prototype.createUser = function(userid, callback) {
   this._request.put(this._registryURL + '/user_id/' + userid, "", function(err, response) {
     print("Create user: " + response);
+    callback(response);
   });
 };
 

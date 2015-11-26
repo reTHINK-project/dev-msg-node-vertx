@@ -16,7 +16,10 @@ JavaRequest.prototype.put = function(url, data, callback) {
   .putHeader("content-type", "application/json")
   .putHeader("content-length", "" + data.length())
   .handler(function(response) {
-    callback(null, response.statusCode());
+    response.bodyHandler(function(totalBuffer) {
+      var body = totalBuffer.toString("UTF-8");
+      callback(null, body);
+    });
   })
   .write(data)
   .end();
