@@ -5,11 +5,11 @@ import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 
-public class RegistryManager implements IComponent {
+public class RegistryConnector implements IComponent {
 	final String name;
 	final PipeRegistry register;
 	
-	public RegistryManager(String name, PipeRegistry register) {
+	public RegistryConnector(String name, PipeRegistry register) {
 		this.name = name;
 		this.register = register;
 	}
@@ -22,20 +22,6 @@ public class RegistryManager implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		System.out.println(msg);
 		
-		final String url = msg.getBody().getString("url");
-		if(url != null) {
-			ctx.fail(getName(), "No url present in body!");
-			return;
-		}
-		
-		if(msg.getType().equals("add")) {
-			register.bind(url, ctx.getResourceUid());
-			ctx.replyOK(getName());
-		}
-		
-		if(msg.getType().equals("remove")) {
-			register.unbind(url);
-			ctx.replyOK(getName());
-		}
+		ctx.replyOK(name);
 	}
 }

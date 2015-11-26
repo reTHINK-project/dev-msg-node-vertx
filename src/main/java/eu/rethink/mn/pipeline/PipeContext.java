@@ -35,21 +35,23 @@ public class PipeContext {
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
-		final String url = register.resolve(msg.getTo());
-		
-		if(url == null) {
-			//send to internal component...
-			final IComponent comp = register.getComponent(msg.getTo());
-			if(comp != null) {
-				try {
-					comp.handle(this);
-				} catch(RuntimeException ex) {
-					replyError(comp.getName(), ex.getMessage());
-				}
+
+		final IComponent comp = register.getComponent(msg.getTo());
+		if(comp != null) {
+			try {
+				comp.handle(this);
+			} catch(RuntimeException ex) {
+				replyError(comp.getName(), ex.getMessage());
 			}
 		} else {
+			final String url = register.resolve(msg.getTo());
+			
 			System.out.println("OUT(" + url + "): " + msg);
-			register.getEventBus().publish(url, msg.toString());
+			if(url != null) {
+				register.getEventBus().publish(url, msg.toString());
+			} else {
+				System.out.println("NOT-DELIVERED(" + msg.getTo() + "): " + msg);
+			}
 		}
 	}
 	
