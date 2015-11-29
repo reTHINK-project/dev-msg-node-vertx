@@ -24,4 +24,22 @@ RegistryConnector.prototype.createUser = function(userid, callback) {
   });
 };
 
+RegistryConnector.prototype.getHyperty = function(userid, hypertyid, callback) {
+  var endpoint = '/user_id/' + userid + '/' + hypertyid;
+
+  this._request.get(this._registryURL + endpoint, function(err, response) {
+    print("Get hyperty: " + JSON.stringify(response));
+    callback(response);
+  });
+};
+
+RegistryConnector.prototype.addHyperty = function(userid, hypertyid, data, callback) {
+  var endpoint = '/user_id/' + userid + '/' + hypertyid;
+
+  this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response) {
+    print("Add hyperty: " + response);
+    callback(response);
+  });
+};
+
 module.exports = RegistryConnector;

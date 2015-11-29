@@ -20,8 +20,18 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
       break;
 
       case "get-user":
-      print("[Registry-Connector] Get user with " + msg.body.userid);
+      print("[Registry-Connector] Get hyperty with " + msg.body.userid);
       registry.getUser(msg.body.userid, callback);
+      break;
+
+      case "get-hyperty":
+      print("[Registry-Connector] Get user with " + msg.body.hypertyid);
+      registry.getHyperty(msg.body.userid, msg.body.hypertyid, callback);
+      break;
+
+      case "add-hyperty":
+      print("[Registry-Connector] Add Hyperty with " + msg.body.hypertyid);
+      registry.addHyperty(msg.body.userid, msg.body.hypertyid, msg.body.data, callback);
       break;
   }
 
