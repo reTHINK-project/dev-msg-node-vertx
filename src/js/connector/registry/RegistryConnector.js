@@ -1,9 +1,9 @@
 var RegistryConnector = function(registryURL) {
 
   if(engine.factory.engineName.contains("Nashorn")) {
-    var RequestWrapper = require('./java-request');
+    var RequestWrapper = require('./registry/java-request');
   }else {
-    var RequestWrapper = require('./js-request');
+    var RequestWrapper = require('./registry/js-request');
   }
 
   this._request = new RequestWrapper();
