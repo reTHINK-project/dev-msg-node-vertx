@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import VertxProtoStub from '../src/js/VertxProtoStub';
+import VertxProtoStub from '../src/js/client/VertxProtoStub';
 
 describe('VertxProtoStub', function() {
   it('runtime connectivity', function(done) {

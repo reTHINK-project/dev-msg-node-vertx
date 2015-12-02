@@ -17,7 +17,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 
 gulp.task('build', function() {
-  var bundler = browserify('./src/js/VertxProtoStub.js', {
+  var bundler = browserify('./src/js/client/VertxProtoStub.js', {
     standalone: 'VertxProtoStub',
     debug: false
   }).transform(babel);
