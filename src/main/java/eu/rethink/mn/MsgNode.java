@@ -3,7 +3,6 @@ package eu.rethink.mn;
 import static java.lang.System.out;
 import eu.rethink.mn.component.AddressAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
-import eu.rethink.mn.component.RegistryManager;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
@@ -61,9 +60,6 @@ public class MsgNode extends AbstractVerticle {
 		final AddressAllocationManager alm = new AddressAllocationManager(register);
 		register.installComponent(alm);
 		
-		final RegistryManager rm = new RegistryManager("mn:/registry", register);
-		register.installComponent(rm);
-
 		final RegistryConnector rc = new RegistryConnector("mn:/registry-connector", register);
 		register.installComponent(rc);
 

@@ -3,6 +3,8 @@ package eu.rethink.mn.pipeline;
 import java.util.Iterator;
 
 import eu.rethink.mn.IComponent;
+import eu.rethink.mn.pipeline.message.PipeMessage;
+import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.Handler;
 
 public class PipeContext {
@@ -33,21 +35,23 @@ public class PipeContext {
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
-		final String url = register.resolve(msg.getTo());
-		
-		if(url == null) {
-			//send to internal component...
-			final IComponent comp = register.getComponent(msg.getTo());
-			if(comp != null) {
-				try {
-					comp.handle(this);
-				} catch(RuntimeException ex) {
-					replyError(comp.getName(), ex.getMessage());
-				}
+
+		final IComponent comp = register.getComponent(msg.getTo());
+		if(comp != null) {
+			try {
+				comp.handle(this);
+			} catch(RuntimeException ex) {
+				replyError(comp.getName(), ex.getMessage());
 			}
 		} else {
+			final String url = register.resolve(msg.getTo());
+			
 			System.out.println("OUT(" + url + "): " + msg);
-			register.getEventBus().publish(url, msg.toString());
+			if(url != null) {
+				register.getEventBus().publish(url, msg.toString());
+			} else {
+				System.out.println("NOT-DELIVERED(" + msg.getTo() + "): " + msg);
+			}
 		}
 	}
 	
@@ -55,7 +59,7 @@ public class PipeContext {
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
-		reply.setType("reply");
+		reply.setType(PipeMessage.REPLY);
 		System.out.println("REPLY: " + reply);
 		resource.reply(reply);
 	}
@@ -68,7 +72,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("ok");
+		reply.setReplyCode(ReplyCode.OK);
 		
 		reply(reply);
 	}
@@ -82,7 +86,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("error");
+		reply.setReplyCode(ReplyCode.ERROR);
 		reply.setErrorDescription(error);
 		
 		reply(reply);

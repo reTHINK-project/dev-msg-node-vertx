@@ -2,8 +2,8 @@ package eu.rethink.mn.component;
 
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
 import eu.rethink.mn.pipeline.PipeRegistry;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 
 public class SessionManager implements IComponent {
 	final PipeRegistry register;

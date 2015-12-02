@@ -2,9 +2,10 @@ package eu.rethink.mn.component;
 
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
-import eu.rethink.mn.pipeline.PipeRegistry;
 import io.vertx.core.json.JsonObject;
+import eu.rethink.mn.pipeline.PipeRegistry;
+import eu.rethink.mn.pipeline.message.PipeMessage;
+
 
 public class RegistryConnector implements IComponent {
 	final String name;
@@ -37,6 +38,5 @@ public class RegistryConnector implements IComponent {
 				ctx.fail(name, "Error contacting domain registry");
 			}
 		});
-
 	}
 }

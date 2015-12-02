@@ -43,12 +43,15 @@ public class PipeRegistry {
 			
 			@Override
 			public void encodeToWire(Buffer buffer, PipeContext ctx) {
-				System.out.println("encodeToWire");
-				buffer.appendString(ctx.getMessage().toString());
+				final String msg = ctx.getMessage().toString();
+				System.out.println("encodeToWire: " + msg);
+				buffer.appendString(msg);
 			}
 
 			@Override
 			public PipeContext decodeFromWire(int pos, Buffer buffer) {
+				final String msg = buffer.getString(0, buffer.length() -1 );
+				System.out.println("decodeFromWire: " + msg);
 				return null; //not needed in this architecture
 			}
 		});

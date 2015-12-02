@@ -7,7 +7,7 @@ import java.util.TreeMap;
 
 import io.vertx.core.Handler;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 
 public class MsgOrderPipeHandler implements Handler<PipeContext> {
 	final Map<String, SortedMap<Integer, PipeContext>> queues = new HashMap<>();

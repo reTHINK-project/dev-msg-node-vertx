@@ -13,7 +13,7 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
       return message.reply(msg);
   };
 
-  switch(msg.header.type) {
+  switch(msg.type) {
       case "add-user":
       print("[Registry-Connector] Add user with " + msg.body.userid);
       registry.createUser(msg.body.userid, callback);

@@ -12,9 +12,9 @@ describe('RegistryConnector', function() {
 			postMessage: (msg) => {
 				console.log('postMessage: ', JSON.stringify(msg));
 
-				if (msg.header.id === 2) {
+				if (msg.id === 2) {
 					expect(msg).to.eql({
-						header: { id: 2, type: 'reply', from: 'mn:/registry-connector', to: 'hyper-1' },
+						id: 2, type: 'response', from: 'mn:/registry-connector', to: 'hyper-1',
 						body: { '123-1': { catalogAddress: '12345678', guid: '123131241241241', lastUpdate: '2015-11-30' } }
 					});
 
@@ -36,8 +36,9 @@ describe('RegistryConnector', function() {
 		proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
 
 		send({
-			header: { id: 2, type: 'get-user', from: 'hyper-1', to: 'mn:/registry-connector' },
+			id: 2, type: 'get-user', from: 'hyper-1', to: 'mn:/registry-connector',
 			body:{ userid: '123' }
 		});
 	});
+
 });
