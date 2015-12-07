@@ -8,14 +8,15 @@ describe('Cluster', function() {
 
     let seq = 0;
 
-    let aliceConfig = { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/alice-1' };
-    let bobConfig = { url: 'ws://localhost:9091/ws', runtimeURL: 'runtime:/bob-1' };
+    let aliceConfig = { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
+    let bobConfig = { url: 'ws://localhost:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
 
     let aliceProto;
     let bobProto;
 
     let aliceBus = {
       postMessage: (msg) => {
+        console.log(JSON.stringify(msg))
         if (seq === 0) {
           expect(msg).to.eql({
             type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status',
@@ -26,7 +27,7 @@ describe('Cluster', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'});
+          expect(msg).to.eql({id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession});
 
           aliceProto.disconnect();
           bobProto.disconnect();
@@ -49,7 +50,7 @@ describe('Cluster', function() {
             body: {value: 'connected'}
           });
 
-          bobSend({id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'});
+          bobSend({id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession});
         }
 
         seq++;

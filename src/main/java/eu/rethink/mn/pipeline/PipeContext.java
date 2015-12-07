@@ -18,7 +18,7 @@ public class PipeContext {
 	
 	public PipeMessage getMessage() { return msg; }
 	public String getResourceUid() { return resource.getUid(); }
-	public String getRuntimeUrl() { return resource.getRuntimeUrl(); }
+	public String getRuntimeSessionUrl() { return resource.getRuntimeSessionUrl(); }
 	
 	public PipeResource getResource() {return resource;}
 	

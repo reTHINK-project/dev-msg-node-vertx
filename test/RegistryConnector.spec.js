@@ -11,7 +11,7 @@ describe('Registry Connector', function() {
 
         if (msg.id === 2) {
           expect(msg).to.eql({
-            id: 2, type: 'response', from: 'mn:/registry-connector', to: 'runtime:/alice1',
+            id: 2, type: 'response', from: 'mn:/registry-connector', to: 'runtime:/bob1',
             body: { code: 200 }
           });
 
@@ -27,12 +27,12 @@ describe('Registry Connector', function() {
 
     let config = {
       url: 'ws://localhost:9090/ws',
-      runtimeURL: 'runtime:/alice1'
+      runtimeURL: 'runtime:/bob1'
     };
 
     let proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
     proto.connect();
 
-    send({id: 2, type: 'ping', from: 'runtime:/alice1', to: 'mn:/registry-connector'});
+    send({id: 2, type: 'ping', from: 'runtime:/bob1', to: 'mn:/registry-connector'});
   });
 });

@@ -19,12 +19,12 @@ describe('VertxProtoStub', function() {
           });
 
           //send loopback ping
-          send({id: 1, type: 'ping', from: 'runtime:/alice1', to: 'runtime:/alice1'});
+          send({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
         }
 
         if (seq === 1) {
           //if the runtime is registered, ping should arrive here
-          expect(msg).to.eql({id: 1, type: 'ping', from: 'runtime:/alice1', to: 'runtime:/alice1'});
+          expect(msg).to.eql({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
 
           proto.disconnect();
         }
@@ -56,12 +56,31 @@ describe('VertxProtoStub', function() {
   });
 
   /*
-  it('runtime duplicated address', function(done) {
-    //TODO: requirement -> vertx MN must be online on ws://localhost:9090/ws
+  it('runtime duplicated connection', function(done) {
+    let proto1;
+    let proto2;
+
+    let seq = 0;
 
     let bus1 = {
       postMessage: (msg) => {
-        console.log(msg);
+        if (seq === 0) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'connected'}
+          });
+        }
+
+        if (seq === 1) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'disconnected', desc: 'Normal closure, meaning that the purpose for which the connection was established has been fulfilled.'}
+          });
+
+          done();
+        }
+
+        seq++;
       },
 
       addListener: (url, callback) => {
@@ -71,7 +90,12 @@ describe('VertxProtoStub', function() {
 
     let bus2 = {
       postMessage: (msg) => {
-        console.log(msg);
+        expect(msg).to.eql({
+          type: 'update', from: 'hyperty-runtime://sp1/protostub/2', to: 'hyperty-runtime://sp1/protostub/2/status',
+          body: {value: 'disconnected', desc: 'Reconnection fail. Incorrect runtime token!'}
+        });
+
+        proto1.disconnect();
       },
 
       addListener: (url, callback) => {
@@ -84,15 +108,84 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice-duplicated'
     };
 
-    let proto1 = new VertxProtoStub('hyperty-runtime://sp1/protostub/1', bus1, config);
-    let proto2 = new VertxProtoStub('hyperty-runtime://sp1/protostub/2', bus2, config);
+    proto1 = new VertxProtoStub('hyperty-runtime://sp1/protostub/1', bus1, config);
+    proto2 = new VertxProtoStub('hyperty-runtime://sp1/protostub/2', bus2, config);
+
     proto1.connect();
     proto2.connect();
   });
   */
 
+  it('runtime re-connection', function(done) {
+    let send;
+    let proto;
+
+    let seq = 0;
+
+    let bus = {
+      postMessage: (msg) => {
+        console.log(JSON.stringify(msg));
+        if (seq === 0) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'connected'}
+          });
+
+          proto._sock.close(); //simulate abnormal close
+        }
+
+        if (seq === 1) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'disconnected', desc: 'No status code was actually present.'}
+          });
+
+          proto.connect();
+        }
+
+        if (seq === 2) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'connected'}
+          });
+
+          send({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
+        }
+
+        if (seq === 3) {
+          expect(msg).to.eql({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
+          proto.disconnect();
+        }
+
+        if (seq === 4) {
+          expect(msg).to.eql({
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            body: {value: 'disconnected', desc: 'Normal closure, meaning that the purpose for which the connection was established has been fulfilled.'}
+          });
+
+          done();
+        }
+
+        seq++;
+      },
+
+      addListener: (url, callback) => {
+        send = callback;
+      }
+    };
+
+    let config = {
+      url: 'ws://localhost:9090/ws',
+      runtimeURL: 'runtime:/alice-reconnect'
+    };
+
+    proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/1', bus, config);
+    proto.connect();
+  });
+
   it('hyperty registration', function(done) {
     let send;
+    let proto;
 
     let seq = 0;
     let firstURL;
@@ -142,7 +235,7 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice2'
     };
 
-    let proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
+    proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
 
     send({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',

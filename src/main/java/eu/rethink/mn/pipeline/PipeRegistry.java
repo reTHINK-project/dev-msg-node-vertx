@@ -23,8 +23,6 @@ public class PipeRegistry {
 	//cluster maps...
 	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
 	
-	EventBus getEventBus() { return eb; }
-	
 	public PipeRegistry(Vertx vertx, ClusterManager mgr, String domain) {
 		this.domain = domain;
 		this.mgr = mgr;
@@ -58,9 +56,11 @@ public class PipeRegistry {
 		
 		this.components = new HashMap<String, IComponent>();
 		this.consumers = new HashMap<String, MessageConsumer<Object>>();
+		
 		this.urlSpace = mgr.getSyncMap("urlSpace");
 	}
 	
+	public EventBus getEventBus() { return eb; }
 	public String getDomain() { return domain; }
 	
 	/** Install an addressable component.
@@ -85,19 +85,21 @@ public class PipeRegistry {
 	 * @param resourceUID The textUID address registered in the vertx EventBus.
 	 * @return this
 	 */
-	public PipeRegistry bind(String runtimeURL, String resourceUID) {
-		//TODO: how to handle runtimeURL duplication from diferente clients?
-
-		//can't use this because of connection re-open after a lost connection!
-		//if(urlSpace.containsKey(runtimeURL))
-		//	throw new RuntimeException("RuntimeURL " + runtimeURL + " already exist!");
-			
-		final MessageConsumer<Object> consumer = eb.consumer(runtimeURL, msg -> {
-			eb.send(resourceUID, msg.body());
-		});
+	public PipeRegistry bind(String runtimeSessionURL, String resourceUID) {
+		addListener(runtimeSessionURL, resourceUID);
 		
-		urlSpace.put(runtimeURL, runtimeURL);
-		consumers.put(runtimeURL, consumer);
+		urlSpace.put(runtimeSessionURL, runtimeSessionURL);
+		
+		return this;
+	}
+	
+	/** Rebind other resource to the same (runtimeURL, runtimeToken)
+	 * @param runtimeURL The runtimeURL 
+	 * @param resourceUID The textUID address registered in the vertx EventBus.
+	 * @return
+	 */
+	public PipeRegistry rebind(String runtimeSessionURL, String resourceUID) {
+		addListener(runtimeSessionURL, resourceUID);
 		
 		return this;
 	}
@@ -106,12 +108,11 @@ public class PipeRegistry {
 	 * @param runtimeURL The runtimeURL 
 	 * @return this
 	 */
-	public PipeRegistry unbind(String runtimeURL) {
-		urlSpace.remove(runtimeURL);
-		final MessageConsumer<Object> consumer = consumers.remove(runtimeURL);
-		if(consumer != null) {
-			consumer.unregister();
-		}
+	public PipeRegistry unbind(String runtimeSessionURL) {
+		//TODO: how to remove all allocated addresses?
+		urlSpace.remove(runtimeSessionURL);
+		
+		removeListener(runtimeSessionURL);
 		
 		return this;
 	}
@@ -142,5 +143,21 @@ public class PipeRegistry {
 	 */
 	public String resolve(String url) {
 		return urlSpace.get(url);
+	}
+	
+	
+	private void addListener(String runtimeSessionURL, String resourceUID) {
+		final MessageConsumer<Object> consumer = eb.consumer(runtimeSessionURL, msg -> {
+			eb.send(resourceUID, msg.body());
+		});
+		
+		consumers.put(runtimeSessionURL, consumer);
+	}
+	
+	private void removeListener(String runtimeSessionURL) {
+		final MessageConsumer<Object> consumer = consumers.remove(runtimeSessionURL);
+		if(consumer != null) {
+			consumer.unregister();
+		}
 	}
 }

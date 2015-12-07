@@ -57,7 +57,7 @@ public class AddressAllocationManager implements IComponent {
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url, ctx.getRuntimeUrl())) {
+			if(register.allocate(url, ctx.getRuntimeSessionUrl())) {
 				list.add(url);
 				i++;
 			}

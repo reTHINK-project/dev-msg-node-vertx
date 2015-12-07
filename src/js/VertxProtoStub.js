@@ -8,6 +8,7 @@ export default class VertxProtoStub {
     _config: { url, runtimeURL }
 
     _sock: (WebSocket | SockJS)
+    _reOpen: boolean
   */
 
   /**
@@ -27,6 +28,9 @@ export default class VertxProtoStub {
     this._bus = bus;
     this._config = config;
 
+    this._runtimeSessionURL = config.runtimeURL;
+    this._reOpen = false;
+
     bus.addListener('*', (msg) => {
       _this._open(() => {
         _this._sock.send(JSON.stringify(msg));
@@ -40,6 +44,8 @@ export default class VertxProtoStub {
    */
   get config() { return this._config; }
 
+  get runtimeSession() { return this._runtimeSessionURL; }
+
   /**
    * Try to open the connection to the MessageNode. Connection is auto managed, there is no need to call this explicitly.
    * However, if "disconnect()" is called, it's necessary to call this to enable connections again.
@@ -48,7 +54,6 @@ export default class VertxProtoStub {
   connect() {
     let _this = this;
 
-    //TODO: get updated tokenID?
     _this._continuousOpen = true;
     _this._open(() => {});
   }
@@ -71,12 +76,12 @@ export default class VertxProtoStub {
 
     _this._id++;
     let msg = {
-      id: _this._id,
-      type: 'open',
-      from: _this._config.runtimeURL,
-      to: 'mn:/session',
-      tokenID: '??'
+      id: _this._id, type: 'open', from: _this._runtimeSessionURL, to: 'mn:/session'
     };
+
+    if (_this._reOpen) {
+      msg.type = 're-open';
+    }
 
     //register and wait for open reply...
     let hasResponse = false;
@@ -84,6 +89,12 @@ export default class VertxProtoStub {
       if (reply.type === 'response' & reply.id === msg.id) {
         hasResponse = true;
         if (reply.body.code === 200) {
+          if (reply.body.runtimeToken) {
+            //setup runtimeSession
+            _this._reOpen = true;
+            _this._runtimeSessionURL = _this._config.runtimeURL + '/' + reply.body.runtimeToken;
+          }
+
           _this._sendStatus('connected');
           callback();
         } else {
@@ -106,12 +117,12 @@ export default class VertxProtoStub {
 
     _this._id++;
     let msg = {
-      id: _this._id,
-      type: 'close',
-      from: _this._config.runtimeURL,
-      to: 'mn:/session',
-      tokenID: '??'
+      id: _this._id, type: 'close', from: _this._runtimeSessionURL, to: 'mn:/session'
     };
+
+    //invalidate runtimeSession
+    _this._reOpen = false;
+    _this._runtimeSessionURL = _this._config._runtimeURL;
 
     _this._sock.send(JSON.stringify(msg));
   }
@@ -213,8 +224,8 @@ export default class VertxProtoStub {
           reason = 'Unknown reason';
         }
 
-        _this._sendStatus('disconnected', reason);
         delete _this._sock;
+        _this._sendStatus('disconnected', reason);
       };
     } else {
       _this._waitReady(callback);

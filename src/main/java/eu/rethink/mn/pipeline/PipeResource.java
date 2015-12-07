@@ -6,7 +6,9 @@ import io.vertx.core.Handler;
 public class PipeResource {
 	final String uid;
 	final Pipeline pipeline;
-	String runtimeUrl;
+	
+	//TODO: maybe this should be replaced by a PipeSession { runtimeURL, idpURL, tokenID, userID }
+	String runtimeSessionUrl;
 	
 	final Handler<Void> closeCallback;
 	final Handler<String> replyCallback;
@@ -21,9 +23,9 @@ public class PipeResource {
 	
 	public String getUid() { return uid; }
 	
-	public String getRuntimeUrl() { return runtimeUrl; }
-	public void setRuntimeUrl(String runtimeUrl) {
-		this.runtimeUrl = runtimeUrl;
+	public String getRuntimeSessionUrl() { return runtimeSessionUrl; }
+	public void setRuntimeSessionUrl(String runtimeUrl) {
+		this.runtimeSessionUrl = runtimeUrl;
 	}
 	
 	public void processMessage(PipeMessage msg) {
