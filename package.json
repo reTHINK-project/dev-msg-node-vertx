@@ -31,7 +31,6 @@
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",
     "gulp-insert": "^0.5.0",
-    "gulp-prompt": "^0.1.2",
     "gulp-replace": "^0.5.4",
     "gulp-uglify": "^1.4.2",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
