@@ -1,7 +1,8 @@
 package eu.rethink.mn;
 
 import static java.lang.System.out;
-import eu.rethink.mn.component.AddressAllocationManager;
+import eu.rethink.mn.component.HypertyAllocationManager;
+import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
@@ -53,11 +54,12 @@ public class MsgNode extends AbstractVerticle {
 		final SessionManager sm = new SessionManager(register);
 		register.installComponent(sm);
 		
-		final AddressAllocationManager alm = new AddressAllocationManager(register);
+		final HypertyAllocationManager alm = new HypertyAllocationManager(register);
 		register.installComponent(alm);
+
+		final ObjectAllocationManager olm = new ObjectAllocationManager(register);
+		register.installComponent(olm);
 		
-		final RegistryConnector rm = new RegistryConnector("mn:/registry-connector", register);
-		register.installComponent(rm);
 		
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())

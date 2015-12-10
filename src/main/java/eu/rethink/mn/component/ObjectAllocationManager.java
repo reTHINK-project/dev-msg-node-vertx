@@ -13,16 +13,16 @@ import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 
-public class AddressAllocationManager implements IComponent {
+public class ObjectAllocationManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
 
 	final String baseURL;
-	
-	public AddressAllocationManager(PipeRegistry register) {
+
+	public ObjectAllocationManager(PipeRegistry register) {
 		this.register = register;
-		this.name = "domain://msg-node." + register.getDomain()  + "/hyperty-address-allocation";
-		this.baseURL = "hyperty://" + register.getDomain() + "/";
+		this.name = "domain://msg-node." + register.getDomain()  + "/object-address-allocation";
+		this.baseURL = "resource://" + register.getDomain() + "/";
 	}
 	
 	@Override
@@ -57,7 +57,8 @@ public class AddressAllocationManager implements IComponent {
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url, ctx.getRuntimeSessionUrl())) {
+			if(register.allocate(url + "/subscription", ctx.getRuntimeSessionUrl())) {
+				//TODO: should I allocate also the URL?
 				list.add(url);
 				i++;
 			}
