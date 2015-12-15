@@ -3,7 +3,6 @@ package eu.rethink.mn;
 import static java.lang.System.out;
 import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
-import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
@@ -14,6 +13,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.JksOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
@@ -68,9 +68,18 @@ public class MsgNode extends AbstractVerticle {
 				out.println("PIPELINE-FAIL: " + error);
 			});
 		
-		final HttpServerOptions httpOptions = new HttpServerOptions();
-		httpOptions.setTcpKeepAlive(true);
+		/*
+		final JksOptions jksOptions = new JksOptions()
+			.setPath("./rethink-keystore.jks")
+			.setPassword("<password-of-your-keystore>");
+		*/
 		
+		final HttpServerOptions httpOptions = new HttpServerOptions()
+			.setTcpKeepAlive(true);
+		/*	.setSsl(true)
+			.setKeyStoreOptions(jksOptions);
+		*/
+
 		final HttpServer server = vertx.createHttpServer(httpOptions);
 		WebSocketServer.init(server, pipeline);
 		server.listen(port);

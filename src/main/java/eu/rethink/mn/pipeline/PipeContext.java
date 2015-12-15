@@ -20,7 +20,8 @@ public class PipeContext {
 	public String getResourceUid() { return resource.getUid(); }
 	public String getRuntimeSessionUrl() { return resource.getRuntimeSessionUrl(); }
 	
-	public PipeResource getResource() {return resource;}
+	public PipeRegistry getRegistry() { return pipeline.register; }
+	public PipeResource getResource() { return resource; }
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		System.out.println("IN: " + msg);

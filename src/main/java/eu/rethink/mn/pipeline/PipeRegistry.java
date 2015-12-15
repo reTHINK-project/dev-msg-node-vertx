@@ -4,7 +4,6 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.MessageCodec;
-import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.spi.cluster.ClusterManager;
 
 import java.util.HashMap;
@@ -18,7 +17,8 @@ public class PipeRegistry {
 	
 	final String domain;
 	final Map<String, IComponent> components; 				//<ComponentName, IComponent>
-	final Map<String, MessageConsumer<Object>> consumers;	//<RuntimeURL, MessageConsumer>
+	final Map<String, PipeSession> sessions;				//<RuntimeURL, PipeSession>
+	
 	
 	//cluster maps...
 	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
@@ -55,7 +55,7 @@ public class PipeRegistry {
 		});
 		
 		this.components = new HashMap<String, IComponent>();
-		this.consumers = new HashMap<String, MessageConsumer<Object>>();
+		this.sessions = new HashMap<String, PipeSession>();
 		
 		this.urlSpace = mgr.getSyncMap("urlSpace");
 	}
@@ -86,9 +86,10 @@ public class PipeRegistry {
 	 * @return this
 	 */
 	public PipeRegistry bind(String runtimeSessionURL, String resourceUID) {
-		addListener(runtimeSessionURL, resourceUID);
+		final PipeSession session = new PipeSession(eb, runtimeSessionURL, urlSpace);
+		session.setListener(resourceUID);
 		
-		urlSpace.put(runtimeSessionURL, runtimeSessionURL);
+		sessions.put(runtimeSessionURL, session);
 		
 		return this;
 	}
@@ -99,7 +100,7 @@ public class PipeRegistry {
 	 * @return
 	 */
 	public PipeRegistry rebind(String runtimeSessionURL, String resourceUID) {
-		addListener(runtimeSessionURL, resourceUID);
+		sessions.get(runtimeSessionURL).setListener(resourceUID);
 		
 		return this;
 	}
@@ -109,10 +110,8 @@ public class PipeRegistry {
 	 * @return this
 	 */
 	public PipeRegistry unbind(String runtimeSessionURL) {
-		//TODO: how to remove all allocated addresses?
-		urlSpace.remove(runtimeSessionURL);
-		
-		removeListener(runtimeSessionURL);
+		final PipeSession session = sessions.remove(runtimeSessionURL);
+		session.close();
 		
 		return this;
 	}
@@ -122,19 +121,19 @@ public class PipeRegistry {
 	 * @param runtimeURL The runtimeURL 
 	 * @return <strong>true</strong> if the allocation is successful, <strong>false</strong> if the URL already exist.
 	 */
-	public boolean allocate(String url, String runtimeURL) {
+	public boolean allocate(String url, String runtimeSessionURL) {
 		if(urlSpace.containsKey(url))
 			return false;
 
-		urlSpace.put(url, runtimeURL);
+		sessions.get(runtimeSessionURL).addURL(url);
 		return true;
 	}
 	
 	/** Removes the link between an URL (Hyperty, Resource, ...) and the runtimeURL.
 	 * @param url Any unique identifiable resource URL
 	 */
-	public void deallocate(String url) {
-		urlSpace.remove(url);
+	public void deallocate(String url, String runtimeSessionURL) {
+		sessions.get(runtimeSessionURL).removeURL(url);
 	}
 	
 	/** Try to resolve any URL given to a RuntimeURL.
@@ -143,21 +142,5 @@ public class PipeRegistry {
 	 */
 	public String resolve(String url) {
 		return urlSpace.get(url);
-	}
-	
-	
-	private void addListener(String runtimeSessionURL, String resourceUID) {
-		final MessageConsumer<Object> consumer = eb.consumer(runtimeSessionURL, msg -> {
-			eb.send(resourceUID, msg.body());
-		});
-		
-		consumers.put(runtimeSessionURL, consumer);
-	}
-	
-	private void removeListener(String runtimeSessionURL) {
-		final MessageConsumer<Object> consumer = consumers.remove(runtimeSessionURL);
-		if(consumer != null) {
-			consumer.unregister();
-		}
 	}
 }
