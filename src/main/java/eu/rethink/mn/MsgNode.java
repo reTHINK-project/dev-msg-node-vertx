@@ -20,36 +20,46 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 public class MsgNode extends AbstractVerticle {
 	
 	public static void main(String[] args) {
-		int port = 9090;
-		if(args.length > 0) {
-			port = Integer.parseInt(args[0]);
-		}
-		
-		final ClusterManager mgr = new HazelcastClusterManager();
-		final MsgNode msgNode = new MsgNode(mgr, port);
-		
-		final VertxOptions options = new VertxOptions().setClusterManager(mgr);
-		Vertx.clusteredVertx(options, res -> {
-			if (res.succeeded()) {
-				Vertx vertx = res.result();
-				vertx.deployVerticle(msgNode);
-			} else {
+		if (args.length == 2) {
+			try {
+				final String domain = args[0];
+				final int port = Integer.parseInt(args[1]);
+				
+				final ClusterManager mgr = new HazelcastClusterManager();
+				final MsgNode msgNode = new MsgNode(mgr, domain, port);
+				
+				final VertxOptions options = new VertxOptions().setClusterManager(mgr);
+				Vertx.clusteredVertx(options, res -> {
+					if (res.succeeded()) {
+						Vertx vertx = res.result();
+						vertx.deployVerticle(msgNode);
+					} else {
+						System.exit(-1);
+					}
+				});
+				
+			} catch (Exception e) {
+				System.out.println("usage: <domain> <port>");
 				System.exit(-1);
 			}
-		});
+		} else {
+			System.out.println("usage: <domain> <port>");
+		}
 	}
 	
 	private final ClusterManager mgr;
+	private final String domain;
 	private final int port;
 	
-	public MsgNode(ClusterManager mgr, int port) {
+	public MsgNode(ClusterManager mgr, String domain,int port) {
 		this.mgr = mgr;
+		this.domain = domain;
 		this.port = port;
 	}
 	
 	@Override
 	public void start() throws Exception {
-		final PipeRegistry register = new PipeRegistry(vertx, mgr, "ua.pt");
+		final PipeRegistry register = new PipeRegistry(vertx, mgr, domain);
 		
 		final SessionManager sm = new SessionManager(register);
 		register.installComponent(sm);
@@ -83,6 +93,6 @@ public class MsgNode extends AbstractVerticle {
 		final HttpServer server = vertx.createHttpServer(httpOptions);
 		WebSocketServer.init(server, pipeline);
 		server.listen(port);
-		System.out.println("Message Node -> port(" + port + ")");
+		System.out.println("Running ws://msg-node." + domain + ":" + port);
 	}
 }
