@@ -75,8 +75,7 @@ public class MsgNode extends AbstractVerticle {
 		final ObjectAllocationManager olm = new ObjectAllocationManager(register);
 		register.installComponent(olm);
 
-
-		final RegistryConnector rc = new RegistryConnector("mn:/registry-connector", register);
+		final RegistryConnector rc = new RegistryConnector("domain://msg-node.ua.pt/hyperty-address-allocation", register);
 		register.installComponent(rc);
 
 		final Pipeline pipeline = new Pipeline(register)

@@ -22,7 +22,7 @@ public class RegistryConnector implements IComponent {
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
 		
-		register.getEventBus().send(name, msg.getJson().encode(), event -> {
+		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
 			final Object val = event.result().body();
 			if(event.succeeded()) {
 				//reply: {"123-1":{"catalogAddress":"12345678","guid":"123131241241241","lastUpdate":"2015-11-30"}}
