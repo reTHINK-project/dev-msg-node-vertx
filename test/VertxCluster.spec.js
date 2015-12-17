@@ -8,15 +8,15 @@ describe('Cluster', function() {
 
     let seq = 0;
 
-    let aliceConfig = { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
-    let bobConfig = { url: 'ws://localhost:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
+    let aliceConfig = { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
+    let bobConfig = { url: 'wss://msg-node.ua.pt:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
 
     let aliceProto;
     let bobProto;
 
     let aliceBus = {
       postMessage: (msg) => {
-        console.log(JSON.stringify(msg))
+        console.log('postMessage(alice)', JSON.stringify(msg));
         if (seq === 0) {
           expect(msg).to.eql({
             type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status',
@@ -38,12 +38,14 @@ describe('Cluster', function() {
       },
 
       addListener: (url, callback) => {
+        console.log('addListener(alice)', url);
         expect(url).to.eql('*');
       }
     };
 
     let bobBus = {
       postMessage: (msg) => {
+        console.log('postMessage(bob)', JSON.stringify(msg));
         if (seq === 1) {
           expect(msg).to.eql({
             type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status',
@@ -57,6 +59,7 @@ describe('Cluster', function() {
       },
 
       addListener: (url, callback) => {
+        console.log('addListener(bob)', url);
         bobSend = callback;
       }
     };

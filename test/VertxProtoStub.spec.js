@@ -47,7 +47,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'ws://localhost:9090/ws',
+      url: 'wss://msg-node.ua.pt:9090/ws',
       runtimeURL: 'runtime:/alice1'
     };
 
@@ -104,7 +104,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'ws://localhost:9090/ws',
+      url: 'wss://msg-node.ua.pt:9090/ws',
       runtimeURL: 'runtime:/alice-duplicated'
     };
 
@@ -175,7 +175,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'ws://localhost:9090/ws',
+      url: 'wss://msg-node.ua.pt:9090/ws',
       runtimeURL: 'runtime:/alice-reconnect'
     };
 
@@ -231,7 +231,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'ws://localhost:9090/ws',
+      url: 'wss://msg-node.ua.pt:9090/ws',
       runtimeURL: 'runtime:/alice2'
     };
 

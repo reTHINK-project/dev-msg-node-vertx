@@ -57,8 +57,8 @@ describe('TransitionConnection', function() {
       }
     };
 
-    proto1 = new VertxProtoStub('hyperty-runtime://sp1/protostub', bus1, { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-1'});
-    proto2 = new VertxProtoStub('hyperty-runtime://sp2/protostub', bus2, { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-2'});
+    proto1 = new VertxProtoStub('hyperty-runtime://sp1/protostub', bus1, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-1'});
+    proto2 = new VertxProtoStub('hyperty-runtime://sp2/protostub', bus2, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-2'});
 
     send1({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',
