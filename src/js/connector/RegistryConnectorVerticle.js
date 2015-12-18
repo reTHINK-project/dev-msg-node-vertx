@@ -21,7 +21,7 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
 
       case "CREATE":
       print("[Registry-Connector] Add Hyperty with " + msg.body.hypertyid);
-      registry.addHyperty(msg.body.userid, msg.body.hypertyid, msg.body.data, callback);
+      registry.addHyperty(msg.body.userid, msg.body.hypertyid, msg.body.hypertyDescriptorURL, callback);
       break;
   }
 
