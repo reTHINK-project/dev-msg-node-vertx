@@ -233,6 +233,13 @@ export default class VertxProtoStub {
   }
 }
 
+export default function activate(url, bus, config) {
+  return {
+    name: 'VertxProtoStub',
+    instance: new VertxProtoStub(url, bus, config)
+  };
+}
+
 /**
 * Callback used to send messages
 * @callback PostMessage
