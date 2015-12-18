@@ -25,7 +25,7 @@ RegistryConnector.prototype.createUser = function(userid, callback) {
 };
 
 RegistryConnector.prototype.getHyperty = function(userid, hypertyid, callback) {
-  var endpoint = '/user_id/' + userid + '/' + hypertyid;
+  var endpoint = '/hyperty/user/' + userid + '/' + hypertyid;
 
   this._request.get(this._registryURL + endpoint, function(err, response) {
     print("Get hyperty: " + JSON.stringify(response));
@@ -33,8 +33,9 @@ RegistryConnector.prototype.getHyperty = function(userid, hypertyid, callback) {
   });
 };
 
-RegistryConnector.prototype.addHyperty = function(userid, hypertyid, data, callback) {
-  var endpoint = '/user_id/' + userid + '/' + hypertyid;
+RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDescriptor, callback) {
+  var endpoint = '/hyperty/user/' + userid + '/' + hypertyid;
+  var data = { 'hypertyDescriptor': hypertyDescriptor };
 
   this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response) {
     print("Add hyperty: " + response);
