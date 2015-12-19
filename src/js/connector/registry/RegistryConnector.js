@@ -11,7 +11,7 @@ var RegistryConnector = function(registryURL) {
 };
 
 RegistryConnector.prototype.getUser = function(userid, callback) {
-  this._request.get(this._registryURL + '/user_id/' + userid, function(err, response) {
+  this._request.get(this._registryURL + '/user_id/' + encodeURIComponent(userid), function(err, response) {
     print("Get user: " + JSON.stringify(response));
     callback(response);
   });
