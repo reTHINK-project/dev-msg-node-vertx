@@ -1,4 +1,4 @@
-export default class VertxProtoStub {
+export class VertxProtoStub {
   /* private
     _continuousOpen: boolean
 
