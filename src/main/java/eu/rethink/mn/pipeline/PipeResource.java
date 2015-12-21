@@ -7,8 +7,7 @@ public class PipeResource {
 	final String uid;
 	final Pipeline pipeline;
 	
-	//TODO: maybe this should be replaced by a PipeSession { runtimeURL, idpURL, tokenID, userID }
-	String runtimeSessionUrl;
+	PipeSession session = null;
 	
 	final Handler<Void> closeCallback;
 	final Handler<String> replyCallback;
@@ -23,10 +22,8 @@ public class PipeResource {
 	
 	public String getUid() { return uid; }
 	
-	public String getRuntimeSessionUrl() { return runtimeSessionUrl; }
-	public void setRuntimeSessionUrl(String runtimeUrl) {
-		this.runtimeSessionUrl = runtimeUrl;
-	}
+	public PipeSession getSession() { return session; }
+	public void setSession(PipeSession session) { this.session = session; }
 	
 	public void processMessage(PipeMessage msg) {
 		pipeline.process(this, msg);

@@ -5,6 +5,7 @@ import java.util.UUID;
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeRegistry;
+import eu.rethink.mn.pipeline.PipeSession;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 
@@ -28,9 +29,10 @@ public class SessionManager implements IComponent {
 			//(new connection) request - ok
 			final String newRuntimeToken = UUID.randomUUID().toString();
 			final String runtimeSessionURL = runtimeURL + "/" + newRuntimeToken;
+			System.out.println("SESSION-OPEN: " + runtimeSessionURL);
 			
-			register.bind(runtimeSessionURL, ctx.getResourceUid());
-			ctx.getResource().setRuntimeSessionUrl(runtimeSessionURL);
+			final PipeSession session = register.createSession(runtimeSessionURL);
+			ctx.setSession(session);
 			
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
@@ -39,19 +41,14 @@ public class SessionManager implements IComponent {
 			reply.setReplyCode(ReplyCode.OK);
 			reply.getBody().put("runtimeToken", newRuntimeToken);
 			
-			System.out.println("SESSION-OPEN: " + runtimeSessionURL);
 			ctx.reply(reply);
 			
 		} else if(type.equals("re-open")) {
 			//(reconnection) request
-			final String runtimeSessionURL = runtimeURL;
-			
-			if(register.resolve(runtimeSessionURL) != null) {
-				//(reconnection) ok
-				register.rebind(runtimeSessionURL, ctx.getResourceUid());
-				ctx.getResource().setRuntimeSessionUrl(runtimeSessionURL);
-				
-				System.out.println("SESSION-REOPEN: " + runtimeSessionURL);
+			final PipeSession session = register.getSession(runtimeURL);
+			if(session != null) {
+				System.out.println("SESSION-REOPEN: " + runtimeURL);
+				ctx.setSession(session);
 				ctx.replyOK(getName());
 			} else {
 				//(reconnection) fail
@@ -59,11 +56,9 @@ public class SessionManager implements IComponent {
 			}
 
 		} else if(type.equals("close")) {
-			final String runtimeSessionURL = ctx.getRuntimeSessionUrl();
-			if (runtimeSessionURL != null) {
-				register.unbind(runtimeSessionURL);
-			
-				System.out.println("SESSION-CLOSE: " + runtimeSessionURL);
+			final PipeSession session = ctx.getSession();
+			if (session != null) {
+				System.out.println("SESSION-CLOSE: " + session.getRuntimeSessionURL());
 				ctx.disconnect();
 			}
 		}

@@ -19,7 +19,6 @@ public class PipeRegistry {
 	final Map<String, IComponent> components; 				//<ComponentName, IComponent>
 	final Map<String, PipeSession> sessions;				//<RuntimeURL, PipeSession>
 	
-	
 	//cluster maps...
 	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
 	
@@ -85,62 +84,14 @@ public class PipeRegistry {
 	 * @param resourceUID The textUID address registered in the vertx EventBus.
 	 * @return this
 	 */
-	public PipeRegistry bind(String runtimeSessionURL, String resourceUID) {
-		final PipeSession session = new PipeSession(eb, runtimeSessionURL, urlSpace);
-		session.setListener(resourceUID);
-		
+	public PipeSession createSession(String runtimeSessionURL) {
+		final PipeSession session = new PipeSession(this, runtimeSessionURL);
 		sessions.put(runtimeSessionURL, session);
 		
-		return this;
+		return session;
 	}
 	
-	/** Rebind other resource to the same (runtimeURL, runtimeToken)
-	 * @param runtimeURL The runtimeURL 
-	 * @param resourceUID The textUID address registered in the vertx EventBus.
-	 * @return
-	 */
-	public PipeRegistry rebind(String runtimeSessionURL, String resourceUID) {
-		sessions.get(runtimeSessionURL).setListener(resourceUID);
-		
-		return this;
-	}
-	
-	/** Removes runtimeURL relation from the "whatever" resource channel that is registered.
-	 * @param runtimeURL The runtimeURL 
-	 * @return this
-	 */
-	public PipeRegistry unbind(String runtimeSessionURL) {
-		final PipeSession session = sessions.remove(runtimeSessionURL);
-		session.close();
-		
-		return this;
-	}
-
-	/** Creates a link between an URL (Hyperty, Resource, ...) and the runtimeURL. 
-	 * @param url Any unique identifiable resource URL
-	 * @param runtimeURL The runtimeURL 
-	 * @return <strong>true</strong> if the allocation is successful, <strong>false</strong> if the URL already exist.
-	 */
-	public boolean allocate(String url, String runtimeSessionURL) {
-		if(urlSpace.containsKey(url))
-			return false;
-
-		sessions.get(runtimeSessionURL).addURL(url);
-		return true;
-	}
-	
-	/** Removes the link between an URL (Hyperty, Resource, ...) and the runtimeURL.
-	 * @param url Any unique identifiable resource URL
-	 */
-	public void deallocate(String url, String runtimeSessionURL) {
-		sessions.get(runtimeSessionURL).removeURL(url);
-	}
-	
-	/** Try to resolve any URL given to a RuntimeURL.
-	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
-	 * @return RuntimeURL registered in the vertx EventBus.
-	 */
-	public String resolve(String url) {
-		return urlSpace.get(url);
+	public PipeSession getSession(String runtimeSessionURL) {
+		return sessions.get(runtimeSessionURL);
 	}
 }

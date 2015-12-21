@@ -1,55 +1,81 @@
 package eu.rethink.mn.pipeline;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 
 public class PipeSession {
-	final EventBus eb;
+	final PipeRegistry registry;
 	final String runtimeSessionURL;
 	
-	final Set<String> urls = new HashSet<String>();
-	final Map<String, String> urlSpace; 
+	final Map<String, MessageConsumer<Object>> consumers = new HashMap<>();
+	final Set<String> urls = new HashSet<>();
 	
-	MessageConsumer<Object> consumer = null;
+	public String getRuntimeSessionURL() { return runtimeSessionURL; }
 	
-	public PipeSession(EventBus eb, String runtimeSessionURL, Map<String, String> urlSpace) {
-		this.eb = eb;
+	PipeSession(PipeRegistry registry, String runtimeSessionURL) {
+		this.registry = registry;
 		this.runtimeSessionURL = runtimeSessionURL;
-		this.urlSpace = urlSpace;
+	}
 		
-		urlSpace.put(runtimeSessionURL, runtimeSessionURL);
+	public void addListener(String address, Handler<Message<Object>> handler) {
+		final MessageConsumer<Object> value = registry.getEventBus().consumer(address, handler);
+		consumers.put(address, value);
 	}
 	
+	public void removeListener(String address) {
+		final MessageConsumer<Object> value = consumers.remove(address);
+		if (value != null) {
+			value.unregister();
+		}
+	}
 	
-	public void setListener(String resourceUID) {
-		consumer = eb.consumer(runtimeSessionURL, msg -> {
-			eb.send(resourceUID, msg.body());
+	public boolean allocate(String url) {
+		if(registry.urlSpace.containsKey(url))
+			return false;
+
+		addURL(url);
+		return true;
+	}
+	
+	public void deallocate(String url) {
+		removeURL(url);
+	}
+		
+	void close() {
+		registry.sessions.remove(runtimeSessionURL);
+
+		for (String url: urls) {
+			registry.urlSpace.remove(url);
+		}
+		
+		for (MessageConsumer<Object> value: consumers.values()) {
+			value.unregister();
+		}
+		
+		// consumers.clear(); or urls.clear(); no need to do this, session will be discarded
+	}
+	
+	void bindToResourceUID(String resourceUID) {
+		addURL(runtimeSessionURL);
+
+		addListener(runtimeSessionURL, msg -> {
+			registry.getEventBus().send(resourceUID, msg.body());
 		});
 	}
 	
-	public void addURL(String url) {
-		urlSpace.put(url, runtimeSessionURL);
+	void addURL(String url) {
+		registry.urlSpace.put(url, runtimeSessionURL);
 		urls.add(url);
 	}
 	
-	public void removeURL(String url) {
+	void removeURL(String url) {
 		urls.remove(url);
-		urlSpace.remove(url);
-	}
-	
-	public void close() {
-		if(consumer != null) {
-			consumer.unregister();
-		}
-		
-		for (String url: urls) {
-			urlSpace.remove(url);
-		}
-		
-		//urls.clear(); no need to do this, session will be discarded
+		registry.urlSpace.remove(url);
 	}
 }

@@ -57,7 +57,7 @@ public class ObjectAllocationManager implements IComponent {
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url + "/subscription", ctx.getRuntimeSessionUrl())) {
+			if(ctx.getSession().allocate(url + "/subscription")) {
 				//TODO: should I allocate also the URL?
 				list.add(url);
 				i++;

@@ -17,11 +17,12 @@ public class PipeContext {
 	final PipeMessage msg;
 	
 	public PipeMessage getMessage() { return msg; }
-	public String getResourceUid() { return resource.getUid(); }
-	public String getRuntimeSessionUrl() { return resource.getRuntimeSessionUrl(); }
 	
-	public PipeRegistry getRegistry() { return pipeline.register; }
-	public PipeResource getResource() { return resource; }
+	public PipeSession getSession() { return resource.getSession(); }
+	public void setSession(PipeSession session) {
+		resource.setSession(session);
+		session.bindToResourceUID(resource.getUid());
+	}
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		System.out.println("IN: " + msg);
@@ -29,6 +30,14 @@ public class PipeContext {
 		this.resource = resource;
 		this.iter = iter;
 		this.msg = msg;
+	}
+	
+	/** Try to resolve any URL given to a RuntimeURL.
+	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
+	 * @return RuntimeURL registered in the vertx EventBus.
+	 */
+	public String resolve(String url) {
+		return pipeline.register.urlSpace.get(url);
 	}
 	
 	/** Sends the context to the delivery destination. Normally this methods is called in the end of the pipeline process.
@@ -45,7 +54,7 @@ public class PipeContext {
 				replyError(comp.getName(), ex.getMessage());
 			}
 		} else {
-			final String url = register.resolve(msg.getTo());
+			final String url = resolve(msg.getTo());
 			
 			System.out.println("OUT(" + url + "): " + msg);
 			if(url != null) {
@@ -97,6 +106,11 @@ public class PipeContext {
 	 * To avoid this, the method should only be used when the client orders the disconnection.
 	 */
 	public void disconnect() {
+		final PipeSession session = getSession();
+		if (session != null) {
+			session.close();
+		}
+		
 		resource.disconnect();
 	}
 	

@@ -57,7 +57,7 @@ public class HypertyAllocationManager implements IComponent {
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url, ctx.getRuntimeSessionUrl())) {
+			if(ctx.getSession().allocate(url)) {
 				list.add(url);
 				i++;
 			}
