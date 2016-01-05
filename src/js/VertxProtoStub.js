@@ -180,7 +180,7 @@ class VertxProtoStub {
       };
 
       _this._sock.onmessage = function(e) {
-        var msg = JSON.parse(e.data);
+        let msg = JSON.parse(e.data);
         if (msg.from === 'mn:/session') {
           if (_this._sessionCallback) {
             _this._sessionCallback(msg);
