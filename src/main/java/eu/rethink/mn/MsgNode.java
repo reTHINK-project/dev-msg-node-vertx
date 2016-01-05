@@ -3,12 +3,14 @@ package eu.rethink.mn;
 import static java.lang.System.out;
 import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
+import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.TransitionPipeHandler;
 import eu.rethink.mn.pipeline.handlers.ValidatorPipeHandler;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
@@ -33,6 +35,9 @@ public class MsgNode extends AbstractVerticle {
 					if (res.succeeded()) {
 						Vertx vertx = res.result();
 						vertx.deployVerticle(msgNode);
+
+                        DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
+                        vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
 					} else {
 						System.exit(-1);
 					}
@@ -70,6 +75,8 @@ public class MsgNode extends AbstractVerticle {
 		final ObjectAllocationManager olm = new ObjectAllocationManager(register);
 		register.installComponent(olm);
 
+		final RegistryConnector rc = new RegistryConnector("domain://registry.ua.pt/", register);
+		register.installComponent(rc);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())
@@ -96,7 +103,7 @@ public class MsgNode extends AbstractVerticle {
 			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
 		});
 
-		
+
 		WebSocketServer.init(server, pipeline);
 		server.listen(port);
 		System.out.println("Running wss://msg-node." + domain + ":" + port);

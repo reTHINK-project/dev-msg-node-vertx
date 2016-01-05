@@ -28,6 +28,10 @@ public class PipeMessage {
 		
 		return msg.getJsonObject("body"); 
 	}
+	public PipeMessage setBody(JsonObject body) {
+		msg.put("body", body);
+		return this;
+	}
 	
 	public int getId() { return msg.getInteger("id", 0); }
 	public PipeMessage setId(int id) {
