@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import VertxProtoStub from '../src/js/client/VertxProtoStub';
+import activate from '../src/js/client/VertxProtoStub';
 
 describe('Cluster', function() {
   it('cluster connectivity', function(done) {
@@ -37,7 +37,7 @@ describe('Cluster', function() {
         seq++;
       },
 
-      addListener: (url, callback) => {
+      addListener: (url) => {
         console.log('addListener(alice)', url);
         expect(url).to.eql('*');
       }
@@ -64,8 +64,8 @@ describe('Cluster', function() {
       }
     };
 
-    aliceProto = new VertxProtoStub('hyperty-runtime://sp1/protostub/alice', aliceBus, aliceConfig);
-    bobProto = new VertxProtoStub('hyperty-runtime://sp1/protostub/bob', bobBus, bobConfig);
+    aliceProto = activate('hyperty-runtime://sp1/protostub/alice', aliceBus, aliceConfig).instance;
+    bobProto = activate('hyperty-runtime://sp1/protostub/bob', bobBus, bobConfig).instance;
 
     aliceProto.connect();
   });

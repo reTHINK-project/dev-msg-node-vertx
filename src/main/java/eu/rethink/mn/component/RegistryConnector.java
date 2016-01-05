@@ -2,19 +2,17 @@ package eu.rethink.mn.component;
 
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeRegistry;
-import io.vertx.core.json.JsonObject;
-
 
 public class RegistryConnector implements IComponent {
 	final String name;
 	final PipeRegistry register;
 
-	public RegistryConnector(String name, PipeRegistry register) {
-		this.name = name;
+	public RegistryConnector(PipeRegistry register) {
 		this.register = register;
+		this.name = "domain://registry." + register.getDomain()  + "/";
 	}
 
 	@Override

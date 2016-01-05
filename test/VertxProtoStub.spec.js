@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import VertxProtoStub from '../src/js/client/VertxProtoStub';
+import activate from '../src/js/client/VertxProtoStub';
 
 describe('VertxProtoStub', function() {
   it('runtime connectivity', function(done) {
@@ -51,7 +51,8 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice1'
     };
 
-    proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
+    proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
+    console.log(proto);
     proto.connect();
   });
 
@@ -179,7 +180,7 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice-reconnect'
     };
 
-    proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/1', bus, config);
+    proto = activate('hyperty-runtime://sp1/protostub/1', bus, config).instance;
     proto.connect();
   });
 
@@ -235,7 +236,7 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice2'
     };
 
-    proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
+    proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
 
     send({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',

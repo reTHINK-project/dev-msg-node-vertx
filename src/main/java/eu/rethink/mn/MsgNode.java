@@ -75,7 +75,7 @@ public class MsgNode extends AbstractVerticle {
 		final ObjectAllocationManager olm = new ObjectAllocationManager(register);
 		register.installComponent(olm);
 
-		final RegistryConnector rc = new RegistryConnector("domain://registry.ua.pt/", register);
+		final RegistryConnector rc = new RegistryConnector(register);
 		register.installComponent(rc);
 
 		final Pipeline pipeline = new Pipeline(register)

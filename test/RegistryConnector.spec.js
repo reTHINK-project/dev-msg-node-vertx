@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import VertxProtoStub from '../src/js/client/VertxProtoStub';
+import activate from '../src/js/client/VertxProtoStub';
 
 describe('RegistryConnector', function() {
 	it('registry connectivity', function(done) {
@@ -8,14 +8,14 @@ describe('RegistryConnector', function() {
 
 		//TODO: requirement -> vertx MN must be online on ws://localhost:9090/ws
 
-    let bus = {
+		let bus = {
 			postMessage: (msg) => {
 				console.log('postMessage: ', JSON.stringify(msg));
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'mn:/registry-connector', to: 'hyper-1',
-						body: { '123-1': { catalogAddress: '12345678', guid: '123131241241241', lastUpdate: '2015-11-30' } }
+						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
+						body: { message: 'user not found' }
 					});
 
 					done();
@@ -29,15 +29,15 @@ describe('RegistryConnector', function() {
 		};
 
 		let config = {
-      url: 'ws://localhost:9090/ws',
-      runtimeURL: 'runtime:/alice1'
-    };
+			url: 'wss://msg-node.ua.pt:9090/ws',
+			runtimeURL: 'runtime:/alice1'
+		};
 
-		proto = new VertxProtoStub('hyperty-runtime://sp1/protostub/123', bus, config);
+		proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).activate;
 
 		send({
-			id: 2, type: 'get-user', from: 'hyper-1', to: 'mn:/registry-connector',
-			body:{ userid: '123' }
+			id: 2, type: 'READ', from: 'hyper-1', to: 'domain://registry.ua.pt/',
+			body: { user: 'john@skype.com' }
 		});
 	});
 

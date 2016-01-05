@@ -2,7 +2,7 @@ var RegistryConnector = require('./registry/RegistryConnector');
 
 print("[Connectors] Registry Connector Loaded");
 
-var registry = new RegistryConnector('http://citysdk.tagus.ist.utl.pt:4567');
+var registry = new RegistryConnector('http://localhost:4567');
 
 vertx.eventBus().consumer("mn:/registry-connector", function (message) {
   print("[Registry-Connector][Received]: " + message.body());

@@ -23,6 +23,7 @@ public class PipeRegistry {
 	final Map<String, String> urlSpace; 					//<URL, RuntimeURL>
 
 	public EventBus getEventBus() { return eb; }
+	public String getDomain() { return domain; }
 
 	public PipeRegistry(Vertx vertx, ClusterManager mgr, String domain) {
 		this.domain = domain;
@@ -61,8 +62,6 @@ public class PipeRegistry {
 		this.urlSpace = mgr.getSyncMap("urlSpace");
 	}
 
-	public EventBus getEventBus() { return eb; }
-	public String getDomain() { return domain; }
 
 	/** Install an addressable component.
 	 * @param component The IComponent interface, the handler is called when the message is to be deliver.
