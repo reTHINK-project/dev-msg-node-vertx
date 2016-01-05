@@ -3,8 +3,10 @@ package eu.rethink.mn.component;
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeMessage;
+import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import io.vertx.core.json.JsonObject;
+
 
 public class RegistryConnector implements IComponent {
 	final String name;
@@ -14,14 +16,14 @@ public class RegistryConnector implements IComponent {
 		this.name = name;
 		this.register = register;
 	}
-	
+
 	@Override
 	public String getName() { return name; }
-	
+
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
-		
+
 		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
 			final Object val = event.result().body();
 			if(event.succeeded()) {
@@ -37,6 +39,5 @@ public class RegistryConnector implements IComponent {
 				ctx.fail(name, "Error contacting domain registry");
 			}
 		});
-
 	}
 }
