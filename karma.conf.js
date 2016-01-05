@@ -14,7 +14,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
-      'test/**/*.spec.js'
+      'test/**/RegistryConnector.spec.js'
     ],
 
     // list of files to exclude

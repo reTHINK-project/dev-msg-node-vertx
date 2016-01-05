@@ -12,6 +12,8 @@ public class WebSocketServer {
 		server.websocketHandler(ws -> {
 			if(!ws.uri().equals("/ws")) {
 				ws.reject();
+				out.println("RESOURCE-OPEN-REJECTED");
+				return;
 			}
 			
 			out.println("RESOURCE-OPEN");
