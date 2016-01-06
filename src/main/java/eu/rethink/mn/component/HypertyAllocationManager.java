@@ -9,19 +9,20 @@ import java.util.UUID;
 
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
 import eu.rethink.mn.pipeline.PipeRegistry;
+import eu.rethink.mn.pipeline.message.PipeMessage;
+import eu.rethink.mn.pipeline.message.ReplyCode;
 
-public class AddressAllocationManager implements IComponent {
+public class HypertyAllocationManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
 
 	final String baseURL;
 	
-	public AddressAllocationManager(PipeRegistry register) {
+	public HypertyAllocationManager(PipeRegistry register) {
 		this.register = register;
 		this.name = "domain://msg-node." + register.getDomain()  + "/hyperty-address-allocation";
-		this.baseURL = "hyperty-instance://" + register.getDomain() + "/";
+		this.baseURL = "hyperty://" + register.getDomain() + "/";
 	}
 	
 	@Override
@@ -39,7 +40,7 @@ public class AddressAllocationManager implements IComponent {
 			reply.setId(msg.getId());
 			reply.setFrom(name);
 			reply.setTo(msg.getFrom());
-			reply.setReplyCode("ok");
+			reply.setReplyCode(ReplyCode.OK);
 			
 			final JsonObject body = reply.getBody();
 			body.put("allocated", new JsonArray(allocated));
@@ -56,7 +57,7 @@ public class AddressAllocationManager implements IComponent {
 		while(i < number) {
 			//find unique url, not in registry...
 			final String url = baseURL + UUID.randomUUID().toString();
-			if(register.allocate(url, ctx.getRuntimeUrl())) {
+			if(ctx.getSession().allocate(url)) {
 				list.add(url);
 				i++;
 			}

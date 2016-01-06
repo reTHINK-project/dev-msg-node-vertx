@@ -1,11 +1,13 @@
 package eu.rethink.mn.pipeline;
 
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.Handler;
 
 public class PipeResource {
 	final String uid;
 	final Pipeline pipeline;
-	String runtimeUrl;
+	
+	PipeSession session = null;
 	
 	final Handler<Void> closeCallback;
 	final Handler<String> replyCallback;
@@ -20,10 +22,8 @@ public class PipeResource {
 	
 	public String getUid() { return uid; }
 	
-	public String getRuntimeUrl() { return runtimeUrl; }
-	public void setRuntimeUrl(String runtimeUrl) {
-		this.runtimeUrl = runtimeUrl;
-	}
+	public PipeSession getSession() { return session; }
+	public void setSession(PipeSession session) { this.session = session; }
 	
 	public void processMessage(PipeMessage msg) {
 		pipeline.process(this, msg);

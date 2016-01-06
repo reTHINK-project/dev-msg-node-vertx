@@ -1,32 +1,25 @@
-package eu.rethink.mn.pipeline;
+package eu.rethink.mn.pipeline.message;
 
 import io.vertx.core.json.JsonObject;
 
 public class PipeMessage {
+	public static final String REPLY = "response";
+	
 	final JsonObject msg;
 	
 	public PipeMessage() {
 		this(new JsonObject());
-		msg.put("header", new JsonObject());
 	}
 
 	public PipeMessage(String json) {
 		this(new JsonObject(json));
-		if(!msg.containsKey("header")) {
-			msg.put("header", new JsonObject());
-		}
 	}
 	
 	public PipeMessage(JsonObject msg) {
 		this.msg = msg;
-		if(!msg.containsKey("header")) {
-			msg.put("header", new JsonObject());
-		}
 	}
 	
 	public JsonObject getJson() { return msg; }
-	
-	public JsonObject getHeader() { return msg.getJsonObject("header"); }
 	
 	public JsonObject getBody() {
 		if(!msg.containsKey("body")) {
@@ -35,34 +28,38 @@ public class PipeMessage {
 		
 		return msg.getJsonObject("body"); 
 	}
+	public PipeMessage setBody(JsonObject body) {
+		msg.put("body", body);
+		return this;
+	}
 	
-	public int getId() { return getHeader().getInteger("id", 0); }
+	public int getId() { return msg.getInteger("id", 0); }
 	public PipeMessage setId(int id) {
-		getHeader().put("id", id);
+		msg.put("id", id);
 		return this;
 	}
 	
-	public String getFrom() { return getHeader().getString("from"); }
+	public String getFrom() { return msg.getString("from"); }
 	public PipeMessage setFrom(String from) {
-		getHeader().put("from", from);
+		msg.put("from", from);
 		return this;
 	}
 	
-	public String getTo() { return getHeader().getString("to"); }
+	public String getTo() { return msg.getString("to"); }
 	public PipeMessage setTo(String to) {
-		getHeader().put("to", to);
+		msg.put("to", to);
 		return this;
 	}
 	
-	public String getType() { return getHeader().getString("type"); }
+	public String getType() { return msg.getString("type"); }
 	public PipeMessage setType(String type) {
-		getHeader().put("type", type);
+		msg.put("type", type);
 		return this;
 	}
 	
-	public String getReplyCode() { return getBody().getString("code"); }
-	public PipeMessage setReplyCode(String code) {
-		getBody().put("code", code);
+	public int getReplyCode() { return getBody().getInteger("code"); }
+	public PipeMessage setReplyCode(ReplyCode code) {
+		getBody().put("code", code.code);
 		return this;
 	}
 	

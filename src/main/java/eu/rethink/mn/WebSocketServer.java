@@ -3,7 +3,7 @@ package eu.rethink.mn;
 import static java.lang.System.out;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.PipeResource;
-import eu.rethink.mn.pipeline.PipeMessage;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.http.HttpServer;
 
 public class WebSocketServer {
@@ -12,6 +12,8 @@ public class WebSocketServer {
 		server.websocketHandler(ws -> {
 			if(!ws.uri().equals("/ws")) {
 				ws.reject();
+				out.println("RESOURCE-OPEN-REJECTED");
+				return;
 			}
 			
 			out.println("RESOURCE-OPEN");

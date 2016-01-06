@@ -3,6 +3,7 @@ package eu.rethink.mn.pipeline;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.Handler;
 
 public class Pipeline {

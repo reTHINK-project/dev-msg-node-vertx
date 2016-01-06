@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import VertxProtoStub from '../src/js/VertxProtoStub';
+import activate from '../src/js/client/VertxProtoStub';
 
 describe('Cluster', function() {
   it('cluster connectivity', function(done) {
@@ -8,17 +8,18 @@ describe('Cluster', function() {
 
     let seq = 0;
 
-    let aliceConfig = { url: 'ws://localhost:9090/ws', runtimeURL: 'runtime:/alice-1' };
-    let bobConfig = { url: 'ws://localhost:9091/ws', runtimeURL: 'runtime:/bob-1' };
+    let aliceConfig = { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
+    let bobConfig = { url: 'wss://msg-node.ua.pt:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
 
     let aliceProto;
     let bobProto;
 
     let aliceBus = {
       postMessage: (msg) => {
+        console.log('postMessage(alice)', JSON.stringify(msg));
         if (seq === 0) {
           expect(msg).to.eql({
-            header: {type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status'},
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status',
             body: {value: 'connected'}
           });
 
@@ -26,9 +27,7 @@ describe('Cluster', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({
-            header: {id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'}
-          });
+          expect(msg).to.eql({id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession});
 
           aliceProto.disconnect();
           bobProto.disconnect();
@@ -38,34 +37,35 @@ describe('Cluster', function() {
         seq++;
       },
 
-      addListener: (url, callback) => {
+      addListener: (url) => {
+        console.log('addListener(alice)', url);
         expect(url).to.eql('*');
       }
     };
 
     let bobBus = {
       postMessage: (msg) => {
+        console.log('postMessage(bob)', JSON.stringify(msg));
         if (seq === 1) {
           expect(msg).to.eql({
-            header: {type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status'},
+            type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status',
             body: {value: 'connected'}
           });
 
-          bobSend({
-            header: {id: 1, type: 'ping', from: 'runtime:/bob-1', to: 'runtime:/alice-1'}
-          });
+          bobSend({id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession});
         }
 
         seq++;
       },
 
       addListener: (url, callback) => {
+        console.log('addListener(bob)', url);
         bobSend = callback;
       }
     };
 
-    aliceProto = new VertxProtoStub('hyperty-runtime://sp1/protostub/alice', aliceBus, aliceConfig);
-    bobProto = new VertxProtoStub('hyperty-runtime://sp1/protostub/bob', bobBus, bobConfig);
+    aliceProto = activate('hyperty-runtime://sp1/protostub/alice', aliceBus, aliceConfig).instance;
+    bobProto = activate('hyperty-runtime://sp1/protostub/bob', bobBus, bobConfig).instance;
 
     aliceProto.connect();
   });

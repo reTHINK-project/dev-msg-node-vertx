@@ -17,7 +17,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 
 gulp.task('build', function() {
-  var bundler = browserify('./src/js/VertxProtoStub.js', {
+  var bundler = browserify('./src/js/client/VertxProtoStub.js', {
     standalone: 'VertxProtoStub',
     debug: false
   }).transform(babel);
@@ -75,4 +75,34 @@ gulp.task('test', function(done) {
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
   }, done).start();
+});
+
+var git = require('gulp-git');
+var prompt = require('gulp-prompt');
+
+// Run git add
+gulp.task('add', ['test'], function() {
+  return gulp.src('./')
+    .pipe(git.add());
+});
+
+// Run git commit
+gulp.task('commit', ['test'], function() {
+  var message;
+  gulp.src('./', {buffer:false})
+  .pipe(prompt.prompt({
+    type: 'input',
+    name: 'commit',
+    message: 'Please enter commit message...'
+  }, function(res) {
+      message = res.commit;
+    }))
+    .pipe(git.commit(message));
+});
+
+// Run git push
+gulp.task('push', ['test'], function() {
+  git.push('origin', 'master', function(err) {
+    if (err) throw err;
+  });
 });

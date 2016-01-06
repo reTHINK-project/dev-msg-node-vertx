@@ -14,7 +14,7 @@ If you have some trouble with the environment, you can open an issue;
 #### Java
 Follow the link to [Install Maven](https://maven.apache.org/install.html).
 * Build the project with: mvn package
-* Run vertx node with: mvn exec:java [-Dexec.args="9090"]
+* Run vertx node with: mvn exec:java -Dexec.args="\<domain\> \<port\>"
 
 ### Use of VertxProtoStub
 Once the MessageNode is active, we are able to connect with the ProtoStub. The best example of how this is done is in the test/VertxProtoStub.js in "runtime connectivity" test. It's important to send the "runtimeURL" in the config parameter, because it will be used to link the connection channel to the runtime.
@@ -46,5 +46,5 @@ Both types receive a ```PipeContext``` in the **handle** method when a message s
 
 ### Unit testing
 **DO NOT SUBMIT CODE WITHOUT ALL UNIT TESTS ARE OK**
-* Run 2 instances of the message-node: **mvn exec:java -Dexec.args="9090"** and **mvn exec:java -Dexec.args="9091"**
+* Run 2 instances of the message-node: **mvn exec:java -Dexec.args="ua.pt 9090"** and **mvn exec:java -Dexec.args="ua.pt 9091"**
 * Run **karma start**

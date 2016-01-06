@@ -1,6 +1,6 @@
 {
   "name": "msg-node-protostub",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "core runtime development",
   "main": "src/main.js",
   "scripts": {
@@ -30,7 +30,9 @@
     "expect.js": "^0.3.1",
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",
+    "gulp-git": "^1.6.0",
     "gulp-insert": "^0.5.0",
+    "gulp-prompt": "^0.1.2",
     "gulp-replace": "^0.5.4",
     "gulp-uglify": "^1.4.2",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",

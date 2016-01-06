@@ -3,6 +3,8 @@ package eu.rethink.mn.pipeline;
 import java.util.Iterator;
 
 import eu.rethink.mn.IComponent;
+import eu.rethink.mn.pipeline.message.PipeMessage;
+import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.Handler;
 
 public class PipeContext {
@@ -15,10 +17,12 @@ public class PipeContext {
 	final PipeMessage msg;
 	
 	public PipeMessage getMessage() { return msg; }
-	public String getResourceUid() { return resource.getUid(); }
-	public String getRuntimeUrl() { return resource.getRuntimeUrl(); }
 	
-	public PipeResource getResource() {return resource;}
+	public PipeSession getSession() { return resource.getSession(); }
+	public void setSession(PipeSession session) {
+		resource.setSession(session);
+		session.bindToResourceUID(resource.getUid());
+	}
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		System.out.println("IN: " + msg);
@@ -28,26 +32,36 @@ public class PipeContext {
 		this.msg = msg;
 	}
 	
+	/** Try to resolve any URL given to a RuntimeURL.
+	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
+	 * @return RuntimeURL registered in the vertx EventBus.
+	 */
+	public String resolve(String url) {
+		return pipeline.register.urlSpace.get(url);
+	}
+	
 	/** Sends the context to the delivery destination. Normally this methods is called in the end of the pipeline process.
 	 *  So most of the time there is no need to call this.
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
-		final String url = register.resolve(msg.getTo());
-		
-		if(url == null) {
-			//send to internal component...
-			final IComponent comp = register.getComponent(msg.getTo());
-			if(comp != null) {
-				try {
-					comp.handle(this);
-				} catch(RuntimeException ex) {
-					replyError(comp.getName(), ex.getMessage());
-				}
+
+		final IComponent comp = register.getComponent(msg.getTo());
+		if(comp != null) {
+			try {
+				comp.handle(this);
+			} catch(RuntimeException ex) {
+				replyError(comp.getName(), ex.getMessage());
 			}
 		} else {
+			final String url = resolve(msg.getTo());
+			
 			System.out.println("OUT(" + url + "): " + msg);
-			register.getEventBus().publish(url, msg.toString());
+			if(url != null) {
+				register.getEventBus().publish(url, msg.toString());
+			} else {
+				System.out.println("NOT-DELIVERED(" + msg.getTo() + "): " + msg);
+			}
 		}
 	}
 	
@@ -55,7 +69,7 @@ public class PipeContext {
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
-		reply.setType("reply");
+		reply.setType(PipeMessage.REPLY);
 		System.out.println("REPLY: " + reply);
 		resource.reply(reply);
 	}
@@ -68,7 +82,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("ok");
+		reply.setReplyCode(ReplyCode.OK);
 		
 		reply(reply);
 	}
@@ -82,7 +96,7 @@ public class PipeContext {
 		reply.setId(msg.getId());
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
-		reply.setReplyCode("error");
+		reply.setReplyCode(ReplyCode.ERROR);
 		reply.setErrorDescription(error);
 		
 		reply(reply);
@@ -92,6 +106,11 @@ public class PipeContext {
 	 * To avoid this, the method should only be used when the client orders the disconnection.
 	 */
 	public void disconnect() {
+		final PipeSession session = getSession();
+		if (session != null) {
+			session.close();
+		}
+		
 		resource.disconnect();
 	}
 	

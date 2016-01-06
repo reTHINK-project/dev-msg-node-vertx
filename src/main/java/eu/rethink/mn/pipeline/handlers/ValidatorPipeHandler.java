@@ -3,38 +3,35 @@ package eu.rethink.mn.pipeline.handlers;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeContext;
-import eu.rethink.mn.pipeline.PipeMessage;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 
 public class ValidatorPipeHandler implements Handler<PipeContext> {
-	public static String NAME = ""; 
+	public static String NAME = "mn:/validator"; 
 
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
 		
 		//header validation...
-		final JsonObject header = msg.getHeader();
-		if(header == null) {
-			ctx.fail(NAME, "No mandatory field 'header' in message");
-		} 
+		final JsonObject json = msg.getJson();
 		
-			if(!header.containsKey("id")) {
-				ctx.fail(NAME, "No mandatory field 'id' in header");
-			}
-			
-			if(!header.containsKey("type")) {
-				ctx.fail(NAME, "No mandatory field 'type' in header");
-			}
-			
-			final String from = header.getString("from");
-			if(from == null) {
-				ctx.fail(NAME, "No mandatory field 'from' in header");
-			}
-	
-			final String to = header.getString("to");
-			if(to == null) {
-				ctx.fail(NAME, "No mandatory field 'to' in header");
-			}
+		if(!json.containsKey("id")) {
+			ctx.fail(NAME, "No mandatory field 'id'");
+		}
+		
+		if(!json.containsKey("type")) {
+			ctx.fail(NAME, "No mandatory field 'type'");
+		}
+		
+		final String from = json.getString("from");
+		if(from == null) {
+			ctx.fail(NAME, "No mandatory field 'from'");
+		}
+
+		final String to = json.getString("to");
+		if(to == null) {
+			ctx.fail(NAME, "No mandatory field 'to'");
+		}
 
 		ctx.next();
 	}
