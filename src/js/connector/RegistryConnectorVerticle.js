@@ -1,8 +1,7 @@
-var RegistryConnector = require('./registry/RegistryConnector');
+var RegistryConnector = require(__dirname + '/registry/RegistryConnector');
+var registry = new RegistryConnector('http://localhost:4567');
 
 print("[Connectors] Registry Connector Loaded");
-
-var registry = new RegistryConnector('http://localhost:4567');
 
 vertx.eventBus().consumer("mn:/registry-connector", function (message) {
   print("[Registry-Connector][Received]: " + message.body());
