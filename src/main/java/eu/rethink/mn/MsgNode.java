@@ -1,6 +1,13 @@
 package eu.rethink.mn;
 
 import static java.lang.System.out;
+
+import java.io.File;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
@@ -22,13 +29,18 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 public class MsgNode extends AbstractVerticle {
 
 	public static void main(String[] args) {
-		if (args.length == 2) {
+		if (args.length == 1) {
+			
+			//load node.config.json
+			final NodeConfig config = readConfig("node.config.json");
+			System.out.println("[Config] File Found");
+			System.out.println(config);
+			
 			try {
-				final String domain = args[0];
-				final int port = Integer.parseInt(args[1]);
+				final int port = Integer.parseInt(args[0]);
 
 				final ClusterManager mgr = new HazelcastClusterManager();
-				final MsgNode msgNode = new MsgNode(mgr, domain, port);
+				final MsgNode msgNode = new MsgNode(mgr, config.getDomain(), port);
 
 				final VertxOptions options = new VertxOptions().setClusterManager(mgr);
 				Vertx.clusteredVertx(options, res -> {
@@ -44,11 +56,11 @@ public class MsgNode extends AbstractVerticle {
 				});
 
 			} catch (Exception e) {
-				System.out.println("usage: <domain> <port>");
+				System.out.println("usage: <port>");
 				System.exit(-1);
 			}
 		} else {
-			System.out.println("usage: <domain> <port>");
+			System.out.println("usage: <port>");
 		}
 	}
 
@@ -56,6 +68,50 @@ public class MsgNode extends AbstractVerticle {
 	private final String domain;
 	private final int port;
 
+	public static NodeConfig readConfig(String filePath) {
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final NodeConfig config = new NodeConfig();
+		
+		try {
+			String configSelect = System.getenv("MSG_NODE_CONFIG");
+			if (configSelect == null) {
+				System.out.println("[Config] No enviroment variable MSG_NODE_CONFIG, default to dev");
+				configSelect = "dev";
+			}
+			
+			config.setSelected(configSelect);
+			
+			final File file = new File(filePath);
+		    final JsonNode node = objectMapper.readValue(file, JsonNode.class);
+		    
+		    final JsonNode selectedNode =  node.get(configSelect);
+		    if (selectedNode == null) {
+		    	System.out.println("[Config] No " + configSelect + " field found!");
+		    	System.exit(-1);
+		    }
+		    
+		    final JsonNode domainNode = selectedNode.get("domain");
+		    if (domainNode == null) {
+		    	System.out.println("[Config] No " + configSelect + ".domain field found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setDomain(domainNode.asText());
+		    
+		    final JsonNode registryNode = selectedNode.get("registry");
+		    if (registryNode == null) {
+		    	System.out.println("[Config] No " + configSelect + ".registry field found!");
+		    	System.exit(-1);
+		    }
+		    
+		} catch (IOException e) {
+		    e.printStackTrace();
+		    System.exit(-1);
+		}
+		
+		return config;
+	}
+	
 	public MsgNode(ClusterManager mgr, String domain,int port) {
 		this.mgr = mgr;
 		this.domain = domain;
@@ -106,6 +162,6 @@ public class MsgNode extends AbstractVerticle {
 
 		WebSocketServer.init(server, pipeline);
 		server.listen(port);
-		System.out.println("Running wss://msg-node." + domain + ":" + port);
+		System.out.println("[Message-Node] Running on wss://msg-node." + domain + ":" + port);
 	}
 }
