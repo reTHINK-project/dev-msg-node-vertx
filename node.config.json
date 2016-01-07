@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "domain": "ua.pt",
+    "registry": {
+      "url": "http://localhost:4567"
+    }
+  },
+
+  "prod": {
+    "domain": "ua.pt",
+    "registry": {
+      "url": "http://localhost:4567"
+    }
+  }
+}
