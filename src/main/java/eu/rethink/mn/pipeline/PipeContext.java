@@ -55,12 +55,12 @@ public class PipeContext {
 			}
 		} else {
 			final String url = resolve(msg.getTo());
-			
-			System.out.println("OUT(" + url + "): " + msg);
 			if(url != null) {
-				register.getEventBus().publish(url, msg.toString());
+				System.out.println("OUT(" + url + "): " + msg);
+				register.getEventBus().send(url, msg.toString());
 			} else {
-				System.out.println("NOT-DELIVERED(" + msg.getTo() + "): " + msg);
+				System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
+				register.getEventBus().publish(msg.getTo(), msg.toString());
 			}
 		}
 	}

@@ -12,6 +12,7 @@ import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
+import eu.rethink.mn.component.SubscriptionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.TransitionPipeHandler;
@@ -121,15 +122,10 @@ public class MsgNode extends AbstractVerticle {
 	@Override
 	public void start() throws Exception {
 		final PipeRegistry register = new PipeRegistry(vertx, mgr, domain);
-
-		final SessionManager sm = new SessionManager(register);
-		register.installComponent(sm);
-
-		final HypertyAllocationManager alm = new HypertyAllocationManager(register);
-		register.installComponent(alm);
-
-		final ObjectAllocationManager olm = new ObjectAllocationManager(register);
-		register.installComponent(olm);
+		register.installComponent(new SubscriptionManager(register));
+		register.installComponent(new SessionManager(register));
+		register.installComponent(new HypertyAllocationManager(register));
+		register.installComponent(new ObjectAllocationManager(register));
 
 		final RegistryConnector rc = new RegistryConnector(register);
 		register.installComponent(rc);

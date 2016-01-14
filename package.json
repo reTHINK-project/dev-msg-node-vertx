@@ -1,6 +1,6 @@
 {
   "name": "msg-node-protostub",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "core runtime development",
   "main": "src/main.js",
   "scripts": {

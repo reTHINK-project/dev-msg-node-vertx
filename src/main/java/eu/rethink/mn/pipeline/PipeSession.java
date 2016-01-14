@@ -5,34 +5,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.vertx.core.Handler;
-import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
 
 public class PipeSession {
 	final PipeRegistry registry;
 	final String runtimeSessionURL;
+	String resourceUID = null;
 	
 	final Map<String, MessageConsumer<Object>> consumers = new HashMap<>();
-	final Set<String> urls = new HashSet<>();
+	final Set<String> urls = new HashSet<>(); //unique URL's registered in registry.urlSpace
 	
 	public String getRuntimeSessionURL() { return runtimeSessionURL; }
 	
 	PipeSession(PipeRegistry registry, String runtimeSessionURL) {
 		this.registry = registry;
 		this.runtimeSessionURL = runtimeSessionURL;
-	}
-		
-	public void addListener(String address, Handler<Message<Object>> handler) {
-		final MessageConsumer<Object> value = registry.getEventBus().consumer(address, handler);
-		consumers.put(address, value);
-	}
-	
-	public void removeListener(String address) {
-		final MessageConsumer<Object> value = consumers.remove(address);
-		if (value != null) {
-			value.unregister();
-		}
 	}
 	
 	public boolean allocate(String url) {
@@ -46,7 +33,27 @@ public class PipeSession {
 	public void deallocate(String url) {
 		removeURL(url);
 	}
+
+	public boolean addListener(String address) {
+		if(consumers.containsKey(address)) {
+			return false;
+		}
 		
+		final MessageConsumer<Object> value = registry.getEventBus().consumer(address, msg -> {
+			registry.getEventBus().send(resourceUID, msg.body());
+		});
+		
+		consumers.put(address, value);
+		return true;
+	}
+	
+	public void removeListener(String address) {
+		final MessageConsumer<Object> value = consumers.remove(address);
+		if (value != null) {
+			value.unregister();
+		}
+	}
+	
 	void close() {
 		registry.sessions.remove(runtimeSessionURL);
 
@@ -62,11 +69,9 @@ public class PipeSession {
 	}
 	
 	void bindToResourceUID(String resourceUID) {
+		this.resourceUID = resourceUID;
 		addURL(runtimeSessionURL);
-
-		addListener(runtimeSessionURL, msg -> {
-			registry.getEventBus().send(resourceUID, msg.body());
-		});
+		addListener(runtimeSessionURL);
 	}
 	
 	void addURL(String url) {
