@@ -1,5 +1,7 @@
 package eu.rethink.mn.pipeline;
 
+import static java.lang.System.out;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -27,6 +29,8 @@ public class PipeSession {
 			return false;
 
 		addURL(url);
+		out.println("ALLOCATE(" + runtimeSessionURL + "): " + url);
+		
 		return true;
 	}
 	
@@ -35,6 +39,8 @@ public class PipeSession {
 	}
 
 	public boolean addListener(String address) {
+		out.println("ADD-LISTENER(" + runtimeSessionURL + "): " + address);
+		
 		if(consumers.containsKey(address)) {
 			return false;
 		}
@@ -48,6 +54,8 @@ public class PipeSession {
 	}
 	
 	public void removeListener(String address) {
+		out.println("REMOVE-LISTENER(" + runtimeSessionURL + "): " + address);
+		
 		final MessageConsumer<Object> value = consumers.remove(address);
 		if (value != null) {
 			value.unregister();

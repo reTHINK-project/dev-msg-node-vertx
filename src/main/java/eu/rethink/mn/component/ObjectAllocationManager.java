@@ -22,7 +22,7 @@ public class ObjectAllocationManager implements IComponent {
 	public ObjectAllocationManager(PipeRegistry register) {
 		this.register = register;
 		this.name = "domain://msg-node." + register.getDomain()  + "/object-address-allocation";
-		this.baseURL = "resource://" + register.getDomain() + "/";
+		this.baseURL = "://" + register.getDomain() + "/";
 	}
 	
 	@Override
@@ -33,8 +33,13 @@ public class ObjectAllocationManager implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		
 		if(msg.getType().equals("create")) {
-			int number = msg.getBody().getInteger("number", 5);
-			final List<String> allocated = allocate(ctx, number);
+			final JsonObject msgBody = msg.getBody();
+			
+			final int number = msgBody.getInteger("number", 5);
+			final String scheme = msgBody.getString("urlScheme");
+			final JsonArray children = msgBody.getJsonArray("resourceChildren");
+			
+			final List<String> allocated = allocate(ctx, scheme, children, number);
 		
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
@@ -42,8 +47,8 @@ public class ObjectAllocationManager implements IComponent {
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
 			
-			final JsonObject body = reply.getBody();
-			body.put("allocated", new JsonArray(allocated));
+			final JsonObject replyBody = reply.getBody();
+			replyBody.put("allocated", new JsonArray(allocated));
 			
 			ctx.reply(reply);
 		} else {
@@ -51,16 +56,20 @@ public class ObjectAllocationManager implements IComponent {
 		}
 	}
 
-	private List<String> allocate(PipeContext ctx, int number) {
+	private List<String> allocate(PipeContext ctx, String scheme, JsonArray children, int number) {
 		final ArrayList<String> list = new ArrayList<String>(number);
 		int i = 0;
 		while(i < number) {
 			//find unique url, not in registry...
-			final String url = baseURL + UUID.randomUUID().toString();
+			final String url = scheme + baseURL + UUID.randomUUID().toString();
 			if(ctx.getSession().allocate(url + "/subscription")) {
-				//TODO: should I allocate also the URL?
 				list.add(url);
 				i++;
+				
+				//allocate children...
+				for(Object child: children) {
+					ctx.getSession().allocate(url + "/children/" + child);
+				}
 			}
 		}
 		

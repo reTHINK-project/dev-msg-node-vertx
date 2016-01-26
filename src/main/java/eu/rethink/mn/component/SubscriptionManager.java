@@ -1,5 +1,7 @@
 package eu.rethink.mn.component;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeRegistry;
@@ -20,16 +22,29 @@ public class SubscriptionManager implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
+		final JsonObject msgBody = msg.getBody();
 		System.out.println("SubscriptionManager: " + msg);
 		
-		final String resourceURL = msg.getBody().getString("resource");
+		final String resourceURL = msgBody.getString("resource");
+		final JsonArray children = msgBody.getJsonArray("children");
+		
 		if(resourceURL != null) {
 			if(msg.getType().equals("subscribe")) {
 				ctx.getSession().addListener(resourceURL);
+				for(Object child: children) {
+					ctx.getSession().addListener(resourceURL + "/children/" + child);
+				}
+				
 				ctx.replyOK(name);
 			} else if(msg.getType().equals("unsubscribe")) {
 				ctx.getSession().removeListener(resourceURL);
+				for(Object child: children) {
+					ctx.getSession().removeListener(resourceURL + "/children/" + child);
+				}
+				
 				ctx.replyOK(name);
+			} else {
+				ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
 			}
 		} else {
 			ctx.replyError(name, "No mandatory field 'body.resource'");
