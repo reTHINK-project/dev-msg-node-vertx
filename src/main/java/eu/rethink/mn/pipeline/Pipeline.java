@@ -14,15 +14,8 @@ public class Pipeline {
 	
 	void process(PipeResource resource, PipeMessage msg) {
 		final Iterator<Handler<PipeContext>> iter = handlers.iterator();
-		if(iter.hasNext()) {
-			final PipeContext ctx = new PipeContext(this, resource, iter, msg);
-			try {
-				iter.next().handle(ctx);
-			} catch(RuntimeException ex) {
-				ctx.fail("mn:/pipeline", ex.getMessage());
-				return;
-			}
-		}
+		final PipeContext ctx = new PipeContext(this, resource, iter, msg);
+		ctx.next();
 	}
 	
 	public Pipeline(PipeRegistry register) {

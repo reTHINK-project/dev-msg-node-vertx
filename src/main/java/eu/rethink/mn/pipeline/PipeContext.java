@@ -51,6 +51,7 @@ public class PipeContext {
 			try {
 				comp.handle(this);
 			} catch(RuntimeException ex) {
+				ex.printStackTrace();
 				replyError(comp.getName(), ex.getMessage());
 			}
 		} else {
@@ -122,6 +123,7 @@ public class PipeContext {
 				try {
 					iter.next().handle(this);
 				} catch(RuntimeException ex) {
+					ex.printStackTrace();
 					fail("mn:/pipeline", ex.getMessage());
 				}
 			} else {

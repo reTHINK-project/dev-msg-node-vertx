@@ -24,7 +24,7 @@ describe('Listeners', function() {
           //send subscribe msg...
           send({
             id: 1, type: 'subscribe', from: 'runtime:/alice/listeners/sm', to: 'domain://msg-node.ua.pt/sm',
-            body: { resource: 'resource://ua.pt/1' }
+            body: { resource: 'resource://ua.pt/1', children: ['children1', 'children2'] }
           });
         }
 
