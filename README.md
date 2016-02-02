@@ -48,4 +48,6 @@ Both types receive a ```PipeContext``` in the **handle** method when a message s
 ### Unit testing
 **DO NOT SUBMIT CODE WITHOUT ALL UNIT TESTS ARE OK**
 * Run 2 instances of the message-node: **mvn exec:java -Dexec.args="9090"** and **mvn exec:java -Dexec.args="9091"**
+* Add "msg-node.ua.pt 127.0.0.1" config to your OS host file
+* Verify connectivity with the browser at https://msg-node.ua.pt:9090/ should return **Hello**. Accept certificate.
 * Run **karma start**
