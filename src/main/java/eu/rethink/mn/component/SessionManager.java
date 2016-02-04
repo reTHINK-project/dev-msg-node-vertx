@@ -34,6 +34,9 @@ public class SessionManager implements IComponent {
 			final PipeSession session = register.createSession(runtimeSessionURL);
 			ctx.setSession(session);
 			
+			//FIX: this hack should not be here! Maybe there should be a separated message flow to register the runtime SM?
+			session.addListener(runtimeURL + "/sm");
+			
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
 			reply.setFrom(getName());

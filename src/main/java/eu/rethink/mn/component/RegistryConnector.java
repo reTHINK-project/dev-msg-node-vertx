@@ -3,6 +3,7 @@ package eu.rethink.mn.component;
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.message.PipeMessage;
+import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeRegistry;
 
@@ -32,6 +33,7 @@ public class RegistryConnector implements IComponent {
 				replyMsg.setFrom(msg.getTo());
 				replyMsg.setTo(msg.getFrom());
 				replyMsg.setBody(new JsonObject(val.toString()));
+				replyMsg.setReplyCode(ReplyCode.OK);
 				ctx.reply(replyMsg);
 			}else {
 				ctx.fail(name, "Error contacting domain registry");
