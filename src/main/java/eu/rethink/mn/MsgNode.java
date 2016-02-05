@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.rethink.mn.component.GlobalRegistryConnector;
 import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
@@ -51,6 +52,7 @@ public class MsgNode extends AbstractVerticle {
 
                         DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
                         vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
+                        vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
 					} else {
 						System.exit(-1);
 					}
@@ -99,9 +101,15 @@ public class MsgNode extends AbstractVerticle {
 		    
 		    config.setDomain(domainNode.asText());
 		    
-		    final JsonNode registryNode = selectedNode.get("registry");
+   		    final JsonNode registryNode = selectedNode.get("registry");
 		    if (registryNode == null) {
 		    	System.out.println("[Config] No " + configSelect + ".registry field found!");
+		    	System.exit(-1);
+		    }
+		    
+		    final JsonNode globalregistryNode = selectedNode.get("globalregistry");
+		    if (globalregistryNode == null) {
+		    	System.out.println("[Config] No " + configSelect + ".globalregistry field found!");
 		    	System.exit(-1);
 		    }
 		    
@@ -129,6 +137,9 @@ public class MsgNode extends AbstractVerticle {
 
 		final RegistryConnector rc = new RegistryConnector(register);
 		register.installComponent(rc);
+		
+		final GlobalRegistryConnector grc = new GlobalRegistryConnector(register);
+		register.installComponent(grc);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler())
