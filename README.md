@@ -41,7 +41,7 @@ docker run -it -e "MSG_NODE_CONFIG=dev" -p 9090:9090 vertx-msg-node
 
 **Verify** if the VertxMN is running at docker host port map `https://192.168.99.100:9090/`, should return **Hello**.
 It's ok at first to have an invalid certificate. The pre-configured self-signed certificate is pointing at host `msg-node.ua.pt`
-You can config you host OS file and add a new line for `192.168.99.100   msg-node.ua.pt`.
+You can config your host OS file and add a new line for `192.168.99.100   msg-node.ua.pt`.
 
 #### 5. Testing
 To fire the test suite you need **NPM** and all installed dependencies.
