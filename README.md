@@ -22,6 +22,27 @@ You need to set up the following requirements.
 - [git client tool](https://git-scm.com/downloads) This is already a Docker dependency. If already installed you may skip it.
 - Test Docker setup. Fire the Docker shell and run `docker run hello-world`
 
+#### 2. Cloning the repository and running Docker image
+```
+git clone https://github.com/reTHINK-project/dev-msg-node-vertx.git
+cd dev-msg-node-vertx
+```
+
+#### 3. Config VertxMN domain
+The VertxMN is pointing at default domain `ua.pt`, but if other domain is needed it can be configured in `node.config.json`.
+Change an already entry, like `dev`, or create a new one.
+Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
+
+#### 4. Build and run Docker
+```
+docker build -t vertx-msg-node .
+docker run -it -e "MSG_NODE_CONFIG=dev" -p 9090:9090 vertx-msg-node
+```
+
+**Verify** if the VertxMN is running at docker host port map `https://192.168.99.100:9090/`.
+It's ok at first to have an invalid certificate. The pre-configured self-signed certificate is pointing at host `msg-node.ua.pt:9090`
+You can config you host OS file and add a new line for `192.168.99.100 msg-node.ua.pt`.
+
 ---------------------------------------------------------------------------------------
 ### Setup Environment
 
