@@ -1,5 +1,28 @@
-## dev-msg-node-vertx
+## vertx.io based Message Node (VertxMN) (not ready)
 
+### Overview
+
+#### Functional location in the reTHINK Architecture
+The vertx.io based Message Node is one of the reference implementations of the Message Node component in the reTHINK Architecture. The overall role of Message Nodes in the reTHINK Architecture is described in detail in [Hyperty Messaging Framework](https://github.com/reTHINK-project/dev-service-framework/blob/d3.2-working-docs/docs/manuals/hyperty-messaging-framework.md).
+
+A general documentation and guideline for the development of Message nodes is given in [Message Nodes and Protostubs Development](https://github.com/reTHINK-project/dev-service-framework/blob/d3.2-working-docs/docs/manuals/development-of-protostubs-and-msg-nodes.md).
+
+#### Dependencies
+One of the responsibilities of Message Nodes in the reTHINK architecture is to perform the interactions with the Domain registry. Runtimes send special messages to the Message Nodes to register or query hyperties or data objects at the domain registry. The Message Nodes have to perform the interactions with the registry component and return the results back to the Runtime.
+
+There is a need to have the domain registry running and configured. However, there is no specific initiation sequence. The procedures to achieve this are described in the following section.
+
+### User View
+
+This chapter provides instructions for the setup, configuration and operation of the Vertx Message Node as a docker container. The Docker file is already available in the repository.
+
+#### 1. Installation of Git and Docker
+You need to set up the following requirements.
+- [docker](https://docs.docker.com/)
+- [git client tool](https://git-scm.com/downloads) This is already a Docker dependency. If already installed you may skip it.
+- Test Docker setup. Fire the Docker shell and run `docker run hello-world`
+
+---------------------------------------------------------------------------------------
 ### Setup Environment
 
 #### JavaScript
