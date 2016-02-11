@@ -39,9 +39,21 @@ docker build -t vertx-msg-node .
 docker run -it -e "MSG_NODE_CONFIG=dev" -p 9090:9090 vertx-msg-node
 ```
 
-**Verify** if the VertxMN is running at docker host port map `https://192.168.99.100:9090/`.
-It's ok at first to have an invalid certificate. The pre-configured self-signed certificate is pointing at host `msg-node.ua.pt:9090`
-You can config you host OS file and add a new line for `192.168.99.100 msg-node.ua.pt`.
+**Verify** if the VertxMN is running at docker host port map `https://192.168.99.100:9090/`, should return **Hello**.
+It's ok at first to have an invalid certificate. The pre-configured self-signed certificate is pointing at host `msg-node.ua.pt`
+You can config you host OS file and add a new line for `192.168.99.100   msg-node.ua.pt`.
+
+#### 5. Testing
+To fire the test suite you need **NPM** and all installed dependencies.
+- [NodeJS](https://nodejs.org/en/) will install NPM.
+```
+npm install
+```
+- Run 2 instances of the VertxMN to test cluster modes. You can run 2 dockers with diferent port maps `-p 9090:9090` and `-p 9091:9090`.
+- For unit test it's required to have the correct **host OS file** configured to `msg-node.ua.pt` and domain at **ua.pt** in the selected entry for `node.config.json`.
+- Run **karma start**
+
+**create user** and **read user** will fail if there is no domain registry running.
 
 ---------------------------------------------------------------------------------------
 ### Setup Environment
