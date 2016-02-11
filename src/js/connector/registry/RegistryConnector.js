@@ -43,4 +43,13 @@ RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDesc
   });
 };
 
+RegistryConnector.prototype.deleteHyperty = function(userid, hypertyid, callback) {
+  var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
+
+  this._request.del(this._registryURL + endpoint, function(err, response) {
+    print("Delete hyperty: " + response);
+    callback(response);
+  });
+};
+
 module.exports = RegistryConnector;

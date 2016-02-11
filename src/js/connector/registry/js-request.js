@@ -25,7 +25,12 @@ JSRequest.prototype.put = function(url, message, callback) {
       });
 };
 
-JSRequest.prototype.update = function(url, message, callback) {
+JSRequest.prototype.del = function(url, callback) {
+  this._client
+      .del(url)
+      .on('response', function(response) {
+        callback(null, response);
+      });
 };
 
 module.exports = JSRequest;

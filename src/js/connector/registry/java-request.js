@@ -25,4 +25,13 @@ JavaRequest.prototype.put = function(url, data, callback) {
   .end();
 };
 
+JavaRequest.prototype.del = function(url, callback) {
+  this._client.deleteAbs(url, function(response) {
+    response.bodyHandler(function(totalBuffer) {
+      var body = totalBuffer.toString("UTF-8");
+      callback(null, body);
+    });
+  }).end();
+};
+
 module.exports = JavaRequest;
