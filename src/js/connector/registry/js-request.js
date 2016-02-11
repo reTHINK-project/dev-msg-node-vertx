@@ -18,10 +18,10 @@ JSRequest.prototype.put = function(url, message, callback) {
         body: message
       }, function(error, response, body) {
         if(err) {
-          callback(err, null);
+          callback(err, null, null);
         }
 
-        callback(null, body);
+        callback(null, body, response.statusCode);
       });
 };
 
@@ -29,7 +29,7 @@ JSRequest.prototype.del = function(url, callback) {
   this._client
       .del(url)
       .on('response', function(response) {
-        callback(null, response);
+        callback(null, response.statusCode);
       });
 };
 

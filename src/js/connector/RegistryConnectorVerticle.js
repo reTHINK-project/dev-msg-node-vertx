@@ -15,13 +15,18 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
 
   switch(msg.type) {
       case "READ":
-      print("[Registry-Connector] Get user with " + msg.body.user);
-      registry.getUser(msg.body.user, callback);
+      print("[Registry-Connector] Get user with " + msg.body.resource);
+      registry.getUser(msg.body.resource, callback);
       break;
 
       case "CREATE":
-      print("[Registry-Connector] Add Hyperty with " + msg.body.hypertyURL);
-      registry.addHyperty(msg.body.user, msg.body.hypertyURL, msg.body.hypertyDescriptorURL, callback);
+      print("[Registry-Connector] Add Hyperty with " + msg.body.value.hypertyURL);
+      registry.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, callback);
+      break;
+
+      case "DELETE":
+      print("[Registry-Connector] Delete Hyperty with " + msg.body.value.hypertyURL);
+      registry.deleteHyperty(msg.body.value.user, msg.body.value.hypertyURL, callback);
       break;
   }
 

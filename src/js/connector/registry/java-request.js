@@ -6,7 +6,7 @@ JavaRequest.prototype.get = function(url, callback) {
   this._client.getAbs(url, function (response) {
     response.bodyHandler(function(totalBuffer) {
       var body = totalBuffer.toString("UTF-8");
-      callback(null, body);
+      callback(null, body, response.statusCode());
     });
   }).end();
 };
@@ -18,7 +18,7 @@ JavaRequest.prototype.put = function(url, data, callback) {
   .handler(function(response) {
     response.bodyHandler(function(totalBuffer) {
       var body = totalBuffer.toString("UTF-8");
-      callback(null, body);
+      callback(null, body, response.statusCode());
     });
   })
   .write(data)
@@ -29,7 +29,7 @@ JavaRequest.prototype.del = function(url, callback) {
   this._client.deleteAbs(url, function(response) {
     response.bodyHandler(function(totalBuffer) {
       var body = totalBuffer.toString("UTF-8");
-      callback(null, body);
+      callback(null, body, response.statusCode());
     });
   }).end();
 };

@@ -11,25 +11,15 @@ var RegistryConnector = function(registryURL) {
 };
 
 RegistryConnector.prototype.getUser = function(userid, callback) {
-  this._request.get(this._registryURL + '/hyperty/user/' + encodeURIComponent(userid), function(err, response) {
+  this._request.get(this._registryURL + '/hyperty/user/' + encodeURIComponent(userid), function(err, response, statusCode) {
     print("Get user: " + JSON.stringify(response));
-    callback(response);
-  });
-};
 
-RegistryConnector.prototype.createUser = function(userid, callback) {
-  this._request.put(this._registryURL + '/hyperty/user/' + userid, "", function(err, response) {
-    print("Create user: " + response);
-    callback(response);
-  });
-};
+    var body = {
+      'code': statusCode,
+      'value': response
+    };
 
-RegistryConnector.prototype.getHyperty = function(userid, hypertyid, callback) {
-  var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
-
-  this._request.get(this._registryURL + endpoint, function(err, response) {
-    print("Get hyperty: " + JSON.stringify(response));
-    callback(response);
+    callback(body);
   });
 };
 
@@ -37,18 +27,28 @@ RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDesc
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
   var data = { 'descriptor': hypertyDescriptor };
 
-  this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response) {
+  this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
     print("Add hyperty: " + response);
-    callback(response);
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
   });
 };
 
 RegistryConnector.prototype.deleteHyperty = function(userid, hypertyid, callback) {
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
 
-  this._request.del(this._registryURL + endpoint, function(err, response) {
+  this._request.del(this._registryURL + endpoint, function(err, response, statusCode) {
     print("Delete hyperty: " + response);
-    callback(response);
+
+    var body = {
+      'code': statusCode
+    };
+
+    callback(body);
   });
 };
 
