@@ -33,6 +33,9 @@ class VertxProtoStub {
 
     bus.addListener('*', (msg) => {
       _this._open(() => {
+        if (msg.body && msg.body.via === _this._runtimeProtoStubURL)
+          return;
+
         _this._sock.send(JSON.stringify(msg));
       });
     });
@@ -158,6 +161,13 @@ class VertxProtoStub {
     }
   }
 
+  _deliver(msg) {
+    if (!msg.body) msg.body = {};
+
+    msg.body.via = this._runtimeProtoStubURL;
+    this._bus.postMessage(msg);
+  }
+
   _open(callback) {
     let _this = this;
 
@@ -186,7 +196,7 @@ class VertxProtoStub {
             _this._sessionCallback(msg);
           }
         } else {
-          _this._bus.postMessage(msg);
+          _this._deliver(msg);
         }
       };
 

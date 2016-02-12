@@ -22,6 +22,7 @@ public class RegistryConnector implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
+		System.out.println("[RegistryConnector.handle]" + msg);
 
 		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
 			final Object val = event.result().body();
