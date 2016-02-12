@@ -2,7 +2,9 @@ import expect from 'expect.js';
 import activate from '../src/js/client/VertxProtoStub';
 
 describe('VertxProtoStub', function() {
+
   it('runtime connectivity', function(done) {
+    let protoURL = 'hyperty-runtime://sp1/protostub/123';
     let send;
 
     let seq = 0;
@@ -14,7 +16,7 @@ describe('VertxProtoStub', function() {
       postMessage: (msg) => {
         if (seq === 0) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/123', to: 'hyperty-runtime://sp1/protostub/123/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
             body: {value: 'connected'}
           });
 
@@ -24,14 +26,17 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           //if the runtime is registered, ping should arrive here
-          expect(msg).to.eql({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
+          expect(msg).to.eql({
+            id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession,
+            body: { via: protoURL }
+          });
 
           proto.disconnect();
         }
 
         if (seq === 2) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/123', to: 'hyperty-runtime://sp1/protostub/123/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
             body: {value: 'disconnected', desc: 'Normal closure, meaning that the purpose for which the connection was established has been fulfilled.'}
           });
 
@@ -51,7 +56,7 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice1'
     };
 
-    proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
+    proto = activate(protoURL, bus, config).instance;
     console.log(proto);
     proto.connect();
   });
@@ -118,6 +123,7 @@ describe('VertxProtoStub', function() {
   */
 
   it('runtime re-connection', function(done) {
+    let protoURL = 'hyperty-runtime://sp1/protostub/1';
     let send;
     let proto;
 
@@ -128,7 +134,7 @@ describe('VertxProtoStub', function() {
         console.log(JSON.stringify(msg));
         if (seq === 0) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/1/status',
             body: {value: 'connected'}
           });
 
@@ -137,7 +143,7 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/1/status',
             body: {value: 'disconnected', desc: 'No status code was actually present.'}
           });
 
@@ -146,7 +152,7 @@ describe('VertxProtoStub', function() {
 
         if (seq === 2) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/1/status',
             body: {value: 'connected'}
           });
 
@@ -154,13 +160,16 @@ describe('VertxProtoStub', function() {
         }
 
         if (seq === 3) {
-          expect(msg).to.eql({id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession});
+          expect(msg).to.eql({
+            id: 1, type: 'ping', from: proto.runtimeSession, to: proto.runtimeSession,
+            body: { via: protoURL }
+          });
           proto.disconnect();
         }
 
         if (seq === 4) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/1', to: 'hyperty-runtime://sp1/protostub/1/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/1/status',
             body: {value: 'disconnected', desc: 'Normal closure, meaning that the purpose for which the connection was established has been fulfilled.'}
           });
 
@@ -180,11 +189,12 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice-reconnect'
     };
 
-    proto = activate('hyperty-runtime://sp1/protostub/1', bus, config).instance;
+    proto = activate(protoURL, bus, config).instance;
     proto.connect();
   });
 
   it('hyperty registration', function(done) {
+    let protoURL = 'hyperty-runtime://sp1/protostub/123';
     let send;
     let proto;
 
@@ -196,7 +206,7 @@ describe('VertxProtoStub', function() {
       postMessage: (msg) => {
         if (seq === 0) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/123', to: 'hyperty-runtime://sp1/protostub/123/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
             body: {value: 'connected'}
           });
         }
@@ -217,7 +227,10 @@ describe('VertxProtoStub', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({id: 1, type: 'ping', from: firstURL, to: secondURL});
+          expect(msg).to.eql({
+            id: 1, type: 'ping', from: firstURL, to: secondURL,
+            body: { via: protoURL }
+          });
 
           proto.disconnect();
           done();
@@ -236,7 +249,7 @@ describe('VertxProtoStub', function() {
       runtimeURL: 'runtime:/alice2'
     };
 
-    proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
+    proto = activate(protoURL, bus, config).instance;
 
     send({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',

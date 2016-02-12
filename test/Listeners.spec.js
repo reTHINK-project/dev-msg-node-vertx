@@ -2,6 +2,8 @@ import expect from 'expect.js';
 import activate from '../src/js/client/VertxProtoStub';
 
 describe('Listeners', function() {
+  let protoURL = 'hyperty-runtime://sp1/protostub/123';
+
   it('add and test listener', function(done) {
     let send;
 
@@ -17,7 +19,7 @@ describe('Listeners', function() {
 
         if (seq === 1) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/123', to: 'hyperty-runtime://sp1/protostub/123/status',
+            type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
             body: { value: 'connected' }
           });
 
@@ -31,7 +33,7 @@ describe('Listeners', function() {
         if (seq === 2) {
           expect(msg).to.eql({
             id: 1, type: 'response', from: 'domain://msg-node.ua.pt/sm', to: 'runtime:/alice/listeners/sm',
-            body: { code: 200 }
+            body: { code: 200, via: protoURL }
           });
 
           send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1' });
@@ -39,7 +41,8 @@ describe('Listeners', function() {
 
         if (seq === 3) {
           expect(msg).to.eql({
-            id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1'
+            id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1',
+            body: { via: protoURL }
           });
 
           done();
@@ -57,7 +60,7 @@ describe('Listeners', function() {
       runtimeURL: 'runtime:/alice/listeners'
     };
 
-    proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
+    proto = activate(protoURL, bus, config).instance;
     proto.connect();
   });
 });

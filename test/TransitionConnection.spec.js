@@ -3,6 +3,9 @@ import activate from '../src/js/client/VertxProtoStub';
 
 describe('TransitionConnection', function() {
   it('connectivity between hyperties in different domains', function(done) {
+    let protoSP1URL = 'hyperty-runtime://sp1/protostub';
+    let protoSP2URL = 'hyperty-runtime://sp2/protostub';
+
     let send1;
     let send2;
 
@@ -28,7 +31,10 @@ describe('TransitionConnection', function() {
         }
 
         if (msg.id === 2) {
-          expect(msg).to.eql({ id: 2, type: 'ping', from: 'hyperty://unknown-url', to: hyper1 });
+          expect(msg).to.eql({
+            id: 2, type: 'ping', from: 'hyperty://unknown-url', to: hyper1,
+            body: { via: protoSP1URL }
+          });
 
           //send reply pong
           send1({ id: 1, type: 'pong', from: hyper1, to: 'hyperty://unknown-url' });
@@ -45,7 +51,10 @@ describe('TransitionConnection', function() {
       postMessage: (msg) => {
         console.log('postMessage(2): ', JSON.stringify(msg));
         if (msg.id === 1) {
-          expect(msg).to.eql({ id: 1, type: 'pong', from: hyper1, to: 'hyperty://unknown-url' });
+          expect(msg).to.eql({
+            id: 1, type: 'pong', from: hyper1, to: 'hyperty://unknown-url',
+            body: { via: protoSP2URL }
+          });
 
           done();
         }
@@ -57,8 +66,8 @@ describe('TransitionConnection', function() {
       }
     };
 
-    proto1 = activate('hyperty-runtime://sp1/protostub', bus1, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
-    proto2 = activate('hyperty-runtime://sp2/protostub', bus2, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
+    proto1 = activate(protoSP1URL, bus1, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
+    proto2 = activate(protoSP2URL, bus2, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
 
     send1({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',
