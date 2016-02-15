@@ -73,9 +73,11 @@ The "dev-msg-node-vertx" GitHub repository is structured as follows:
 -	./test/\** ... Test cases for the VertxMN
 -	./target/ ... Output for distribution files
 
-#### 3. Distribution files
+#### 3. Build and run
 
 Build a VertxMN distribution jar, executing `mvn package`. Build a VertxProtoStub distribution file, executing `gulp build`.
+
+Run VertxMN with `mvn exec:java -Dexec.args="9090"`. This will download all jar dependencies and run.
 
 #### 4. Internal Architecture and components
 
