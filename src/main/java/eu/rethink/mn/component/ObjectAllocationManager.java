@@ -33,11 +33,13 @@ public class ObjectAllocationManager implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		
 		if(msg.getType().equals("create")) {
-			final JsonObject msgBody = msg.getBody();
+			final JsonObject body = msg.getBody();
+			final String scheme = body.getString("scheme");
+			final JsonArray children = body.getJsonArray("childrenResources");
 			
-			final int number = msgBody.getInteger("number", 5);
-			final String scheme = msgBody.getString("urlScheme");
-			final JsonArray children = msgBody.getJsonArray("resourceChildren");
+			//on value
+			final JsonObject msgBodyValue = body.getJsonObject("value");
+			final int number = msgBodyValue.getInteger("number", 5);
 			
 			final List<String> allocated = allocate(ctx, scheme, children, number);
 		
@@ -47,8 +49,11 @@ public class ObjectAllocationManager implements IComponent {
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
 			
-			final JsonObject replyBody = reply.getBody();
-			replyBody.put("allocated", new JsonArray(allocated));
+			
+			final JsonObject value = new JsonObject();
+			value.put("allocated", new JsonArray(allocated));
+			
+			reply.getBody().put("value", value);
 			
 			ctx.reply(reply);
 		} else {

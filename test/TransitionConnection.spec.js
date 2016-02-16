@@ -19,9 +19,9 @@ describe('TransitionConnection', function() {
         if (msg.id === 1) {
           expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
-          expect(msg.body.allocated).to.have.length(1);
+          expect(msg.body.value.allocated).to.have.length(1);
 
-          hyper1 = msg.body.allocated[0];
+          hyper1 = msg.body.value.allocated[0];
 
           //simulate message from unknown hyperty url (from the other connection)
           send2({ id: 2, type: 'ping', from: 'hyperty://unknown-url', to: hyper1 });
@@ -62,7 +62,7 @@ describe('TransitionConnection', function() {
 
     send1({
       id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',
-      body: { number: 1 }
+      body: { value: { number: 1 } }
     });
 
   });

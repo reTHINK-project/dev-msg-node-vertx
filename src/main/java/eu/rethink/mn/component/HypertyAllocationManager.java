@@ -33,7 +33,9 @@ public class HypertyAllocationManager implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		
 		if(msg.getType().equals("create")) {
-			int number = msg.getBody().getInteger("number", 5);
+			final JsonObject msgBodyValue = msg.getBody().getJsonObject("value");
+			
+			int number = msgBodyValue.getInteger("number", 5);
 			final List<String> allocated = allocate(ctx, number);
 		
 			final PipeMessage reply = new PipeMessage();
@@ -42,8 +44,10 @@ public class HypertyAllocationManager implements IComponent {
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
 			
-			final JsonObject body = reply.getBody();
-			body.put("allocated", new JsonArray(allocated));
+			final JsonObject value = new JsonObject();
+			value.put("allocated", new JsonArray(allocated));
+			
+			reply.getBody().put("value", value);
 			
 			ctx.reply(reply);
 		} else {

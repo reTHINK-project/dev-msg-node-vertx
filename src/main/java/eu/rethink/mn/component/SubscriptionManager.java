@@ -22,24 +22,28 @@ public class SubscriptionManager implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
-		final JsonObject msgBody = msg.getBody();
+		final JsonObject body = msg.getBody();
 		System.out.println("SubscriptionManager: " + msg);
 		
-		final String resourceURL = msgBody.getString("resource");
-		final JsonArray children = msgBody.getJsonArray("children");
+		final String resourceURL = body.getString("resource");
+		final JsonArray children = body.getJsonArray("childrenResources");
 		
 		if(resourceURL != null) {
 			if(msg.getType().equals("subscribe")) {
 				ctx.getSession().addListener(resourceURL);
-				for(Object child: children) {
-					ctx.getSession().addListener(resourceURL + "/children/" + child);
+				if(children != null) {
+					for(Object child: children) {
+						ctx.getSession().addListener(resourceURL + "/children/" + child);
+					}
 				}
 				
 				ctx.replyOK(name);
 			} else if(msg.getType().equals("unsubscribe")) {
 				ctx.getSession().removeListener(resourceURL);
-				for(Object child: children) {
-					ctx.getSession().removeListener(resourceURL + "/children/" + child);
+				if(children != null) {
+					for(Object child: children) {
+						ctx.getSession().removeListener(resourceURL + "/children/" + child);
+					}
 				}
 				
 				ctx.replyOK(name);
