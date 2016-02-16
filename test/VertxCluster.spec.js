@@ -3,6 +3,9 @@ import activate from '../src/js/client/VertxProtoStub';
 
 describe('Cluster', function() {
   it('cluster connectivity', function(done) {
+    let protoAliceURL = 'hyperty-runtime://sp1/protostub/alice';
+    let protoBobURL = 'hyperty-runtime://sp1/protostub/bob';
+
     //TODO: requirement -> vertx MN must be online on (ws://localhost:9090/ws, ws://localhost:9091/ws)
     let bobSend;
 
@@ -19,7 +22,7 @@ describe('Cluster', function() {
         console.log('postMessage(alice)', JSON.stringify(msg));
         if (seq === 0) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/alice', to: 'hyperty-runtime://sp1/protostub/alice/status',
+            type: 'update', from: protoAliceURL, to: 'hyperty-runtime://sp1/protostub/alice/status',
             body: {value: 'connected'}
           });
 
@@ -27,7 +30,10 @@ describe('Cluster', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession});
+          expect(msg).to.eql({
+            id: 1, type: 'ping', from: bobProto.runtimeSession, to: aliceProto.runtimeSession,
+            body: { via: protoAliceURL }
+          });
 
           aliceProto.disconnect();
           bobProto.disconnect();
@@ -48,7 +54,7 @@ describe('Cluster', function() {
         console.log('postMessage(bob)', JSON.stringify(msg));
         if (seq === 1) {
           expect(msg).to.eql({
-            type: 'update', from: 'hyperty-runtime://sp1/protostub/bob', to: 'hyperty-runtime://sp1/protostub/bob/status',
+            type: 'update', from: protoBobURL, to: 'hyperty-runtime://sp1/protostub/bob/status',
             body: {value: 'connected'}
           });
 
@@ -64,8 +70,8 @@ describe('Cluster', function() {
       }
     };
 
-    aliceProto = activate('hyperty-runtime://sp1/protostub/alice', aliceBus, aliceConfig).instance;
-    bobProto = activate('hyperty-runtime://sp1/protostub/bob', bobBus, bobConfig).instance;
+    aliceProto = activate(protoAliceURL, aliceBus, aliceConfig).instance;
+    bobProto = activate(protoBobURL, bobBus, bobConfig).instance;
 
     aliceProto.connect();
   });

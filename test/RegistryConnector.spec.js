@@ -2,6 +2,7 @@ import expect from 'expect.js';
 import activate from '../src/js/client/VertxProtoStub';
 
 describe('RegistryConnector', function() {
+	let protoURL = 'hyperty-runtime://sp1/protostub/123';
 	let config = {
 		url: 'wss://msg-node.ua.pt:9090/ws',
 		runtimeURL: 'runtime:/alice1'
@@ -17,7 +18,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: { message: 'hyperty created' }
+						body: { code: 200, via: protoURL, message: 'hyperty created' }
 					});
 
 					done();
@@ -30,7 +31,7 @@ describe('RegistryConnector', function() {
 			}
 		};
 
-		let proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).activate;
+		let proto = activate(protoURL, bus, config).activate;
 
 		send({
 			id: 2, type: 'CREATE', from: "hyper-1", to: 'domain://registry.ua.pt/',
@@ -51,7 +52,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: { last: 'hyperty-instance:/ua.pt/1', hyperties: { "hyperty-instance:/ua.pt/1": { descriptor: 'hyper-1'}} }
+						body: { code: 200, via: protoURL, last: 'hyperty-instance://ua.pt/1', hyperties: { "hyperty-instance://ua.pt/1": { descriptor: 'hyper-1'}} }
 					});
 
 					done();
@@ -64,7 +65,7 @@ describe('RegistryConnector', function() {
 			}
 		};
 
-		proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).activate;
+		proto = activate(protoURL, bus, config).activate;
 
 		send({
 			id: 2, type: 'READ', from: 'hyper-1', to: 'domain://registry.ua.pt/',
