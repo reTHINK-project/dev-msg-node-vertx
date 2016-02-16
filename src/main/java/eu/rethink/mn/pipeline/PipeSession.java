@@ -29,18 +29,17 @@ public class PipeSession {
 			return false;
 
 		addURL(url);
+
 		out.println("ALLOCATE(" + runtimeSessionURL + "): " + url);
-		
 		return true;
 	}
 	
 	public void deallocate(String url) {
+		out.println("DEALLOCATE(" + runtimeSessionURL + "): " + url);
 		removeURL(url);
 	}
 
 	public boolean addListener(String address) {
-		out.println("ADD-LISTENER(" + runtimeSessionURL + "): " + address);
-		
 		if(consumers.containsKey(address)) {
 			return false;
 		}
@@ -50,6 +49,8 @@ public class PipeSession {
 		});
 		
 		consumers.put(address, value);
+		
+		out.println("ADD-LISTENER(" + runtimeSessionURL + "): " + address);
 		return true;
 	}
 	

@@ -68,7 +68,7 @@ public class ObjectAllocationManager implements IComponent {
 				
 				//allocate children...
 				for(Object child: children) {
-					ctx.getSession().allocate(url + "/children/" + child);
+					ctx.getSession().addListener(url + "/children/" + child);
 				}
 			}
 		}
