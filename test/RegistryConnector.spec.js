@@ -18,7 +18,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: { code: 200, via: protoURL, message: 'hyperty created' }
+						body: { code: 200, via: protoURL }
 					});
 
 					done();
@@ -35,7 +35,13 @@ describe('RegistryConnector', function() {
 
 		send({
 			id: 2, type: 'CREATE', from: "hyper-1", to: 'domain://registry.ua.pt/',
-			body: { user: 'user://google.com/testuser10',  hypertyDescriptorURL: 'hyper-1', hypertyURL: 'hyperty-instance://ua.pt/1' }
+			body: {
+				value: {
+					user: 'user://google.com/testuser10',
+					hypertyDescriptorURL: 'hyper-1',
+					hypertyURL: 'hyperty-instance://ua.pt/1'
+				}
+			}
 		});
 	});
 
@@ -52,7 +58,18 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: { code: 200, via: protoURL, last: 'hyperty-instance://ua.pt/1', hyperties: { "hyperty-instance://ua.pt/1": { descriptor: 'hyper-1'}} }
+						body: {
+							code: 200,
+							via: protoURL,
+							value: {
+								last: 'hyperty-instance://ua.pt/1',
+								hyperties: {
+									'hyperty-instance://ua.pt/1': {
+										descriptor: 'hyper-1'
+									}
+								}
+							}
+						}
 					});
 
 					done();
@@ -69,7 +86,7 @@ describe('RegistryConnector', function() {
 
 		send({
 			id: 2, type: 'READ', from: 'hyper-1', to: 'domain://registry.ua.pt/',
-			body: { user: 'user://google.com/testuser10' }
+			body: { resource: 'user://google.com/testuser10' }
 		});
 	});
 

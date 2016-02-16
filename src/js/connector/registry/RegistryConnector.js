@@ -12,11 +12,11 @@ var RegistryConnector = function(registryURL) {
 
 RegistryConnector.prototype.getUser = function(userid, callback) {
   this._request.get(this._registryURL + '/hyperty/user/' + encodeURIComponent(userid), function(err, response, statusCode) {
-    print("Get user: " + JSON.stringify(response));
+    print("Get user: " + response);
 
     var body = {
       'code': statusCode,
-      'value': response
+      'value': JSON.parse(response)
     };
 
     callback(body);

@@ -258,6 +258,7 @@ describe('VertxProtoStub', function() {
   });
 
   it('object registration', function(done) {
+    let protoURL = 'hyperty-runtime://sp1/protostub/123';
     let send;
     let proto;
 
@@ -290,7 +291,10 @@ describe('VertxProtoStub', function() {
         }
 
         if (seq === 2) {
-          expect(msg).to.eql({id: 1, type: 'ping', from: url, to: urlChildren});
+          expect(msg).to.eql({
+            id: 1, type: 'ping', from: url, to: urlChildren,
+            body: { via: protoURL }
+          });
 
           proto.disconnect();
           done();
