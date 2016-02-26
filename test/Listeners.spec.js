@@ -36,12 +36,12 @@ describe('Listeners', function() {
             body: { code: 200, via: protoURL }
           });
 
-          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1' });
+          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1/changes' });
         }
 
         if (seq === 3) {
           expect(msg).to.eql({
-            id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1',
+            id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1/changes',
             body: { via: protoURL }
           });
 

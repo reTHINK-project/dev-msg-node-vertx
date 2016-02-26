@@ -58,18 +58,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: {
-							code: 200,
-							via: protoURL,
-							value: {
-								last: 'hyperty-instance://ua.pt/1',
-								hyperties: {
-									'hyperty-instance://ua.pt/1': {
-										descriptor: 'hyper-1'
-									}
-								}
-							}
-						}
+						body: { code: 200, via: protoURL, value: msg.body.value }
 					});
 
 					done();

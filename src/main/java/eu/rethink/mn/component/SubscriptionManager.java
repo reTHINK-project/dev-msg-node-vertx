@@ -30,7 +30,7 @@ public class SubscriptionManager implements IComponent {
 		
 		if(resourceURL != null) {
 			if(msg.getType().equals("subscribe")) {
-				ctx.getSession().addListener(resourceURL);
+				ctx.getSession().addListener(resourceURL + "/changes");
 				if(children != null) {
 					for(Object child: children) {
 						ctx.getSession().addListener(resourceURL + "/children/" + child);
@@ -39,7 +39,7 @@ public class SubscriptionManager implements IComponent {
 				
 				ctx.replyOK(name);
 			} else if(msg.getType().equals("unsubscribe")) {
-				ctx.getSession().removeListener(resourceURL);
+				ctx.getSession().removeListener(resourceURL + "/changes");
 				if(children != null) {
 					for(Object child: children) {
 						ctx.getSession().removeListener(resourceURL + "/children/" + child);

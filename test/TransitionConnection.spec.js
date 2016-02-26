@@ -56,6 +56,8 @@ describe('TransitionConnection', function() {
             body: { via: protoSP2URL }
           });
 
+          proto1.disconnect();
+          proto2.disconnect();
           done();
         }
       },
