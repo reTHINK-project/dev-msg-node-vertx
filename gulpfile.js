@@ -106,3 +106,68 @@ gulp.task('push', ['test'], function() {
     if (err) throw err;
   });
 });
+
+var replace = require('gulp-replace');
+var argv = require('yargs').argv;
+var through = require('through2');
+var path = require('path');
+var gulpif = require('gulp-if');
+var insert = require('gulp-insert');
+
+gulp.task('license', function() {
+  var clean = argv.clean;
+  if (!clean) clean = false;
+
+  return gulp.src(['src/**/*.java', 'src/**/*.js'])
+  .pipe(prependLicense(clean));
+
+});
+
+function prependLicense(clean) {
+
+  var license = '/**\n' +
+'* Copyright 2016 PT Inovação e Sistemas SA\n' +
+'* Copyright 2016 INESC-ID\n' +
+'* Copyright 2016 QUOBIS NETWORKS SL\n' +
+'* Copyright 2016 FRAUNHOFER-GESELLSCHAFT ZUR FOERDERUNG DER ANGEWANDTEN FORSCHUNG E.V\n' +
+'* Copyright 2016 ORANGE SA\n' +
+'* Copyright 2016 Deutsche Telekom AG\n' +
+'* Copyright 2016 Apizee\n' +
+'* Copyright 2016 TECHNISCHE UNIVERSITAT BERLIN\n' +
+'*\n' +
+'* Licensed under the Apache License, Version 2.0 (the "License");\n' +
+'* you may not use this file except in compliance with the License.\n' +
+'* You may obtain a copy of the License at\n' +
+'*\n' +
+'*   http://www.apache.org/licenses/LICENSE-2.0\n' +
+'*\n' +
+'* Unless required by applicable law or agreed to in writing, software\n' +
+'* distributed under the License is distributed on an "AS IS" BASIS,\n' +
+'* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n' +
+'* See the License for the specific language governing permissions and\n' +
+'* limitations under the License.\n' +
+'**/\n\n';
+
+  return through.obj(function(file, enc, cb) {
+
+    if (file.isNull()) {
+      return cb(new Error('Fil is null'));
+    }
+
+    if (file.isStream()) {
+      return cb(new Error('Streaming not supported'));
+    }
+
+    var dest = path.dirname(file.path);
+
+    return gulp.src(file.path)
+    .pipe(replace(license, ''))
+    .pipe(gulpif(!clean, insert.prepend(license)))
+    .pipe(gulp.dest(dest))
+    .on('end', function() {
+      cb();
+    });
+
+  });
+
+}
