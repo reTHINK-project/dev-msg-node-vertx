@@ -54,9 +54,9 @@ public class ObjectAllocationManager implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
+		final JsonObject body = msg.getBody();
 		
 		if(msg.getType().equals("create")) {
-			final JsonObject body = msg.getBody();
 			final String scheme = body.getString("scheme");
 			final JsonArray children = body.getJsonArray("childrenResources");
 			
@@ -79,8 +79,19 @@ public class ObjectAllocationManager implements IComponent {
 			reply.getBody().put("value", value);
 			
 			ctx.reply(reply);
-		} else {
-			//TODO: deallocate !?
+		} else if(msg.getType().equals("delete")) {
+			final String resource = body.getString("resource");
+			final JsonArray children = body.getJsonArray("childrenResources");
+			
+			deallocate(ctx, resource, children);
+			
+			final PipeMessage reply = new PipeMessage();
+			reply.setId(msg.getId());
+			reply.setFrom(name);
+			reply.setTo(msg.getFrom());
+			reply.setReplyCode(ReplyCode.OK);
+			
+			ctx.reply(reply);
 		}
 	}
 
@@ -102,5 +113,13 @@ public class ObjectAllocationManager implements IComponent {
 		}
 		
 		return list;
+	}
+	
+	private void deallocate(PipeContext ctx, String url, JsonArray children) {
+		ctx.getSession().deallocate(url + "/subscription");
+		
+		for(Object child: children) {
+			ctx.getSession().removeListener(url + "/children/" + child);
+		}
 	}
 }
