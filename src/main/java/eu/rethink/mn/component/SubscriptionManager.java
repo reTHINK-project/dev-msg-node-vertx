@@ -48,25 +48,18 @@ public class SubscriptionManager implements IComponent {
 		final JsonObject body = msg.getBody();
 		System.out.println("SubscriptionManager: " + msg);
 		
-		final String resourceURL = body.getString("resource");
-		final JsonArray children = body.getJsonArray("childrenResources");
+		final JsonArray addressList = body.getJsonArray("subscribe");
 		
-		if(resourceURL != null) {
+		if(addressList != null) {
 			if(msg.getType().equals("subscribe")) {
-				ctx.getSession().addListener(resourceURL + "/changes");
-				if(children != null) {
-					for(Object child: children) {
-						ctx.getSession().addListener(resourceURL + "/children/" + child);
-					}
+				for(Object address: addressList) {
+					ctx.getSession().addListener(address.toString());
 				}
 				
 				ctx.replyOK(name);
 			} else if(msg.getType().equals("unsubscribe")) {
-				ctx.getSession().removeListener(resourceURL + "/changes");
-				if(children != null) {
-					for(Object child: children) {
-						ctx.getSession().removeListener(resourceURL + "/children/" + child);
-					}
+				for(Object address: addressList) {
+					ctx.getSession().removeListener(address.toString());
 				}
 				
 				ctx.replyOK(name);
@@ -74,7 +67,7 @@ public class SubscriptionManager implements IComponent {
 				ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
 			}
 		} else {
-			ctx.replyError(name, "No mandatory field 'body.resource'");
+			ctx.replyError(name, "No mandatory field 'body.subscribe'");
 		}
 	}
 }

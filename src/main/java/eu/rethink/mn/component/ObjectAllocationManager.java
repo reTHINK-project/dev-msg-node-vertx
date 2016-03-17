@@ -58,20 +58,18 @@ public class ObjectAllocationManager implements IComponent {
 		
 		if(msg.getType().equals("create")) {
 			final String scheme = body.getString("scheme");
-			final JsonArray children = body.getJsonArray("childrenResources");
 			
 			//on value
 			final JsonObject msgBodyValue = body.getJsonObject("value");
 			final int number = msgBodyValue.getInteger("number", 5);
 			
-			final List<String> allocated = allocate(ctx, scheme, children, number);
+			final List<String> allocated = allocate(ctx, scheme, number);
 		
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
 			reply.setFrom(name);
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
-			
 			
 			final JsonObject value = new JsonObject();
 			value.put("allocated", new JsonArray(allocated));
@@ -81,21 +79,14 @@ public class ObjectAllocationManager implements IComponent {
 			ctx.reply(reply);
 		} else if(msg.getType().equals("delete")) {
 			final String resource = body.getString("resource");
-			final JsonArray children = body.getJsonArray("childrenResources");
 			
-			deallocate(ctx, resource, children);
+			deallocate(ctx, resource);
 			
-			final PipeMessage reply = new PipeMessage();
-			reply.setId(msg.getId());
-			reply.setFrom(name);
-			reply.setTo(msg.getFrom());
-			reply.setReplyCode(ReplyCode.OK);
-			
-			ctx.reply(reply);
+			ctx.replyOK(name);
 		}
 	}
 
-	private List<String> allocate(PipeContext ctx, String scheme, JsonArray children, int number) {
+	private List<String> allocate(PipeContext ctx, String scheme, int number) {
 		final ArrayList<String> list = new ArrayList<String>(number);
 		int i = 0;
 		while(i < number) {
@@ -104,22 +95,13 @@ public class ObjectAllocationManager implements IComponent {
 			if(ctx.getSession().allocate(url + "/subscription")) {
 				list.add(url);
 				i++;
-				
-				//allocate children...
-				for(Object child: children) {
-					ctx.getSession().addListener(url + "/children/" + child);
-				}
 			}
 		}
 		
 		return list;
 	}
 	
-	private void deallocate(PipeContext ctx, String url, JsonArray children) {
+	private void deallocate(PipeContext ctx, String url) {
 		ctx.getSession().deallocate(url + "/subscription");
-		
-		for(Object child: children) {
-			ctx.getSession().removeListener(url + "/children/" + child);
-		}
 	}
 }
