@@ -53,18 +53,18 @@ npm install
 
 #### 6. Certificate installation
 Tools needed:
-[Let's Encrypt](https://letsencrypt.org/) for "letsencrypt-auto"
-[Java JDK 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) for "keytool"
-[OpenSSL](https://www.openssl.org/) for "openssl"
+* [Let's Encrypt](https://letsencrypt.org/) for "letsencrypt-auto"
+* [Java JDK 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) for "keytool"
+* [OpenSSL](https://www.openssl.org/) for "openssl"
 
 "Let's Encrypt" can be used to generate PEM formated certificates if you already have a DNS domain:
-```letsencrypt-auto certonly --manual -d <domain>```
+* ```letsencrypt-auto certonly --manual -d <domain>```
 
 Convert the generated fullchain and private key files to "pkcs12" with openssl: 
-```openssl pkcs12 -export -out keystore.pkcs12 -in <path>/fullchain.pem -inkey <path>/privkey.pem```
+* ```openssl pkcs12 -export -out keystore.pkcs12 -in <path>/fullchain.pem -inkey <path>/privkey.pem```
 
 Import the certificate to java keystore:
-```keytool -v -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -deststoretype JKS -destkeystore server-keystore.jks```
+* ```keytool -v -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -deststoretype JKS -destkeystore server-keystore.jks```
 
 ### Developer view
 
