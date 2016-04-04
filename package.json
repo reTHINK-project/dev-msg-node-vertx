@@ -4,8 +4,7 @@
   "description": "core runtime development",
   "main": "src/main.js",
   "scripts": {
-    "init-setup": "npm init && npm install -g jspm karma-cli gulp-cli && npm install && jspm init && node setup.js",
-    "preinstall": "npm install -g gulp-cli",
+    "preinstall": "npm install -g gulp-cli karma-cli",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -37,7 +36,6 @@
     "gulp-replace": "^0.5.4",
     "gulp-uglify": "^1.4.2",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
-    "jspm": "^0.16.10",
     "karma": "^0.13.10",
     "karma-browserify": "^4.4.0",
     "karma-chrome-launcher": "^0.2.1",
@@ -49,16 +47,6 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0",
     "yargs": "^4.2.0"
-  },
-  "jspm": {
-    "directories": {
-      "packages": "vendor"
-    },
-    "devDependencies": {
-      "babel": "npm:babel-core@^5.8.24",
-      "babel-runtime": "npm:babel-runtime@^5.8.24",
-      "core-js": "npm:core-js@^1.1.4"
-    }
   },
   "directories": {
     "test": "test"
