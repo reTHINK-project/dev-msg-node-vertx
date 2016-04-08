@@ -28,18 +28,18 @@ var RegistryConnector = function(registryURL) {
 };
 
 RegistryConnector.prototype.processMessage = function(msg, callback) {
-  switch(msg.type) {
-      case "READ":
+  switch(msg.type.toLowerCase()) {
+      case "read":
       print("[Registry-Connector] Get user with " + msg.body.resource);
       this.getUser(msg.body.resource, callback);
       break;
 
-      case "CREATE":
+      case "create":
       print("[Registry-Connector] Add Hyperty with " + msg.body.value.hypertyURL);
       this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
       break;
 
-      case "DELETE":
+      case "delete":
       print("[Registry-Connector] Delete Hyperty with " + msg.body.value.hypertyURL);
       this.deleteHyperty(msg.body.value.user, msg.body.value.hypertyURL, callback);
       break;
