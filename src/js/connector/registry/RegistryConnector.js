@@ -1,5 +1,12 @@
-/*
-* Copyright 2015-2016 INESC-ID
+/**
+* Copyright 2016 PT Inovação e Sistemas SA
+* Copyright 2016 INESC-ID
+* Copyright 2016 QUOBIS NETWORKS SL
+* Copyright 2016 FRAUNHOFER-GESELLSCHAFT ZUR FOERDERUNG DER ANGEWANDTEN FORSCHUNG E.V
+* Copyright 2016 ORANGE SA
+* Copyright 2016 Deutsche Telekom AG
+* Copyright 2016 Apizee
+* Copyright 2016 TECHNISCHE UNIVERSITAT BERLIN
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -12,8 +19,7 @@
 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 * See the License for the specific language governing permissions and
 * limitations under the License.
-*
-*/
+**/
 
 var RegistryConnector = function(registryURL) {
 
@@ -36,6 +42,11 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
 
       case "create":
       print("[Registry-Connector] Add Hyperty with " + msg.body.value.hypertyURL);
+      this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
+      break;
+
+      case "update":
+      print("[Registry-Connector] Update Hyperty with " + msg.body.value.hypertyURL);
       this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
       break;
 
