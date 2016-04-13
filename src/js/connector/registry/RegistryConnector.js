@@ -36,7 +36,7 @@ var RegistryConnector = function(registryURL) {
 RegistryConnector.prototype.processMessage = function(msg, callback) {
   switch(msg.type.toLowerCase()) {
       case "read":
-        if(msg.body.resource.startsWith("dataObject")) {
+        if(msg.body.value.resource.startsWith("dataObject")) {
           this.getDataObject(msg.body.value.name, callback);
         }else {
           this.getUser(msg.body.resource, callback);
@@ -44,7 +44,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
       break;
 
       case "create":
-        if(msg.body.resource.startsWith("dataObject")) {
+        if(msg.body.value.resource.startsWith("dataObject")) {
           this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
         }else {
           this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
@@ -52,7 +52,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
       break;
 
       case "update":
-        if(msg.body.resource.startsWith("dataObject")) {
+        if(msg.body.value.resource.startsWith("dataObject")) {
           this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
         }else {
           this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
@@ -60,7 +60,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
       break;
 
       case "delete":
-        if(msg.body.resource.startsWith("dataObject")) {
+        if(msg.body.value.resource.startsWith("dataObject")) {
           this.deleteDataObject(msg.body.value.name, callback);
         }else {
           this.deleteHyperty(msg.body.value.user, msg.body.value.hypertyURL, callback);
