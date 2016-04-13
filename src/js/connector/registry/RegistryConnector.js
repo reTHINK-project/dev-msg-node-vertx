@@ -36,10 +36,10 @@ var RegistryConnector = function(registryURL) {
 RegistryConnector.prototype.processMessage = function(msg, callback) {
   switch(msg.type.toLowerCase()) {
       case "read":
-        if('hypertyURL' in msg.body.value) {
-          this.getUser(msg.body.resource, callback);
-        }else {
+        if(msg.body.resource.startsWith("dataObject://")) {
           this.getDataObject(msg.body.resource, callback);
+        }else {
+          this.getUser(msg.body.resource, callback);
         }
       break;
 
