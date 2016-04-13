@@ -39,7 +39,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
         if('hypertyURL' in msg.body.value) {
           this.getUser(msg.body.resource, callback);
         }else {
-          this.getDataObject(msg.body.value.name, callback);
+          this.getDataObject(msg.body.resource, callback);
         }
       break;
 
@@ -114,8 +114,10 @@ RegistryConnector.prototype.deleteHyperty = function(userid, hypertyid, callback
   });
 };
 
-RegistryConnector.prototype.getDataObject = function(dataobjName, callback) {
-  this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobjName), function(err, response, statusCode) {
+RegistryConnector.prototype.getDataObject = function(resource, callback) {
+  var dataobj = resource.split("://")[1];
+
+  this._request.get(this._registryURL + '/hyperty/dataobject/' + encodeURIComponent(dataobj), function(err, response, statusCode) {
     print("Get Data Object: " + response);
 
     var body = {
