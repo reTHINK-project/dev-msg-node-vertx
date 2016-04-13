@@ -36,34 +36,34 @@ var RegistryConnector = function(registryURL) {
 RegistryConnector.prototype.processMessage = function(msg, callback) {
   switch(msg.type.toLowerCase()) {
       case "read":
-        if(msg.body.value.resource.startsWith("dataObject")) {
-          this.getDataObject(msg.body.value.name, callback);
-        }else {
+        if('hypertyURL' in msg.body.value) {
           this.getUser(msg.body.resource, callback);
+        }else {
+          this.getDataObject(msg.body.value.name, callback);
         }
       break;
 
       case "create":
-        if(msg.body.value.resource.startsWith("dataObject")) {
-          this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
-        }else {
+        if('hypertyURL' in msg.body.value) {
           this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
+        }else {
+          this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
         }
       break;
 
       case "update":
-        if(msg.body.value.resource.startsWith("dataObject")) {
-          this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
-        }else {
+        if('hypertyURL' in msg.body.value) {
           this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
+        }else {
+          this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
         }
       break;
 
       case "delete":
-        if(msg.body.value.resource.startsWith("dataObject")) {
-          this.deleteDataObject(msg.body.value.name, callback);
-        }else {
+        if('hypertyURL' in msg.body.value) {
           this.deleteHyperty(msg.body.value.user, msg.body.value.hypertyURL, callback);
+        }else {
+          this.deleteDataObject(msg.body.value.name, callback);
         }
       break;
   }
