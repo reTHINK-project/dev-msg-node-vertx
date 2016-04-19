@@ -54,17 +54,16 @@ public class ObjectAllocationManager implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
+		final JsonObject body = msg.getBody();
 		
 		if(msg.getType().equals("create")) {
-			final JsonObject body = msg.getBody();
 			final String scheme = body.getString("scheme");
-			final JsonArray children = body.getJsonArray("childrenResources");
 			
 			//on value
 			final JsonObject msgBodyValue = body.getJsonObject("value");
 			final int number = msgBodyValue.getInteger("number", 5);
 			
-			final List<String> allocated = allocate(ctx, scheme, children, number);
+			final List<String> allocated = allocate(ctx, scheme, number);
 		
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
@@ -72,19 +71,22 @@ public class ObjectAllocationManager implements IComponent {
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
 			
-			
 			final JsonObject value = new JsonObject();
 			value.put("allocated", new JsonArray(allocated));
 			
 			reply.getBody().put("value", value);
 			
 			ctx.reply(reply);
-		} else {
-			//TODO: deallocate !?
+		} else if(msg.getType().equals("delete")) {
+			final String resource = body.getString("resource");
+			
+			deallocate(ctx, resource);
+			
+			ctx.replyOK(name);
 		}
 	}
 
-	private List<String> allocate(PipeContext ctx, String scheme, JsonArray children, int number) {
+	private List<String> allocate(PipeContext ctx, String scheme, int number) {
 		final ArrayList<String> list = new ArrayList<String>(number);
 		int i = 0;
 		while(i < number) {
@@ -93,14 +95,13 @@ public class ObjectAllocationManager implements IComponent {
 			if(ctx.getSession().allocate(url + "/subscription")) {
 				list.add(url);
 				i++;
-				
-				//allocate children...
-				for(Object child: children) {
-					ctx.getSession().addListener(url + "/children/" + child);
-				}
 			}
 		}
 		
 		return list;
+	}
+	
+	private void deallocate(PipeContext ctx, String url) {
+		ctx.getSession().deallocate(url + "/subscription");
 	}
 }
