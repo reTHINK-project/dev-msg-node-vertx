@@ -51,6 +51,21 @@ npm install
 
 **create user** and **read user** will fail if there is no domain registry running.
 
+#### 6. Certificate installation
+Tools needed:
+* [Let's Encrypt](https://letsencrypt.org/) for "letsencrypt-auto"
+* [Java JDK 8](http://www.oracle.com/technetwork/java/javase/overview/index.html) for "keytool"
+* [OpenSSL](https://www.openssl.org/) for "openssl"
+
+"Let's Encrypt" can be used to generate PEM formated certificates if you already have a DNS domain:
+* ```letsencrypt-auto certonly --manual -d <domain>```
+
+Convert the generated fullchain and private key files to "pkcs12" with openssl: 
+* ```openssl pkcs12 -export -out keystore.pkcs12 -in <path>/fullchain.pem -inkey <path>/privkey.pem```
+
+Import the certificate to java keystore:
+* ```keytool -v -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -deststoretype JKS -destkeystore server-keystore.jks```
+
 ### Developer view
 
 Once the VertxMN is active, we are able to connect with the ProtoStub. The best example of how this is done is in the test/VertxProtoStub.js in "runtime connectivity" test. It's important to send the "runtimeURL" in the config parameter, because it will be used to link the connection channel to the runtime.
