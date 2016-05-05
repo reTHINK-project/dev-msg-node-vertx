@@ -25,12 +25,6 @@ package eu.rethink.mn;
 
 import static java.lang.System.out;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import eu.rethink.mn.component.GlobalRegistryConnector;
 import eu.rethink.mn.component.HypertyAllocationManager;
 import eu.rethink.mn.component.ObjectAllocationManager;
@@ -54,105 +48,62 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 public class MsgNode extends AbstractVerticle {
 
 	public static void main(String[] args) {
-		if (args.length == 1) {
-			
-			//load node.config.json
-			final NodeConfig config = readConfig("node.config.json");
-			System.out.println("[Config] File Found");
-			System.out.println(config);
-			
-			try {
-				final int port = Integer.parseInt(args[0]);
+		final NodeConfig config = readConfig();
+		try {
+			final ClusterManager mgr = new HazelcastClusterManager();
+			final MsgNode msgNode = new MsgNode(mgr, config);
 
-				final ClusterManager mgr = new HazelcastClusterManager();
-				final MsgNode msgNode = new MsgNode(mgr, config.getDomain(), port);
+			final VertxOptions options = new VertxOptions().setClusterManager(mgr);
+			Vertx.clusteredVertx(options, res -> {
+				if (res.succeeded()) {
+					Vertx vertx = res.result();
+					vertx.deployVerticle(msgNode);
 
-				final VertxOptions options = new VertxOptions().setClusterManager(mgr);
-				Vertx.clusteredVertx(options, res -> {
-					if (res.succeeded()) {
-						Vertx vertx = res.result();
-						vertx.deployVerticle(msgNode);
+                    DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
+                    vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
+                    vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
+				} else {
+					System.exit(-1);
+				}
+			});
 
-                        DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
-                        vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
-                        vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
-					} else {
-						System.exit(-1);
-					}
-				});
-
-			} catch (Exception e) {
-				System.out.println("usage: <port>");
-				System.exit(-1);
-			}
-		} else {
-			System.out.println("usage: <port>");
+		} catch (Exception e) {
+			System.out.println("Problem in config setup.");
+			System.exit(-1);
 		}
 	}
 
 	private final ClusterManager mgr;
-	private final String domain;
-	private final int port;
+	private final NodeConfig config;
 
-	public static NodeConfig readConfig(String filePath) {
-		final ObjectMapper objectMapper = new ObjectMapper();
-		final NodeConfig config = new NodeConfig();
+	public static NodeConfig readConfig() {
+		NodeConfig config = null;
+
+		String selection = System.getenv("MSG_NODE_CONFIG");
+		if (selection == null) {
+			System.out.println("[Config] No enviroment variable MSG_NODE_CONFIG, default to node.config.json -> dev");
+			selection = "dev";
+		}
 		
-		try {
-			String configSelect = System.getenv("MSG_NODE_CONFIG");
-			if (configSelect == null) {
-				System.out.println("[Config] No enviroment variable MSG_NODE_CONFIG, default to dev");
-				configSelect = "dev";
-			}
-			
-			config.setSelected(configSelect);
-			
-			final File file = new File(filePath);
-		    final JsonNode node = objectMapper.readValue(file, JsonNode.class);
-		    
-		    final JsonNode selectedNode =  node.get(configSelect);
-		    if (selectedNode == null) {
-		    	System.out.println("[Config] No " + configSelect + " field found!");
-		    	System.exit(-1);
-		    }
-		    
-		    final JsonNode domainNode = selectedNode.get("domain");
-		    if (domainNode == null) {
-		    	System.out.println("[Config] No " + configSelect + ".domain field found!");
-		    	System.exit(-1);
-		    }
-		    
-		    config.setDomain(domainNode.asText());
-		    
-   		    final JsonNode registryNode = selectedNode.get("registry");
-		    if (registryNode == null) {
-		    	System.out.println("[Config] No " + configSelect + ".registry field found!");
-		    	System.exit(-1);
-		    }
-		    
-		    final JsonNode globalregistryNode = selectedNode.get("globalregistry");
-		    if (globalregistryNode == null) {
-		    	System.out.println("[Config] No " + configSelect + ".globalregistry field found!");
-		    	System.exit(-1);
-		    }
-		    
-		} catch (IOException e) {
-		    e.printStackTrace();
-		    System.exit(-1);
+		if (!selection.equals("env")) {
+			//load from config file
+			config = NodeConfig.readFromFile("node.config.json", selection);
+		} else {
+			//load from environment variables
+			config = NodeConfig.readFromEnvironment();
 		}
 		
 		return config;
 	}
 	
-	public MsgNode(ClusterManager mgr, String domain,int port) {
+	public MsgNode(ClusterManager mgr, NodeConfig config) {
 		this.mgr = mgr;
-		this.domain = domain;
-		this.port = port;
+		this.config = config;
 	}
 
 	@Override
 	public void start() throws Exception {
-		final PipeRegistry register = new PipeRegistry(vertx, mgr, domain);
+		final PipeRegistry register = new PipeRegistry(vertx, mgr, config.getDomain());
 		register.installComponent(new SubscriptionManager(register));
 		register.installComponent(new SessionManager(register));
 		register.installComponent(new HypertyAllocationManager(register));
@@ -191,7 +142,7 @@ public class MsgNode extends AbstractVerticle {
 
 
 		WebSocketServer.init(server, pipeline);
-		server.listen(port);
-		System.out.println("[Message-Node] Running on wss://msg-node." + domain + ":" + port);
+		server.listen(config.getPort());
+		System.out.println("[Message-Node] Running with config: " + config);
 	}
 }

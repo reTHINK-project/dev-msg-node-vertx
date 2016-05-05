@@ -1,6 +1,7 @@
 {
   "dev": {
     "domain": "ua.pt",
+    "port": "9090",
     "registry": {
       "url": "http://localhost:4567"
     },
@@ -10,7 +11,8 @@
   },
 
   "prod": {
-    "domain": "ua.pt",
+    "domain": "hybroker.rethink.ptinovacao.pt",
+    "port": "9090",
     "registry": {
       "url": "http://localhost:4567"
     },

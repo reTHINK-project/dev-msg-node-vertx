@@ -23,9 +23,27 @@
 
 var config = require(__dirname + '/../../node.config.json');
 
-var configSelect = process.env.MSG_NODE_CONFIG;
-if (!configSelect) {
-	configSelect = "dev";
+var selection = process.env.MSG_NODE_CONFIG;
+if (!selection) {
+	selection = "dev";
 }
 
-module.exports = config[configSelect];
+var configSelect;
+if (selection !== "env") {
+	//load from config file
+	configSelect = config[selection];
+} else {
+	//load from environment variables
+	configSelect = {
+		registry: {
+			url: process.env.NODE_REGISTRY_URL
+		},
+		globalregistry: {
+			url: process.env.NODE_GLOBAL_REGISTRY_URL
+		}
+	};
+}
+
+
+print("[JS Config] " + JSON.stringify(configSelect));
+module.exports = configSelect;

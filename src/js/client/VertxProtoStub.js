@@ -42,6 +42,13 @@ class VertxProtoStub {
    * @return {VertxProtoStub}
    */
   constructor(runtimeProtoStubURL, bus, config) {
+    if (!runtimeProtoStubURL) throw new Error('The runtimeProtoStubURL is a needed parameter');
+    if (!bus) throw new Error('The bus is a needed parameter');
+    if (!config) throw new Error('The config is a needed parameter');
+
+    if (!config.url) throw new Error('The config.url is a needed parameter');
+    if (!config.runtimeURL) throw new Error('The config.runtimeURL is a needed parameter');
+
     let _this = this;
 
     this._id = 0;
