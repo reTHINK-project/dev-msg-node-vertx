@@ -34,6 +34,12 @@ cd dev-msg-node-vertx
 
 The VertxMN is pointing at default domain `ua.pt`, but if other domain is needed it can be configured in `node.config.json`. Change an already entry, like `dev`, or create a new one. Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 
+`MSG_NODE_CONFIG = env` is now reserved for configuration through environment variables. The following are used:
+* `NODE_DOMAIN`
+* `NODE_PORT`
+* `NODE_REGISTRY_URL`
+* `NODE_GLOBAL_REGISTRY_URL`
+
 #### 4. Build and run Docker
 
 ```
