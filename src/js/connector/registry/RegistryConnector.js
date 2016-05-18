@@ -52,7 +52,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
 
     case "create":
       if('hypertyURL' in msg.body.value) {
-        this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, callback);
+        this.addHyperty(msg.body.value.user, msg.body.value.hypertyURL, msg.body.value.hypertyDescriptorURL, msg.body.value.expires, msg.body.value.resources, msg.body.value.dataSchemes, callback);
       }else {
         this.addDataObject(msg.body.value.name, msg.body.value.schema, msg.body.value.expires, msg.body.value.url, msg.body.value.reporter, callback);
       }
@@ -88,11 +88,13 @@ RegistryConnector.prototype.getUser = function(userid, callback) {
   });
 };
 
-RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDescriptor, expires, callback) {
+RegistryConnector.prototype.addHyperty = function(userid, hypertyid, hypertyDescriptor, expires, resources, dataschemes, callback) {
   var endpoint = '/hyperty/user/' + encodeURIComponent(userid) + '/' + encodeURIComponent(hypertyid);
   var data = {
     'descriptor': hypertyDescriptor,
-    'expires': expires
+    'expires': expires,
+    'resources': resources,
+    'dataSchemes': dataschemes
   };
 
   this._request.put(this._registryURL + endpoint, JSON.stringify(data), function(err, response, statusCode) {
