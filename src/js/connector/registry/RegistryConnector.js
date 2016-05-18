@@ -45,7 +45,7 @@ RegistryConnector.prototype.processMessage = function(msg, callback) {
         this.hypertySearch(msg.body.resource.user, msg.body.resource.resources, msg.body.resource.dataSchemes, callback);
       }else if(msg.body.search != 'undefined' && msg.body.search === 'dataObjectPerReporter') {
         this.getDataObjectByReporter(msg.body.resource, callback);
-      }else if(msg.body.resource.startsWith("dataObject://")) {
+      }else if(msg.body.search != 'undefined' && msg.body.search === 'dataObjectPerURL') {
         this.getDataObject(msg.body.resource, callback);
       }else {
         this.getUser(msg.body.resource, callback);
