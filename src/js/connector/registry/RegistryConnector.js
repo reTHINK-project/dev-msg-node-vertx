@@ -41,10 +41,10 @@ var RegistryConnector = function(registryURL) {
 RegistryConnector.prototype.processMessage = function(msg, callback) {
   switch(msg.type.toLowerCase()) {
     case "read":
-      if(msg.body.resource.startsWith("dataObject://")) {
-        this.getDataObject(msg.body.resource, callback);
-      }else if(msg.body.search != 'undefined' && msg.body.search === 'hypertyResourcesDataSchemes') {
+      if(msg.body.search != 'undefined' && msg.body.search === 'hypertyResourcesDataSchemes') {
         this.hypertySearch(msg.body.resource.user, msg.body.resource.resources, msg.body.resource.dataSchemes, callback);
+      }else if(msg.body.resource.startsWith("dataObject://")) {
+        this.getDataObject(msg.body.resource, callback);
       }else {
         this.getUser(msg.body.resource, callback);
       }
