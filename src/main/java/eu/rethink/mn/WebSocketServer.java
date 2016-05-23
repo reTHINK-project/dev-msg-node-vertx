@@ -29,6 +29,10 @@ import eu.rethink.mn.pipeline.PipeResource;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.http.HttpServer;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Initialize the link beetween HttpServer and Pipeline. Used to create resources for every WS connection.
+ */
 public class WebSocketServer {
 	
 	public static void init(HttpServer server, Pipeline pipeline) {

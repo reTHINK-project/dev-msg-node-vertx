@@ -30,6 +30,10 @@ import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.Handler;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Any message entering the Pipeline should have a context: original resource, message, and available actions for the message.
+ */
 public class PipeContext {
 	boolean inFail = false;
 	
@@ -64,7 +68,7 @@ public class PipeContext {
 	}
 	
 	/** Sends the context to the delivery destination. Normally this methods is called in the end of the pipeline process.
-	 *  So most of the time there is no need to call this.
+	 *  So, most of the time there is no need to call this.
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
@@ -89,7 +93,7 @@ public class PipeContext {
 		}
 	}
 	
-	/** Does nothing to the pipeline flow and sends a reply back.
+	/** Does nothing to the pipeline flow and sends a reply back to the same resource connection.
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {

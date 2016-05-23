@@ -28,6 +28,10 @@ import java.io.File;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Main class representing the config model from node.config.json structure or environment variables. 
+ */
 public class NodeConfig {
 	String selected = null;
 	String domain = null;
@@ -51,6 +55,11 @@ public class NodeConfig {
 	public String getGlobalRegistryUrl() { return globalRegistryUrl; }
 	public void setGlobalRegistryUrl(String globalRegistryUrl) { this.globalRegistryUrl = globalRegistryUrl; }
 	
+	/** Read configuration from JSON file
+	 * @param path Relative path to file
+	 * @param selection Select the JSON subnode (dev, prod, ...). "env" selection reserved for environment variables.
+	 * @return Data structure with configurations
+	 */
 	public static NodeConfig readFromFile(String path, String selection) {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final NodeConfig config = new NodeConfig();
@@ -117,6 +126,10 @@ public class NodeConfig {
 		return config;
 	}
 	
+	/** Read configuration from environment variables.
+	 * Variable names: NODE_DOMAIN, NODE_PORT, NODE_REGISTRY_URL, NODE_GLOBAL_REGISTRY_URL
+	 * @return Data structure with configurations
+	 */
 	public static NodeConfig readFromEnvironment() {
 		final NodeConfig config = new NodeConfig();
 		

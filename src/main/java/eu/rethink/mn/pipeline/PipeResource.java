@@ -26,6 +26,10 @@ package eu.rethink.mn.pipeline;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.Handler;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Connection resource. This is one-to-one link to some sort of connection type, with a client (websocket, TCP, ...) 
+ */
 public class PipeResource {
 	final String uid;
 	final Pipeline pipeline;
@@ -48,6 +52,10 @@ public class PipeResource {
 	public PipeSession getSession() { return session; }
 	public void setSession(PipeSession session) { this.session = session; }
 	
+	/** Process a new message, inserting it in the beginning of the pipeline.
+	 *  The resource context is associated to the message.
+	 * @param msg
+	 */
 	public void processMessage(PipeMessage msg) {
 		pipeline.process(this, msg);
 	}

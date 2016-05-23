@@ -45,6 +45,10 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Main class to start the msg-node server 
+ */
 public class MsgNode extends AbstractVerticle {
 
 	public static void main(String[] args) {
