@@ -30,6 +30,10 @@ import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeRegistry;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Intercepts and forwards messages (request and response) to the domain registry. 
+ */
 public class RegistryConnector implements IComponent {
 	final String name;
 	final PipeRegistry register;

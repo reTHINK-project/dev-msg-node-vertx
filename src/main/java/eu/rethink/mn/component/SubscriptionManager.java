@@ -30,6 +30,11 @@ import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Class that handles the domain subscription manager.
+ * Subscribe and UnSubscribe for listeners.
+ */
 public class SubscriptionManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
@@ -51,6 +56,7 @@ public class SubscriptionManager implements IComponent {
 		final JsonArray addressList = body.getJsonArray("subscribe");
 		
 		if(addressList != null) {
+			//subscribe to a list of addresses
 			if(msg.getType().equals("subscribe")) {
 				for(Object address: addressList) {
 					ctx.getSession().addListener(address.toString());
@@ -58,6 +64,7 @@ public class SubscriptionManager implements IComponent {
 				
 				ctx.replyOK(name);
 			} else if(msg.getType().equals("unsubscribe")) {
+				//unsubscribe from a list of addresses
 				for(Object address: addressList) {
 					ctx.getSession().removeListener(address.toString());
 				}

@@ -25,6 +25,10 @@ package eu.rethink.mn.pipeline.message;
 
 import io.vertx.core.json.JsonObject;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * JSON wrapper for the message structure. Only for what is important for routing and error responses.
+ */
 public class PipeMessage {
 	public static final String REPLY = "response";
 	

@@ -36,6 +36,10 @@ import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Address allocation manager for objects.
+ */
 public class ObjectAllocationManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
@@ -57,6 +61,7 @@ public class ObjectAllocationManager implements IComponent {
 		final JsonObject body = msg.getBody();
 		
 		if(msg.getType().equals("create")) {
+			//process JSON msg requesting a number of available addresses
 			final String scheme = body.getString("scheme");
 			
 			//on value
@@ -78,6 +83,7 @@ public class ObjectAllocationManager implements IComponent {
 			
 			ctx.reply(reply);
 		} else if(msg.getType().equals("delete")) {
+			//process JSON msg releasing an address
 			final String resource = body.getString("resource");
 			
 			deallocate(ctx, resource);

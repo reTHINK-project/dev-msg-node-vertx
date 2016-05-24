@@ -26,6 +26,10 @@ package eu.rethink.mn.pipeline.handlers;
 import io.vertx.core.Handler;
 import eu.rethink.mn.pipeline.PipeContext;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Message interceptor for inter-domain routing
+ */
 public class TransitionPipeHandler implements Handler<PipeContext> {
 	public static String NAME = "mn:/transition"; 
 

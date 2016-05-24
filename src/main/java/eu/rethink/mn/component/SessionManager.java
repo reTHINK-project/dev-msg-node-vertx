@@ -32,6 +32,11 @@ import eu.rethink.mn.pipeline.PipeSession;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Class that handles the VertxProtoStub connection and session.
+ * This is only for internal use.
+ */
 public class SessionManager implements IComponent {
 	final PipeRegistry register;
 	
