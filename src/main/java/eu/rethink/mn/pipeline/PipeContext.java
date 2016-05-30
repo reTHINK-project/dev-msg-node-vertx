@@ -25,6 +25,9 @@ package eu.rethink.mn.pipeline;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
@@ -35,6 +38,8 @@ import io.vertx.core.Handler;
  * Any message entering the Pipeline should have a context: original resource, message, and available actions for the message.
  */
 public class PipeContext {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
+	
 	boolean inFail = false;
 	
 	final Pipeline pipeline;
@@ -53,6 +58,8 @@ public class PipeContext {
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		System.out.println("IN: " + msg);
+		logger.info("IN: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+		
 		this.pipeline = pipeline;
 		this.resource = resource;
 		this.iter = iter;
@@ -85,9 +92,13 @@ public class PipeContext {
 			final String url = resolve(msg.getTo());
 			if(url != null) {
 				System.out.println("OUT(" + url + "): " + msg);
+				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+				
 				register.getEventBus().send(url, msg.toString());
 			} else {
-				System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
+				//System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
+				logger.info("PUBLISH: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+				
 				register.getEventBus().publish(msg.getTo(), msg.toString());
 			}
 		}
@@ -98,7 +109,10 @@ public class PipeContext {
 	 */
 	public void reply(PipeMessage reply) {
 		reply.setType(PipeMessage.REPLY);
+		
 		System.out.println("REPLY: " + reply);
+		logger.info("REPLY: (id: {}, type: {}, from: {}, to: {})", reply.getId(), reply.getType(), reply.getFrom(), reply.getTo());
+		
 		resource.reply(reply);
 	}
 	
