@@ -57,7 +57,7 @@ public class PipeContext {
 	}
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
-		System.out.println("IN: " + msg);
+		//System.out.println("IN: " + msg);
 		logger.info("IN: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
 		
 		this.pipeline = pipeline;
@@ -91,7 +91,7 @@ public class PipeContext {
 		} else {
 			final String url = resolve(msg.getTo());
 			if(url != null) {
-				System.out.println("OUT(" + url + "): " + msg);
+				//System.out.println("OUT(" + url + "): " + msg);
 				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
 				
 				register.getEventBus().send(url, msg.toString());
@@ -110,7 +110,7 @@ public class PipeContext {
 	public void reply(PipeMessage reply) {
 		reply.setType(PipeMessage.REPLY);
 		
-		System.out.println("REPLY: " + reply);
+		//System.out.println("REPLY: " + reply);
 		logger.info("REPLY: (id: {}, type: {}, from: {}, to: {})", reply.getId(), reply.getType(), reply.getFrom(), reply.getTo());
 		
 		resource.reply(reply);
