@@ -29,15 +29,21 @@ import eu.rethink.mn.pipeline.PipeResource;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.http.HttpServer;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Initialize the link beetween HttpServer and Pipeline. Used to create resources for every WS connection.
+ */
 public class WebSocketServer {
 	
-	public static void init(HttpServer server, Pipeline pipeline) {
+	public static void init(HttpServer server, Pipeline pipeline) {		
 		server.websocketHandler(ws -> {
 			if(!ws.uri().equals("/ws")) {
 				ws.reject();
 				out.println("RESOURCE-OPEN-REJECTED");
 				return;
 			}
+			
+			final StringBuilder sb = new StringBuilder();
 			
 			out.println("RESOURCE-OPEN");
 			final PipeResource resource = pipeline.createResource(
@@ -47,7 +53,12 @@ public class WebSocketServer {
 			);
 			
 			ws.frameHandler(frame -> {
-				resource.processMessage(new PipeMessage(frame.textData()));
+				sb.append(frame.textData());
+				
+				if (frame.isFinal()) {
+					resource.processMessage(new PipeMessage(sb.toString()));
+					sb.setLength(0);
+				}
 			});
 						
 			ws.closeHandler(handler -> {

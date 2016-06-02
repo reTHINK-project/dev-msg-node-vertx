@@ -32,6 +32,12 @@ import java.util.Set;
 
 import io.vertx.core.eventbus.MessageConsumer;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Session data and associated actions for a resource connection.
+ * NOTE: there is room for improvements here. PipeResource and PipeSession can be simplified in one class.
+ * But some care should be taken because of the cluster architecture. 
+ */
 public class PipeSession {
 	final PipeRegistry registry;
 	final String runtimeSessionURL;
@@ -47,6 +53,10 @@ public class PipeSession {
 		this.runtimeSessionURL = runtimeSessionURL;
 	}
 	
+	/** Allocate a new URL address for a Hyperty or Object.
+	 * @param url HypertyURL or ObjectURL
+	 * @return true if succeeded
+	 */
 	public boolean allocate(String url) {
 		if(registry.urlSpace.containsKey(url))
 			return false;
@@ -57,11 +67,19 @@ public class PipeSession {
 		return true;
 	}
 	
+	/** DeAllocate a URL address for a Hyperty or Object.
+	 * @param url HypertyURL or ObjectURL
+	 */
 	public void deallocate(String url) {
 		out.println("DEALLOCATE(" + runtimeSessionURL + "): " + url);
 		removeURL(url);
 	}
 
+	/** Attach an address listener to the current resource. 
+	 * Any message to this address should reach the Resource client.
+	 * @param address Any address
+	 * @return true if succeeded
+	 */
 	public boolean addListener(String address) {
 		if(consumers.containsKey(address)) {
 			return false;
@@ -77,6 +95,9 @@ public class PipeSession {
 		return true;
 	}
 	
+	/** Detach an address listener.
+	 * @param address Any address
+	 */
 	public void removeListener(String address) {
 		out.println("REMOVE-LISTENER(" + runtimeSessionURL + "): " + address);
 		

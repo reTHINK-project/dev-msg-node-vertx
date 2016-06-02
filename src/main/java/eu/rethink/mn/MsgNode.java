@@ -45,6 +45,10 @@ import io.vertx.core.net.JksOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Main class to start the msg-node server 
+ */
 public class MsgNode extends AbstractVerticle {
 
 	public static void main(String[] args) {
@@ -116,13 +120,14 @@ public class MsgNode extends AbstractVerticle {
 		register.installComponent(grc);
 
 		final Pipeline pipeline = new Pipeline(register)
-			.addHandler(new ValidatorPipeHandler())
-			.addHandler(new TransitionPipeHandler())
+			.addHandler(new ValidatorPipeHandler()) 	//validation of mandatory fields
+			.addHandler(new TransitionPipeHandler()) 	//inter-domain allocator and routing
 			.failHandler(error -> {
 				out.println("PIPELINE-FAIL: " + error);
 			});
 
 
+		//HTTPS security configurations
 		final JksOptions jksOptions = new JksOptions()
 			.setPath("server-keystore.jks")
 			.setPassword("rethink2015");
@@ -136,6 +141,7 @@ public class MsgNode extends AbstractVerticle {
 
 		final HttpServer server = vertx.createHttpServer(httpOptions);
 		server.requestHandler(req -> {
+			//just a land page to test connection 
 			System.out.println("HTTP-PING");
 			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
 		});

@@ -29,6 +29,10 @@ import java.util.Iterator;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.Handler;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Implementation of a pipelice circuit with interceptors and endpoints.
+ */
 public class Pipeline {
 	final PipeRegistry register;
 	
@@ -47,16 +51,30 @@ public class Pipeline {
 	
 	public PipeRegistry getRegister() { return register; }
 	
+	/** Create a connection resource that can be used in any specific implementation, websockets, tcp... 
+	 * @param uid UUID for the resource
+	 * @param closeCallback Callback function called when some internal process fired a request to close the connection.
+	 * @param replyCallback Callback function called for any reply message in a request-response protocol scheme. It's natural that a response flows through the same link as the request.
+	 * @return himself for fluent API
+	 */
 	public PipeResource createResource(String uid, Handler<Void> closeCallback, Handler<String> replyCallback) {
 		final PipeResource resource = new PipeResource(uid, this, closeCallback, replyCallback);
 		return resource;
 	}
 	
+	/**
+	 * @param handler Add interceptor handler for every message entering the pipeline.
+	 * @return himself for fluent API
+	 */
 	public Pipeline addHandler(Handler<PipeContext> handler) {
 		handlers.add(handler);
 		return this;
 	}
 	
+	/**
+	 * @param handler Set the fail handler, for unexpected errors in the pipeline.
+	 * @return himself for fluent API
+	 */
 	public Pipeline failHandler(Handler<String> handler) {
 		failHandler = handler;
 		return this;

@@ -34,6 +34,11 @@ import java.util.Map;
 
 import eu.rethink.mn.IComponent;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Needed information for the pipeline.
+ * Registered components, sessions, and cluster aware data.
+ */
 public class PipeRegistry {
 	final EventBus eb;
 	final ClusterManager mgr;
@@ -88,7 +93,7 @@ public class PipeRegistry {
 
 	/** Install an addressable component.
 	 * @param component The IComponent interface, the handler is called when the message is to be deliver.
-	 * @return this
+	 * @return himself for fluent API
 	 */
 	public PipeRegistry installComponent(IComponent component) {
 		components.put(component.getName(), component);
@@ -103,10 +108,9 @@ public class PipeRegistry {
 		return components.get(url);
 	}
 
-	/** Adds a runtimeURL relation with a channel resource UID.
-	 * @param runtimeURL The runtimeURL
-	 * @param resourceUID The textUID address registered in the vertx EventBus.
-	 * @return this
+	/** Creates a session in this resource context with runtimeSessionURL identification
+	 * @param runtimeSessionURL The runtimeURL
+	 * @return himself for fluent API
 	 */
 	public PipeSession createSession(String runtimeSessionURL) {
 		final PipeSession session = new PipeSession(this, runtimeSessionURL);
@@ -115,6 +119,10 @@ public class PipeRegistry {
 		return session;
 	}
 
+	/** Get a session data from a runtimeSessionURL identification
+	 * @param runtimeSessionURL Same address used on createSession
+	 * @return himself for fluent API
+	 */
 	public PipeSession getSession(String runtimeSessionURL) {
 		return sessions.get(runtimeSessionURL);
 	}

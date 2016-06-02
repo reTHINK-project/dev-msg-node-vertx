@@ -25,12 +25,21 @@ package eu.rethink.mn.pipeline;
 
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.Handler;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Any message entering the Pipeline should have a context: original resource, message, and available actions for the message.
+ */
 public class PipeContext {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
+	
 	boolean inFail = false;
 	
 	final Pipeline pipeline;
@@ -48,7 +57,9 @@ public class PipeContext {
 	}
 	
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
-		System.out.println("IN: " + msg);
+		//System.out.println("IN: " + msg);
+		logger.info("IN: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+		
 		this.pipeline = pipeline;
 		this.resource = resource;
 		this.iter = iter;
@@ -64,7 +75,7 @@ public class PipeContext {
 	}
 	
 	/** Sends the context to the delivery destination. Normally this methods is called in the end of the pipeline process.
-	 *  So most of the time there is no need to call this.
+	 *  So, most of the time there is no need to call this.
 	 */
 	public void deliver() {
 		final PipeRegistry register = pipeline.getRegister();
@@ -80,21 +91,28 @@ public class PipeContext {
 		} else {
 			final String url = resolve(msg.getTo());
 			if(url != null) {
-				System.out.println("OUT(" + url + "): " + msg);
+				//System.out.println("OUT(" + url + "): " + msg);
+				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+				
 				register.getEventBus().send(url, msg.toString());
 			} else {
-				System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
+				//System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
+				logger.info("PUBLISH: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
+				
 				register.getEventBus().publish(msg.getTo(), msg.toString());
 			}
 		}
 	}
 	
-	/** Does nothing to the pipeline flow and sends a reply back.
+	/** Does nothing to the pipeline flow and sends a reply back to the same resource connection.
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
 		reply.setType(PipeMessage.REPLY);
-		System.out.println("REPLY: " + reply);
+		
+		//System.out.println("REPLY: " + reply);
+		logger.info("REPLY: (id: {}, type: {}, from: {}, to: {})", reply.getId(), reply.getType(), reply.getFrom(), reply.getTo());
+		
 		resource.reply(reply);
 	}
 	

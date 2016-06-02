@@ -26,6 +26,10 @@ package eu.rethink.mn;
 import eu.rethink.mn.pipeline.PipeContext;
 import io.vertx.core.Handler;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Any component (Interceptor Handler or Addressable Handler) should implement this interface.
+ */
 public interface IComponent extends Handler<PipeContext> {
 	String getName();
 }

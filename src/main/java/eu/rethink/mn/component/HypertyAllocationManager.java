@@ -36,6 +36,10 @@ import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Address allocation manager for hyperties.
+ */
 public class HypertyAllocationManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
@@ -56,6 +60,7 @@ public class HypertyAllocationManager implements IComponent {
 		final PipeMessage msg = ctx.getMessage();
 		
 		if(msg.getType().equals("create")) {
+			//process JSON msg requesting a number of available addresses
 			final JsonObject msgBodyValue = msg.getBody().getJsonObject("value");
 			
 			int number = msgBodyValue.getInteger("number", 5);

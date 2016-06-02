@@ -28,6 +28,10 @@ import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 
+/**
+ * @author micaelpedrosa@gmail.com
+ * Message interceptor that validates mandatory fields on JSON data.
+ */
 public class ValidatorPipeHandler implements Handler<PipeContext> {
 	public static String NAME = "mn:/validator"; 
 
