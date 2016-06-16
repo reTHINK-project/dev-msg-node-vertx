@@ -32,13 +32,16 @@ cd dev-msg-node-vertx
 
 #### 3. Config VertxMN domain
 
-The VertxMN is pointing at default domain `ua.pt`, but if other domain is needed it can be configured in `node.config.json`. Change an already entry, like `dev`, or create a new one. Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
+Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 
 `MSG_NODE_CONFIG = env` is now reserved for configuration through environment variables. The following are used:
 * `NODE_DOMAIN`
 * `NODE_PORT`
 * `NODE_REGISTRY_URL`
 * `NODE_GLOBAL_REGISTRY_URL`
+
+**Note:** In case Docker is not used the `node.config.json` configuration file is used. 
+
 
 #### 4. Build and run Docker
 
@@ -72,13 +75,16 @@ Convert the generated fullchain and private key files to "pkcs12" with openssl:
 Import the certificate to java keystore:
 * ```keytool -v -importkeystore -srckeystore keystore.pkcs12 -srcstoretype PKCS12 -deststoretype JKS -destkeystore server-keystore.jks```
 
-### Developer view
+#### Vertx Protostub
 
 Once the VertxMN is active, we are able to connect with the ProtoStub. The best example of how this is done is in the test/VertxProtoStub.js in "runtime connectivity" test. It's important to send the "runtimeURL" in the config parameter, because it will be used to link the connection channel to the runtime.
 
 With this it's possible to send messages between runtimes, but Hyperty registration is something that should be done externally.
 
 The connection is auto managed. It means, there is no need to call "connect()" explicitly, and it will always try to be in "connected" until "disconnect()" is called. Status messages are sent to "runtimeProtoStubURL/status".
+
+
+### Developer view
 
 #### 1. Development dependencies
 
