@@ -21,6 +21,9 @@
     "url": "https://github.com/reTHINK-project/core-framework/issues"
   },
   "homepage": "https://github.com/reTHINK-project/core-framework#readme",
+  "dependencies": {
+    "runtime-core": "github:rethink-project/dev-runtime-core#develop-policies"
+  },
   "devDependencies": {
     "assert": "^1.3.0",
     "babelify": "^6.3.0",

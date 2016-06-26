@@ -39,33 +39,37 @@ import io.vertx.core.Handler;
  */
 public class PipeContext {
 	static final Logger logger = LoggerFactory.getLogger("BROKER");
-	
+
 	boolean inFail = false;
-	
+
 	final Pipeline pipeline;
 	final PipeResource resource;
-	
+
 	final Iterator<Handler<PipeContext>> iter;
 	final PipeMessage msg;
-	
+
 	public PipeMessage getMessage() { return msg; }
-	
+
 	public PipeSession getSession() { return resource.getSession(); }
 	public void setSession(PipeSession session) {
 		resource.setSession(session);
 		session.bindToResourceUID(resource.getUid());
 	}
-	
+
+	public Pipeline getPipeline() {
+		return pipeline;
+	}
+
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
 		//System.out.println("IN: " + msg);
 		logger.info("IN: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
-		
+
 		this.pipeline = pipeline;
 		this.resource = resource;
 		this.iter = iter;
 		this.msg = msg;
 	}
-	
+
 	/** Try to resolve any URL given to a RuntimeURL.
 	 * @param url Any URL bound or allocated (RuntimeURL, HypertyURL, ResourceURL, ...)
 	 * @return RuntimeURL registered in the vertx EventBus.
@@ -73,7 +77,7 @@ public class PipeContext {
 	public String resolve(String url) {
 		return pipeline.register.urlSpace.get(url);
 	}
-	
+
 	/** Sends the context to the delivery destination. Normally this methods is called in the end of the pipeline process.
 	 *  So, most of the time there is no need to call this.
 	 */
@@ -93,30 +97,30 @@ public class PipeContext {
 			if(url != null) {
 				//System.out.println("OUT(" + url + "): " + msg);
 				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
-				
+
 				register.getEventBus().send(url, msg.toString());
 			} else {
 				//System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
 				logger.info("PUBLISH: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
-				
+
 				register.getEventBus().publish(msg.getTo(), msg.toString());
 			}
 		}
 	}
-	
+
 	/** Does nothing to the pipeline flow and sends a reply back to the same resource connection.
 	 * @param reply Should be a new PipeMessage
 	 */
 	public void reply(PipeMessage reply) {
 		reply.setType(PipeMessage.REPLY);
-		
+
 		//System.out.println("REPLY: " + reply);
 		logger.info("REPLY: (id: {}, type: {}, from: {}, to: {})", reply.getId(), reply.getType(), reply.getFrom(), reply.getTo());
-		
+
 		resource.reply(reply);
 	}
-	
-	/** Does nothing to the pipeline flow and sends a OK reply back with a pre formatted JSON schema.  
+
+	/** Does nothing to the pipeline flow and sends a OK reply back with a pre formatted JSON schema.
 	 * @param from The address that will be on "header.from".
 	 */
 	public void replyOK(String from) {
@@ -125,11 +129,11 @@ public class PipeContext {
 		reply.setFrom(from);
 		reply.setTo(msg.getFrom());
 		reply.setReplyCode(ReplyCode.OK);
-		
+
 		reply(reply);
 	}
-	
-	/** Does nothing to the pipeline flow and sends a ERROR reply back with a pre formatted JSON schema. 
+
+	/** Does nothing to the pipeline flow and sends a ERROR reply back with a pre formatted JSON schema.
 	 * @param from The address that will be on "header.from".
 	 * @param error The error descriptor message.
 	 */
@@ -140,10 +144,10 @@ public class PipeContext {
 		reply.setTo(msg.getFrom());
 		reply.setReplyCode(ReplyCode.ERROR);
 		reply.setErrorDescription(error);
-		
+
 		reply(reply);
 	}
-	
+
 	/** Order the underlying resource channel to disconnect. But the client protostub can be configured to reconnect, so most of the times a reconnection is made by the client.
 	 * To avoid this, the method should only be used when the client orders the disconnection.
 	 */
@@ -152,10 +156,10 @@ public class PipeContext {
 		if (session != null) {
 			session.close();
 		}
-		
+
 		resource.disconnect();
 	}
-	
+
 	/** Used by interceptors, order the pipeline to execute the next interceptor. If no other interceptor exits, a delivery is proceed.
 	 */
 	public void next() {
@@ -172,7 +176,7 @@ public class PipeContext {
 			}
 		}
 	}
-	
+
 	/** Interrupts the pipeline flow and sends an error message back to the original "header.from". After this, other calls to "next()" or "fail(..)" are useless.
 	 * @param from The address that will be on reply "header.from".
 	 * @param error The error descriptor message.
