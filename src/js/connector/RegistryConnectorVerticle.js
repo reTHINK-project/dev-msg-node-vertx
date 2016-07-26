@@ -23,7 +23,7 @@
 
 var config = require(__dirname + '/../NodeConfig');
 
-var RegistryConnector = require(__dirname + '/registry/RegistryConnector');
+var RegistryConnector = require('dev-registry-domain/connector');
 var registry = new RegistryConnector(config.registry.url);
 print("[Connectors] Registry Connector Loaded");
 
