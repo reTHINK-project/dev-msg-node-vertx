@@ -1,3 +1,5 @@
+// jshint varstmt:false
+
 var gulp = require('gulp');
 var exec = require('child_process').exec;
 
@@ -12,15 +14,15 @@ gulp.task('doc', function(done) {
 });
 
 // Task and dependencies to convert ES6 to ES5 with babel;
-var babel = require('babelify');
+var babelify = require('babelify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 
 gulp.task('dist', function() {
   var bundler = browserify('./src/js/client/VertxProtoStub.js', {
     standalone: 'activate',
-    debug: false
-  }).transform(babel);
+    debug: true
+  }).transform(babelify);
 
   function rebundle() {
     bundler.bundle()
@@ -33,6 +35,17 @@ gulp.task('dist', function() {
   }
 
   rebundle();
+});
+
+var babel = require('gulp-babel');
+gulp.task('dist-node', function() {
+
+  return gulp.src('./src/js/client/VertxProtoStub.js')
+    .pipe(babel({
+      resolveModuleSource: ('WebSocket', 'ws')
+    }))
+    .pipe(gulp.dest('./target'));
+
 });
 
 /**
