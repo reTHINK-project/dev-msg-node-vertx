@@ -1,26 +1,27 @@
 {
   "name": "msg-node-protostub",
   "version": "0.5.0",
-  "description": "core runtime development",
+  "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
   "scripts": {
     "preinstall": "npm install -g gulp-cli karma-cli",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/reTHINK-project/core-framework.git"
+    "url": "git+ssh://git@github.com/reTHINK-project/dev-msg-node-vertx.git"
   },
   "keywords": [
     "reThink",
-    "webRTC"
+    "webRTC",
+    "vertx"
   ],
   "author": "reThink Project",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/reTHINK-project/core-framework/issues"
+    "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
   },
-  "homepage": "https://github.com/reTHINK-project/core-framework#readme",
+  "homepage": "https://github.com/reTHINK-project/dev-msg-node-vertx#readme",
   "devDependencies": {
     "assert": "^1.4.1",
     "babelify": "^7.3.0",
