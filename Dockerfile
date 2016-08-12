@@ -50,3 +50,4 @@ ADD server-keystore.jks /build/server-keystore.jks
 #Run msg-node
 EXPOSE 9090
 CMD ["mvn", "exec:java", "-Dexec.args='9090'"]
+
