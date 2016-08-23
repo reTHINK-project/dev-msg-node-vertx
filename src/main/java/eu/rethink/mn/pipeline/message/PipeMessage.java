@@ -60,7 +60,7 @@ public class PipeMessage {
 		return this;
 	}
 	
-	public int getId() { return Integer.parseInt("" + msg.getString("id", "0")); }
+	public int getId() { return Integer.parseInt("" + msg.getValue("id", "0").toString()); }
 	public PipeMessage setId(int id) {
 		msg.put("id", id);
 		return this;
