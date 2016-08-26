@@ -52,10 +52,9 @@ public class RegistryConnector implements IComponent {
 		System.out.println("[RegistryConnector.handle]" + msg);
 
 		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
-			final Object val = event.result().body();
 			if(event.succeeded()) {
 				//reply: {"123-1":{"catalogAddress":"12345678","guid":"123131241241241","lastUpdate":"2015-11-30"}}
-
+				final Object val = event.result().body();
 				final PipeMessage replyMsg = new PipeMessage();
 				replyMsg.setId(msg.getId());
 				replyMsg.setFrom(msg.getTo());
