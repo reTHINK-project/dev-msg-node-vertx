@@ -21,7 +21,10 @@
   "bugs": {
     "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
   },
-  "homepage": "https://github.com/reTHINK-project/dev-msg-node-vertx#readme",
+  "homepage": "https://github.com/reTHINK-project/core-framework#readme",
+  "dependencies": {
+    "runtime-core": "github:rethink-project/dev-runtime-core#develop-policies"
+  },
   "devDependencies": {
     "assert": "^1.4.1",
     "babelify": "^7.3.0",
