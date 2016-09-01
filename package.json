@@ -1,6 +1,6 @@
 {
   "name": "msg-node-protostub",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
   "scripts": {
