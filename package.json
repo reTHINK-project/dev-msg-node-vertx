@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
   },
-  "homepage": "https://github.com/reTHINK-project/dev-msg-node-vertx#readme",
+  "homepage": "https://github.com/reTHINK-project/core-framework#readme",
   "devDependencies": {
     "assert": "^1.4.1",
     "babel-plugin-add-module-exports": "^0.1.2",
@@ -59,6 +59,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.3.0"
+    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.3.0",
+    "runtime-core": "github:rethink-project/dev-runtime-core#develop"
   }
 }

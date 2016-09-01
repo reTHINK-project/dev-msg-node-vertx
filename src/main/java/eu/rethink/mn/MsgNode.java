@@ -33,6 +33,7 @@ import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.component.SubscriptionManager;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
+import eu.rethink.mn.pipeline.handlers.PoliciesPipeHandler;
 import eu.rethink.mn.pipeline.handlers.TransitionPipeHandler;
 import eu.rethink.mn.pipeline.handlers.ValidatorPipeHandler;
 import io.vertx.core.AbstractVerticle;
@@ -47,7 +48,7 @@ import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 
 /**
  * @author micaelpedrosa@gmail.com
- * Main class to start the msg-node server 
+ * Main class to start the msg-node server
  */
 public class MsgNode extends AbstractVerticle {
 
@@ -66,6 +67,7 @@ public class MsgNode extends AbstractVerticle {
                     DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
                     vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
                     vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
+										vertx.deployVerticle("js:./src/js/connector/PoliciesConnectorVerticle.js", verticleOptions);
 				} else {
 					System.exit(-1);
 				}
@@ -88,7 +90,7 @@ public class MsgNode extends AbstractVerticle {
 			System.out.println("[Config] No enviroment variable MSG_NODE_CONFIG, default to node.config.json -> dev");
 			selection = "dev";
 		}
-		
+
 		if (!selection.equals("env")) {
 			//load from config file
 			config = NodeConfig.readFromFile("node.config.json", selection);
@@ -96,10 +98,10 @@ public class MsgNode extends AbstractVerticle {
 			//load from environment variables
 			config = NodeConfig.readFromEnvironment();
 		}
-		
+
 		return config;
 	}
-	
+
 	public MsgNode(ClusterManager mgr, NodeConfig config) {
 		this.mgr = mgr;
 		this.config = config;
@@ -115,13 +117,14 @@ public class MsgNode extends AbstractVerticle {
 
 		final RegistryConnector rc = new RegistryConnector(register);
 		register.installComponent(rc);
-		
+
 		final GlobalRegistryConnector grc = new GlobalRegistryConnector(register);
 		register.installComponent(grc);
 
 		final Pipeline pipeline = new Pipeline(register)
 			.addHandler(new ValidatorPipeHandler()) 	//validation of mandatory fields
 			.addHandler(new TransitionPipeHandler()) 	//inter-domain allocator and routing
+			.addHandler(new PoliciesPipeHandler())
 			.failHandler(error -> {
 				out.println("PIPELINE-FAIL: " + error);
 			});
@@ -141,7 +144,7 @@ public class MsgNode extends AbstractVerticle {
 
 		final HttpServer server = vertx.createHttpServer(httpOptions);
 		server.requestHandler(req -> {
-			//just a land page to test connection 
+			//just a land page to test connection
 			System.out.println("HTTP-PING");
 			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
 		});
