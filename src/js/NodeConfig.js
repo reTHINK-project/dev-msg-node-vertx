@@ -36,7 +36,8 @@ if (selection !== "env") {
 	//load from environment variables
 	configSelect = {
 		registry: {
-			url: process.env.NODE_REGISTRY_URL
+      url: process.env.NODE_REGISTRY_URL,
+      retries: 2
 		},
 		globalregistry: {
 			url: process.env.NODE_GLOBAL_REGISTRY_URL
