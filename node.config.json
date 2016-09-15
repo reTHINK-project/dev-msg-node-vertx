@@ -3,7 +3,8 @@
     "domain": "ua.pt",
     "port": "9090",
     "registry": {
-      "url": "http://localhost:4567"
+      "url": "http://localhost:4567",
+      "retries": 2
     },
 	"globalregistry": {
 	  "url": "http://130.149.22.133:5002"
