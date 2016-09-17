@@ -22,18 +22,30 @@
 **/
 
 var PoliciesConnector = function() {
-  var MessageNodeCtx = require('runtime-core/dist/MessageNodeCtx');
-  var PolicyEngine = require('runtime-core/dist/PolicyEngine');
-  this.policyEngine = new PolicyEngine(new MessageNodeCtx());
+  var PEP = require('runtime-core/dist/PEP');
+  var VertxCtx = require('./VertxCtx');
+  this.pep = new PEP(new VertxCtx());
 };
 
 PoliciesConnector.prototype.authorise = function(message, callback) {
-  var callback = function(msg) {
-    return message.reply(msg);
-  };
-
-  callback(this.policyEngine.authorise(message));
+  callback(this.pep.authorise(JSON.parse(message.body())));
 };
 
+PoliciesConnector.prototype.addPolicy = function(policies) {
+  if (policies !== undefined) {
+    for (var i in policies) {
+      this.pep.addPolicy('SERVICE_PROVIDER', i, policies[i]);
+      /*var rules = policies[i].rules;
+      for (var j in rules) {
+        if (rules[j].condition.attribute !== undefined) {
+          var condition = [rules[j].condition.attribute, rules[j].condition.operator, rules[j].condition.params];
+          this.pep.context.serviceProviderPolicy.createRule('simple', rules[j].authorise, condition, rules[j].target, rules[j].scope);
+        } else {
+          this.pep.context.serviceProviderPolicy.createRule('advanced', rules[j].authorise, rules[j].condition, rules[j].target, rules[j].scope);
+        }
+      }*/
+    }
+  }
+};
 
 module.exports = PoliciesConnector;

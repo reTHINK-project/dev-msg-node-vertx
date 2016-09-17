@@ -31,6 +31,7 @@ import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.component.SubscriptionManager;
+import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.handlers.PoliciesPipeHandler;
@@ -129,7 +130,6 @@ public class MsgNode extends AbstractVerticle {
 				out.println("PIPELINE-FAIL: " + error);
 			});
 
-
 		//HTTPS security configurations
 		final JksOptions jksOptions = new JksOptions()
 			.setPath("server-keystore.jks")
@@ -154,4 +154,5 @@ public class MsgNode extends AbstractVerticle {
 		server.listen(config.getPort());
 		System.out.println("[Message-Node] Running with config: " + config);
 	}
+
 }

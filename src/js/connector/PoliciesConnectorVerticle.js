@@ -30,12 +30,14 @@ print("[Connectors] Policies Connector Loaded");
 vertx.eventBus().consumer("mn:/policies-connector", function (message) {
   print("[Policies-Connector][Received]: " + message.body());
 
-  var msg = JSON.parse(message.body());
-
   var callback = function(msg) {
-      return message.reply(msg);
+    return message.reply(msg);
   };
 
   policiesConnector.authorise(message, callback);
+});
 
+vertx.eventBus().consumer("mn:/policies-connector-update", function (policies) {
+  print("[Policies-Connector-Update][Received]");
+  policiesConnector.addPolicy(JSON.parse(policies.body()));
 });
