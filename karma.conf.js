@@ -14,11 +14,13 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
-      'test/**/Metrics.spec.js'
+      'test/**/*.spec.js'
     ],
 
     // list of files to exclude
     exclude: [
+      'test/**/VertxCluster.spec.js',
+      'test/**/RegistryConnector.spec.js',
       'test/**/GlobalRegistryConnector.spec.js'
     ],
 
@@ -30,7 +32,6 @@ module.exports = function(config) {
     },
 
     browserify: {
-      debug: true,
       transform: ['babelify']
     },
 
@@ -41,6 +42,12 @@ module.exports = function(config) {
 
     // web server port
     port: 9876,
+
+    // How long will Karma wait for a message from a browser before disconnecting from it (in ms).
+    browserNoActivityTimeout: 110000,
+
+    // Whether or not Karma or any browsers should raise an error when an invalid SSL certificate is found.
+    proxyValidateSSL: false,
 
     // enable / disable colors in the output (reporters and logs)
     colors: true,
@@ -54,7 +61,19 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['ChromeTravis'],
+
+    // you can define custom flags
+    customLaunchers: {
+      ChromeTravis: {
+        base: 'Chrome',
+        flags: [
+          '--disable-web-security',
+          '--ignore-certificate-errors'
+        ],
+        debug: true
+      }
+    },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
