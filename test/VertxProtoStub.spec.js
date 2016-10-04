@@ -285,7 +285,7 @@ describe('VertxProtoStub', function() {
           expect(msg.body.value.allocated).to.have.length(1);
 
           url = msg.body.value.allocated[0];
-          urlChildren = url + '/children/message';
+          urlChildren = url;
 
           send({id: 1, type: 'ping', from: url, to: urlChildren});
         }
