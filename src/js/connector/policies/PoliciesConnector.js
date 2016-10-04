@@ -35,15 +35,6 @@ PoliciesConnector.prototype.addPolicy = function(policies) {
   if (policies !== undefined) {
     for (var i in policies) {
       this.pep.addPolicy('SERVICE_PROVIDER', i, policies[i]);
-      /*var rules = policies[i].rules;
-      for (var j in rules) {
-        if (rules[j].condition.attribute !== undefined) {
-          var condition = [rules[j].condition.attribute, rules[j].condition.operator, rules[j].condition.params];
-          this.pep.context.serviceProviderPolicy.createRule('simple', rules[j].authorise, condition, rules[j].target, rules[j].scope);
-        } else {
-          this.pep.context.serviceProviderPolicy.createRule('advanced', rules[j].authorise, rules[j].condition, rules[j].target, rules[j].scope);
-        }
-      }*/
     }
   }
 };
