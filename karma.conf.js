@@ -14,7 +14,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
+<<<<<<< HEAD
       'test/**/*.spec.js'
+=======
+      'test/**/VertxProtoStub.spec.js'
+>>>>>>> 90b90083c1613007bdcbfbf0ea6f99eb23dc98ff
     ],
 
     // list of files to exclude
@@ -63,21 +67,19 @@ module.exports = function(config) {
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     browsers: ['ChromeTravis'],
 
-    // you can define custom flags
     customLaunchers: {
       ChromeTravis: {
         base: 'Chrome',
         flags: [
-          '--disable-web-security',
-          '--ignore-certificate-errors'
-        ],
-        debug: true
+         '--disable-web-security',
+         '--ignore-certificate-errors'
+       ]
       }
     },
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false
+    singleRun: true
   });
 
 };

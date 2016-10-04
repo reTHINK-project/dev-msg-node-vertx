@@ -3,8 +3,7 @@
     "domain": "ua.pt",
     "port": "9090",
     "registry": {
-      "url": "http://localhost:4567",
-      "retries": 2
+      "url": "https://registry.hybroker.rethink.ptinovacao.pt"
     },
 	"globalregistry": {
 	  "url": "http://130.149.22.133:5002"
