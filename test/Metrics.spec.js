@@ -5,10 +5,11 @@ describe('Listeners', function() {
   let protoURL = 'hyperty-runtime://sp1/protostub';
 
   it('simple', function(done) {
-    this.timeout(0);
 
     let number = 100000;
     let send;
+
+    this.timeout(number + 1000);
 
     let sendMetrics = () => {
       let time = new Date().toJSON();
@@ -32,9 +33,8 @@ describe('Listeners', function() {
 
       for (let i = 0; i < number + 1; i++) {
         let time = new Date().toJSON();
-        send({
-          id: i, type: 'ping', from: 'hyper-1', to: 'hyper-2', body: { time: time }
-        });
+        let msg = {id: i, type: 'ping', from: 'hyper-1', to: 'hyper-2', body: { time: time }};
+        send(msg);
       }
     };
 
