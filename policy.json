@@ -1,0 +1,17 @@
+{
+  "VertxPolicy": {
+    "actions": [],
+    "key": "VertxPolicy",
+    "rules": [{
+      "authorise": true,
+      "condition": {
+        "attribute": "source",
+        "operator": "equals",
+        "params": "openidtest20@gmail.com"
+      },
+      "scope": "global",
+      "target": "global"
+    }],
+    "combiningAlgorithm": "blockOverrides"
+  }
+}
