@@ -62,7 +62,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.3.0",
+    "dev-registry-domain": "rethink-project/dev-registry-domain#connector-reply-fix",
     "runtime-core": "github:rethink-project/dev-runtime-core#develop"
   }
 }
