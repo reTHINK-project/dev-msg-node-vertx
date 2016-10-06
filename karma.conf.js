@@ -14,11 +14,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
-<<<<<<< HEAD
       'test/**/*.spec.js'
-=======
-      'test/**/VertxProtoStub.spec.js'
->>>>>>> 90b90083c1613007bdcbfbf0ea6f99eb23dc98ff
     ],
 
     // list of files to exclude
