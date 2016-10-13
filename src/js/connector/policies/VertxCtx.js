@@ -30,38 +30,18 @@ var VertxCtx = function() {
 VertxCtx.prototype = ReThinkCtx.prototype;
 VertxCtx.prototype.constructor = VertxCtx;
 
-VertxCtx.prototype.authorise = function(message) {
-  var result;
-  if (this.pep._isToVerify(message)) {
-    result = this.pep.pdp.evaluatePolicies(message);
-    if (result === undefined || result === 'Not Applicable') {
-      result = this.defaultBehavior;
-      message.body.auth = false;
-    }
-    this.pep.actionsService.enforcePolicies(message, result);
-    if (result) {
-      message.body.auth = (message.body.auth === undefined) ? true : message.body.auth;
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    result = this.defaultBehavior;
-    if (result) {
-      message.body.auth = false;
-      return true;
-    } else {
-      return false;
-    }
-  }
-};
-
 VertxCtx.prototype.getPolicies = function() {
   return { serviceProviderPolicy: this.serviceProviderPolicy };
 };
 
-VertxCtx.prototype.loadConfigurations = function() {
-  this.defaultBehavior = true;
+VertxCtx.prototype.loadConfigurations = function() {};
+
+VertxCtx.prototype.prepareForEvaluation = function(message) {
+  return message;
+};
+
+VertxCtx.prototype.prepareToForward = function(message) {
+  return message;
 };
 
 VertxCtx.prototype.savePolicies = function(source, policy) {

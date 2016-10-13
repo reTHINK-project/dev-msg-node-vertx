@@ -28,7 +28,7 @@ var policiesConnector = new PoliciesConnector();
 print("[Connectors] Policies Connector Loaded");
 
 vertx.eventBus().consumer("mn:/policies-connector", function (message) {
-  print("[Policies-Connector][Received]: " + message.body());
+  //print("[Policies-Connector][Received]: " + message.body());
 
   var callback = function(msg) {
     return message.reply(msg);

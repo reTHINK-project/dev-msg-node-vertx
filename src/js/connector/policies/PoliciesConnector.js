@@ -28,14 +28,12 @@ var PoliciesConnector = function() {
 };
 
 PoliciesConnector.prototype.authorise = function(message, callback) {
-  callback(this.pep.authorise(JSON.parse(message.body())));
+  callback(this.pep.authoriseSync(JSON.parse(message.body())));
 };
 
-PoliciesConnector.prototype.addPolicy = function(policies) {
-  if (policies !== undefined) {
-    for (var i in policies) {
-      this.pep.addPolicy('SERVICE_PROVIDER', i, policies[i]);
-    }
+PoliciesConnector.prototype.addPolicy = function(policy) {
+  if (policy !== undefined) {
+    this.pep.addPolicy('SERVICE_PROVIDER', policy.key, policy);
   }
 };
 
