@@ -18,8 +18,7 @@
   ],
   "author": "reThink Project",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
+  "bugs": { "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
   },
   "homepage": "https://github.com/reTHINK-project/core-framework#readme",
   "devDependencies": {
