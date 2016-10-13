@@ -6,6 +6,8 @@ language: node_js
 sudo: required
 test: karma start
 before_install:
+  - export STORAGE_TYPE=RAM
+  - export EXPIRES=3600
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
@@ -15,6 +17,15 @@ before_install:
   - sudo apt-get install oracle-java8-installer
   - sudo apt-get install maven
   - export JAVA_HOME='/usr/lib/jvm/java-8-oracle/jre'
+  - cd ..
+  - git clone https://github.com/reTHINK-project/dev-registry-domain.git
+  - cd dev-registry-domain/server/
+  - sudo mvn dependency:resolve
+  - sudo mvn verify
+  - sudo mvn package
+  - sudo mvn exec:java &
+  - sleep 60
+  - cd ../../dev-msg-node-vertx
   - sudo mvn clean
   - sudo mvn compile
 install:
