@@ -46,7 +46,7 @@ public class PoliciesPipeHandler implements Handler<PipeContext> {
 
 	@Override
 	public void handle(PipeContext ctx) {
-		if (firstMessage) {
+		if (firstMessage && this.policies.length() != 0) {
 			ctx.getPipeline().getRegister().getEventBus().send("mn:/policies-connector-update", this.policies);
 			firstMessage = false;
 		}
