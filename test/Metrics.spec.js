@@ -6,10 +6,10 @@ describe('Listeners', function() {
 
   it('simple', function(done) {
 
-    let number = 100000;
+    let number = 100;
     let send;
 
-    this.timeout(number + 1000);
+    this.timeout(number * 2 + 2000);
 
     let sendMetrics = () => {
       let time = new Date().toJSON();
