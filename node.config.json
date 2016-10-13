@@ -3,7 +3,7 @@
     "domain": "ua.pt",
     "port": "9090",
     "registry": {
-      "url": "http://localhost:4567",
+      "url": "https://registry.hysmart.rethink.ptinovacao.pt",
       "retries": 2
     },
 	"globalregistry": {
