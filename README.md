@@ -1,6 +1,7 @@
 vertx.io based Message Node (VertxMN) [![Build Status](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx.svg?branch=develop)](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx)
 -------------------------------------
 
+
 ### Overview
 
 #### Functional location in the reTHINK Architecture
