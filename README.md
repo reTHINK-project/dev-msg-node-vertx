@@ -1,6 +1,7 @@
 vertx.io based Message Node (VertxMN) [![Build Status](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx.svg?branch=master)](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx)
 -------------------------------------
 
+
 ### Overview
 
 #### Functional location in the reTHINK Architecture
@@ -40,7 +41,7 @@ Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 * `NODE_REGISTRY_URL`
 * `NODE_GLOBAL_REGISTRY_URL`
 
-**Note:** In case Docker is not used the `node.config.json` configuration file is used. 
+**Note:** In case Docker is not used the `node.config.json` configuration file is used.
 
 
 #### 4. Build and run Docker
@@ -69,7 +70,7 @@ Tools needed:
 "Let's Encrypt" can be used to generate PEM formated certificates if you already have a DNS domain:
 * ```letsencrypt-auto certonly --manual -d <domain>```
 
-Convert the generated fullchain and private key files to "pkcs12" with openssl: 
+Convert the generated fullchain and private key files to "pkcs12" with openssl:
 * ```openssl pkcs12 -export -out keystore.pkcs12 -in <path>/fullchain.pem -inkey <path>/privkey.pem```
 
 Import the certificate to java keystore:

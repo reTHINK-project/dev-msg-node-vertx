@@ -15,7 +15,7 @@ describe('Listeners', function() {
     let bus = {
       postMessage: (msg) => {
         seq++;
-        console.log('postMessage: ', JSON.stringify(msg));
+        console.log('postMessage: ', JSON.stringify(msg), seq);
 
         if (seq === 1) {
           expect(msg).to.eql({
@@ -26,7 +26,7 @@ describe('Listeners', function() {
           //send subscribe msg...
           send({
             id: 1, type: 'subscribe', from: 'runtime:/alice/listeners/sm', to: 'domain://msg-node.ua.pt/sm',
-            body: { resource: 'resource://ua.pt/1', children: ['children1', 'children2'] }
+            body: { resource: 'resource://ua.pt/1', subscribe: ['resource://ua.pt/1', 'resource://ua.pt/1/changes'] }
           });
         }
 

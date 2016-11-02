@@ -34,12 +34,15 @@ describe('RegistryConnector', function() {
 		let proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'CREATE', from: "hyper-1", to: 'domain://registry.ua.pt/',
+			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.ua.pt/',
 			body: {
 				value: {
 					user: 'user://google.com/testuser10',
-					hypertyDescriptorURL: 'hyper-1',
-					hypertyURL: 'hyperty-instance://ua.pt/1'
+					url: 'hyperty-instance://ua.pt/1',
+					expires: 3600,
+					descriptor: 'hyperty-catalogue://ua.pt/.well-known/hyperty/hyper-1',
+					dataSchemes: ['test'],
+					resources:['test1', 'test2']
 				}
 			}
 		});
@@ -58,7 +61,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
-						body: { code: 200, via: protoURL, value: msg.body.value }
+						body: { code: 200, via: protoURL, description: 'Not Found' }
 					});
 
 					done();
@@ -74,9 +77,17 @@ describe('RegistryConnector', function() {
 		proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'READ', from: 'hyper-1', to: 'domain://registry.ua.pt/',
-			body: { resource: 'user://google.com/testuser10' }
+			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.ua.pt/',
+			body: {
+				auth: false,
+				resource: 'user://google.com/testuser10',
+				criteria : {
+					dataSchemes: ['test'],
+					resources:['test1', 'test2']
+				}
+			}
 		});
+
 	});
 
 });

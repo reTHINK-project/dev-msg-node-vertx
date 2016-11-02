@@ -46,8 +46,8 @@ RUN ["mvn", "package"]
 ENV MSG_NODE_CONFIG dev
 ADD node.config.json /build/node.config.json
 ADD server-keystore.jks /build/server-keystore.jks
+ADD policy.json /build/policy.json
 
 #Run msg-node
 EXPOSE 9090
 CMD ["mvn", "exec:java", "-Dexec.args='9090'"]
-

@@ -21,20 +21,31 @@
 * limitations under the License.
 **/
 
-var PoliciesConnector = function() {
-  var PEP = require('runtime-core/dist/PEP');
-  var VertxCtx = require('./VertxCtx');
-  this.pep = new PEP(new VertxCtx());
+var ReThinkCtx = require('runtime-core/dist/ReThinkCtx');
+
+var VertxCtx = function() {
+  ReThinkCtx.apply(this, arguments);
 };
 
-PoliciesConnector.prototype.authorise = function(message, callback) {
-  callback(this.pep.authoriseSync(JSON.parse(message.body())));
+VertxCtx.prototype = ReThinkCtx.prototype;
+VertxCtx.prototype.constructor = VertxCtx;
+
+VertxCtx.prototype.getPolicies = function() {
+  return { serviceProviderPolicy: this.serviceProviderPolicy };
 };
 
-PoliciesConnector.prototype.addPolicy = function(policy) {
-  if (policy !== undefined) {
-    this.pep.addPolicy('SERVICE_PROVIDER', policy.key, policy);
-  }
+VertxCtx.prototype.loadConfigurations = function() {};
+
+VertxCtx.prototype.prepareForEvaluation = function(message) {
+  return message;
 };
 
-module.exports = PoliciesConnector;
+VertxCtx.prototype.prepareToForward = function(message) {
+  return message;
+};
+
+VertxCtx.prototype.savePolicies = function(source, policy) {
+  this.serviceProviderPolicy = policy;
+};
+
+module.exports = VertxCtx;
