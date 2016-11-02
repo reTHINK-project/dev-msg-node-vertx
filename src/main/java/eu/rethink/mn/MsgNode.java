@@ -25,9 +25,8 @@ package eu.rethink.mn;
 
 import static java.lang.System.out;
 
+import eu.rethink.mn.component.AllocationManager;
 import eu.rethink.mn.component.GlobalRegistryConnector;
-import eu.rethink.mn.component.HypertyAllocationManager;
-import eu.rethink.mn.component.ObjectAllocationManager;
 import eu.rethink.mn.component.RegistryConnector;
 import eu.rethink.mn.component.SessionManager;
 import eu.rethink.mn.component.SubscriptionManager;
@@ -113,8 +112,7 @@ public class MsgNode extends AbstractVerticle {
 		final PipeRegistry register = new PipeRegistry(vertx, mgr, config.getDomain());
 		register.installComponent(new SubscriptionManager(register));
 		register.installComponent(new SessionManager(register));
-		register.installComponent(new HypertyAllocationManager(register));
-		register.installComponent(new ObjectAllocationManager(register));
+		register.installComponent(new AllocationManager(register));
 
 		final RegistryConnector rc = new RegistryConnector(register);
 		register.installComponent(rc);

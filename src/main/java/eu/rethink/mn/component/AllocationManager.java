@@ -38,51 +38,51 @@ import eu.rethink.mn.pipeline.message.ReplyCode;
 
 /**
  * @author micaelpedrosa@gmail.com
- * Address allocation manager for objects.
+ * @author lduarte.suil@gmail.com
+ * Address allocation manager for hyperties and objects.
  */
-public class ObjectAllocationManager implements IComponent {
+public class AllocationManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
 
 	final String baseURL;
-
-	public ObjectAllocationManager(PipeRegistry register) {
+	
+	public AllocationManager(PipeRegistry register) {
 		this.register = register;
-		this.name = "domain://msg-node." + register.getDomain()  + "/object-address-allocation";
+		this.name = "domain://msg-node." + register.getDomain()  + "/address-allocation";
 		this.baseURL = "://" + register.getDomain() + "/";
 	}
-
+	
 	@Override
 	public String getName() { return name; }
-
+	
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
 		final JsonObject body = msg.getBody();
-
+		
 		if(msg.getType().equals("create")) {
 			//process JSON msg requesting a number of available addresses
-			final String scheme = body.getString("scheme");
-
-			//on value
 			final JsonObject msgBodyValue = body.getJsonObject("value");
-			final int number = msgBodyValue.getInteger("number", 5);
-
+			final String scheme = body.getString("scheme");
+			
+			int number = msgBodyValue.getInteger("number", 5);
 			final List<String> allocated = allocate(ctx, scheme, number);
-
+		
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
 			reply.setFrom(name);
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
-
+			
 			final JsonObject value = new JsonObject();
 			value.put("allocated", new JsonArray(allocated));
-
+			
 			reply.getBody().put("value", value);
-
+			
 			ctx.reply(reply);
-		} else if(msg.getType().equals("delete")) {
+			
+		}  else if(msg.getType().equals("delete")) {
 			//process JSON msg releasing an address
 			final String resource = body.getString("resource");
 
@@ -97,7 +97,13 @@ public class ObjectAllocationManager implements IComponent {
 		int i = 0;
 		while(i < number) {
 			//find unique url, not in registry...
-			final String url = scheme + baseURL + UUID.randomUUID().toString();
+			String url;
+			if (scheme == null) {
+				url = "hyperty" + baseURL + UUID.randomUUID().toString();
+			} else {
+				url = scheme + baseURL + UUID.randomUUID().toString();
+			}
+			
 			if(ctx.getSession().allocate(url)) {
 				list.add(url);
 				i++;
