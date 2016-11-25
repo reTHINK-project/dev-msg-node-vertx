@@ -54,23 +54,33 @@ public class SessionManager implements IComponent {
 		final String runtimeURL = msg.getFrom();
 
 		if(type.equals("open")) {
+
 			//(new connection) request - ok
-			final String newRuntimeToken = UUID.randomUUID().toString();
-			final String runtimeSessionURL = runtimeURL + "/" + newRuntimeToken;
-			System.out.println("SESSION-OPEN: " + runtimeSessionURL);
+			String runtimeToken = UUID.randomUUID().toString();
+
+			PipeSession session = register.getSessionByRuntime(runtimeURL);
+			if (session != null) {
+				runtimeToken = session.getRuntimeSessionURL();
+				runtimeToken = runtimeToken.substring(runtimeToken.lastIndexOf("/") + 1);
+				System.out.println("USE EXISTENT SESSION: " + runtimeToken);
+			} else {
+				final String runtimeSessionURL = runtimeURL + "/" + runtimeToken;
+				System.out.println("SESSION-OPEN: " + runtimeSessionURL);
+
+				session = register.createSession(runtimeSessionURL);
+
+				//FIX: this hack should not be here! Maybe there should be a separated message flow to register the runtime SM?
+				session.addListener(runtimeURL + "/sm");
+			}
 			
-			final PipeSession session = register.createSession(runtimeSessionURL);
 			ctx.setSession(session);
-			
-			//FIX: this hack should not be here! Maybe there should be a separated message flow to register the runtime SM?
-			session.addListener(runtimeURL + "/sm");
-			
+
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
 			reply.setFrom(getName());
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
-			reply.getBody().put("runtimeToken", newRuntimeToken);
+			reply.getBody().put("runtimeToken", runtimeToken);
 			
 			ctx.reply(reply);
 			

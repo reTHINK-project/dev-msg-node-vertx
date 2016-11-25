@@ -15,7 +15,7 @@
         </encoder>
     </appender>
     
-    <logger name="BROKER" level="OFF">
+    <logger name="BROKER" level="DEBUG">
     	<appender-ref ref="FILE" />
   	</logger>
 

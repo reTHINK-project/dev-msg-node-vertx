@@ -126,4 +126,18 @@ public class PipeRegistry {
 	public PipeSession getSession(String runtimeSessionURL) {
 		return sessions.get(runtimeSessionURL);
 	}
+	
+	public PipeSession getSessionByRuntime(String runtimeURL) {
+		
+		PipeSession session = null;
+
+		for (Map.Entry<String, PipeSession> e : sessions.entrySet()) {
+			if (e.getKey().startsWith(runtimeURL)) {
+				session = sessions.get(e.getKey());
+			}
+		}
+		
+		return session;
+
+	}
 }
