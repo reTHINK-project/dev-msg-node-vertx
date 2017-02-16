@@ -61,7 +61,7 @@ describe('RegistryConnector', function() {
 				if (msg.id === 2) {
 					expect(msg).to.eql({
 						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
-						body: { code: 200, via: protoURL, description: 'Not Found' }
+						body: { code: 404, via: protoURL, description: 'Not Found' }
 					});
 
 					done();
