@@ -1,7 +1,7 @@
 addons:
   hosts:
-    - ua.pt
-    - msg-node.ua.pt
+    - localhost
+    - msg-node.localhost
 language: node_js
 sudo: required
 test: karma start
