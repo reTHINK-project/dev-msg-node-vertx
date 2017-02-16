@@ -4,7 +4,7 @@ import activate from '../src/js/client/VertxProtoStub';
 describe('RegistryConnector', function() {
 	let protoURL = 'hyperty-runtime://sp1/protostub/123';
 	let config = {
-		url: 'wss://msg-node.ua.pt:9090/ws',
+		url: 'wss://msg-node.localhost:9090/ws',
 		runtimeURL: 'runtime:/alice1'
 	};
 
@@ -17,7 +17,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
 						body: { code: 200, via: protoURL }
 					});
 
@@ -34,13 +34,13 @@ describe('RegistryConnector', function() {
 		let proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.ua.pt/',
+			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.localhost/',
 			body: {
 				value: {
 					user: 'user://google.com/testuser10',
-					url: 'hyperty-instance://ua.pt/1',
+					url: 'hyperty-instance://localhost/1',
 					expires: 3600,
-					descriptor: 'hyperty-catalogue://ua.pt/.well-known/hyperty/hyper-1',
+					descriptor: 'hyperty-catalogue://localhost/.well-known/hyperty/hyper-1',
 					dataSchemes: ['test'],
 					resources:['test1', 'test2']
 				}
@@ -60,7 +60,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.ua.pt/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
 						body: { code: 200, via: protoURL, description: 'Not Found' }
 					});
 
@@ -77,7 +77,7 @@ describe('RegistryConnector', function() {
 		proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.ua.pt/',
+			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.localhost/',
 			body: {
 				auth: false,
 				resource: 'user://google.com/testuser10',

@@ -52,7 +52,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice1'
     };
 
@@ -110,7 +110,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice-duplicated'
     };
 
@@ -185,7 +185,7 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice-reconnect'
     };
 
@@ -213,10 +213,10 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           /*expect something like -> {
-            id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
-            body: {code: 200, allocated: ['hyperty-instance://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+            id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
+            body: {code: 200, allocated: ['hyperty-instance://localhost/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://localhost/6e8f126b-1c56-4525-9a38-5dcd340194da']}
           }*/
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(2);
 
@@ -245,14 +245,14 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice2'
     };
 
     proto = activate(protoURL, bus, config).instance;
 
     send({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/hyperty-address-allocation',
       body: { value: { number: 2 } }
     });
   });
@@ -277,10 +277,10 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           /*expect something like -> {
-            id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
-            body: {code: 200, allocated: ['hyperty-instance://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+            id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
+            body: {code: 200, allocated: ['hyperty-instance://localhost/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://localhost/6e8f126b-1c56-4525-9a38-5dcd340194da']}
           }*/
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/object-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/object-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(1);
 
@@ -309,14 +309,14 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice2'
     };
 
     proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
 
     send({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/object-address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/object-address-allocation',
       body: { scheme: 'fake', childrenResources: ['message'], value: { number: 1 } }
     });
   });
@@ -341,10 +341,10 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           /*expect something like -> {
-            id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
-            body: {code: 200, allocated: ['hyperty-instance://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+            id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
+            body: {code: 200, allocated: ['hyperty-instance://localhost/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://localhost/6e8f126b-1c56-4525-9a38-5dcd340194da']}
           }*/
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(2);
 
@@ -373,14 +373,14 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice2'
     };
 
     proto = activate(protoURL, bus, config).instance;
 
     send({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/address-allocation',
       body: { value: { number: 2 } }
     });
   });
@@ -405,10 +405,10 @@ describe('VertxProtoStub', function() {
 
         if (seq === 1) {
           /*expect something like -> {
-            id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
-            body: {code: 200, allocated: ['hyperty-instance://ua.pt/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://ua.pt/6e8f126b-1c56-4525-9a38-5dcd340194da']}
+            id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation',
+            body: {code: 200, allocated: ['hyperty-instance://localhost/fbf7dc26-ff4f-454f-961e-22edda927561', 'hyperty-instance://localhost/6e8f126b-1c56-4525-9a38-5dcd340194da']}
           }*/
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(1);
 
@@ -437,14 +437,14 @@ describe('VertxProtoStub', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.ua.pt:9090/ws',
+      url: 'wss://msg-node.localhost:9090/ws',
       runtimeURL: 'runtime:/alice2'
     };
 
     proto = activate('hyperty-runtime://sp1/protostub/123', bus, config).instance;
 
     send({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/address-allocation',
       body: { scheme: 'fake', childrenResources: ['message'], value: { number: 1 } }
     });
   });

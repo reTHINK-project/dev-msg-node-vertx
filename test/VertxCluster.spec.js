@@ -11,8 +11,8 @@ describe('Cluster', function() {
 
     let seq = 0;
 
-    let aliceConfig = { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
-    let bobConfig = { url: 'wss://msg-node.ua.pt:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
+    let aliceConfig = { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime:/alice-1/cluster' };
+    let bobConfig = { url: 'wss://msg-node.localhost:9091/ws', runtimeURL: 'runtime:/bob-1/cluster' };
 
     let aliceProto;
     let bobProto;

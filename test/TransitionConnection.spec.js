@@ -20,7 +20,7 @@ describe('TransitionConnection', function() {
       postMessage: (msg) => {
         console.log('postMessage(1): ', JSON.stringify(msg));
         if (msg.id === 1) {
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/hyperty-address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(1);
 
@@ -68,11 +68,11 @@ describe('TransitionConnection', function() {
       }
     };
 
-    proto1 = activate(protoSP1URL, bus1, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
-    proto2 = activate(protoSP2URL, bus2, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
+    proto1 = activate(protoSP1URL, bus1, { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
+    proto2 = activate(protoSP2URL, bus2, { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
 
     send1({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/hyperty-address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/hyperty-address-allocation',
       body: { value: { number: 1 } }
     });
 
@@ -96,7 +96,7 @@ describe('TransitionConnection', function() {
       postMessage: (msg) => {
         console.log('postMessage(1): ', JSON.stringify(msg));
         if (msg.id === 1) {
-          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.ua.pt/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
           expect(msg.body.code).to.eql(200);
           expect(msg.body.value.allocated).to.have.length(1);
 
@@ -144,11 +144,11 @@ describe('TransitionConnection', function() {
       }
     };
 
-    proto1 = activate(protoSP1URL, bus1, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
-    proto2 = activate(protoSP2URL, bus2, { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
+    proto1 = activate(protoSP1URL, bus1, { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-1'}).instance;
+    proto2 = activate(protoSP2URL, bus2, { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime:/inter-domain-2'}).instance;
 
     send1({
-      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.ua.pt/address-allocation',
+      id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/address-allocation',
       body: { value: { number: 1 } }
     });
 
