@@ -1,7 +1,5 @@
 
 #vertx.io based Message Node (VertxMN) 
--------------------------------------
-
 
 ### Build status
 
