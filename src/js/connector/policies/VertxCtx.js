@@ -48,4 +48,8 @@ VertxCtx.prototype.savePolicies = function(source, policy) {
   this.serviceProviderPolicy = policy;
 };
 
+VertxCtx.prototype.isInterworkingProtoStub = function(url) {
+  return url;
+};
+
 module.exports = VertxCtx;
