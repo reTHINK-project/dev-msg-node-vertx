@@ -24,7 +24,7 @@
 var config = require(__dirname + '/../NodeConfig');
 
 var RegistryConnector = require('dev-registry-domain/connector');
-var registry = new RegistryConnector(config.registry.url, config.registry.retries);
+var registry = new RegistryConnector(config.registry);
 print("[Connectors] Registry Connector Loaded");
 
 vertx.eventBus().consumer("mn:/registry-connector", function (message) {

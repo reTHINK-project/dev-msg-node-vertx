@@ -34,13 +34,17 @@ public class HttpRequest {
     private CloseableHttpClient httpClient;
     private final Gson GSON;
 
-    public HttpRequest() throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
+    public HttpRequest(String trustStore, String trustPass, String keyStore, String keyPass, String keyPassphrase) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
+
+        System.out.println(trustPass);
+        System.out.println(keyPass);
+        System.out.println(keyPassphrase);
 
         GSON = new Gson();
 
         sslContext = SSLContexts.custom()
-                .loadTrustMaterial(new File("domain.jks"), "rethink".toCharArray())
-                .loadKeyMaterial(new File("connector.jks"), "rethink".toCharArray(), "rethink".toCharArray())
+                .loadTrustMaterial(new File(trustStore), trustPass.toCharArray())
+                .loadKeyMaterial(new File(keyStore), keyPass.toCharArray(), keyPassphrase.toCharArray())
                 .build();
 
         sslsf = new SSLConnectionSocketFactory(
@@ -52,6 +56,13 @@ public class HttpRequest {
         httpClient = HttpClients.custom()
                 .setSSLSocketFactory(sslsf)
                 .build();
+    }
+
+    public HttpRequest() {
+
+        GSON = new Gson();
+
+        httpClient = HttpClients.createDefault();
     }
 
     public String get(String url) throws IOException {
@@ -93,7 +104,9 @@ public class HttpRequest {
 
             String body = IOUtils.toString(entity.getContent());
 
-            return buildResponse(statusCode, body);
+            String json = buildResponse(statusCode, body);
+
+            return json;
 
         } finally {
             response.close();
