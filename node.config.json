@@ -3,7 +3,7 @@
     "domain": "localhost",
     "port": "9090",
     "registry": {
-      "url": "http://localhost:4567",
+      "url": "http://192.168.99.100:4568",
       "retries": 2
     },
 	"globalregistry": {

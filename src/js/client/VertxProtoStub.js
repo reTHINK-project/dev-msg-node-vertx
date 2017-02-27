@@ -68,6 +68,8 @@ class VertxProtoStub {
         }
       });
     });
+
+    _this._sendStatus('created');
   }
 
   /**
@@ -97,14 +99,20 @@ class VertxProtoStub {
   disconnect() {
     let _this = this;
 
+    _this._sendStatus('disconnected');
+
     _this._continuousOpen = false;
     if (_this._sock) {
       _this._sendClose();
     }
   }
 
+  //todo: add documentation
   _sendOpen(callback) {
     let _this = this;
+
+
+    this._sendStatus('in-progress');
 
     _this._id++;
     let msg = {
@@ -127,10 +135,10 @@ class VertxProtoStub {
             _this._runtimeSessionURL = _this._config.runtimeURL + '/' + reply.body.runtimeToken;
           }
 
-          _this._sendStatus('connected');
+          _this._sendStatus('live');
           callback();
         } else {
-          _this._sendStatus('disconnected', reply.body.desc);
+          _this._sendStatus('failed', reply.body.desc);
         }
       }
     };
@@ -161,6 +169,10 @@ class VertxProtoStub {
 
   _sendStatus(value, reason) {
     let _this = this;
+
+    console.log('[VertxProtostub status changed] to ', value);
+
+    _this._state = value;
 
     let msg = {
       type: 'update',
@@ -202,6 +214,8 @@ class VertxProtoStub {
     msg.body.via = this._runtimeProtoStubURL;
     this._bus.postMessage(msg);
   }
+
+  // add documentation
 
   _open(callback) {
     let _this = this;
