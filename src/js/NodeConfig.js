@@ -21,7 +21,7 @@
 * limitations under the License.
 **/
 
-var config = require(__dirname + '/../../node.config.json');
+var config = require('../../node.config.json');
 
 var selection = process.env.MSG_NODE_CONFIG;
 if (!selection) {
