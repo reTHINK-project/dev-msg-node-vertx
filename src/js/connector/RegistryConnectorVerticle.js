@@ -21,9 +21,13 @@
 * limitations under the License.
 **/
 
-var config = require(__dirname + '/../NodeConfig');
+var config = require('../NodeConfig');
 
-var RegistryConnector = require('dev-registry-domain/connector');
+var registryConnectorPath = 'dev-registry-domain/connector';
+
+print('loading registry connector from ', registryConnectorPath);
+
+var RegistryConnector = require(registryConnectorPath);
 var registry = new RegistryConnector(config.registry.url, config.registry.retries);
 print("[Connectors] Registry Connector Loaded");
 
