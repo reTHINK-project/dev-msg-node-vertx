@@ -36,10 +36,6 @@ public class HttpRequest {
 
     public HttpRequest(String trustStore, String trustPass, String keyStore, String keyPass, String keyPassphrase) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, UnrecoverableKeyException, KeyManagementException {
 
-        System.out.println(trustPass);
-        System.out.println(keyPass);
-        System.out.println(keyPassphrase);
-
         GSON = new Gson();
 
         sslContext = SSLContexts.custom()
@@ -115,6 +111,7 @@ public class HttpRequest {
     }
 
     public String del(String url) throws IOException {
+
 
         HttpDelete httpDel = new HttpDelete(url);
 
