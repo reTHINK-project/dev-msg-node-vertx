@@ -15,24 +15,24 @@
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-core</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-lang-js</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-hazelcast</artifactId>
-			<version>3.1.0</version>
+			<version>3.3.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.21</version>
 		</dependency>
-		<dependency> 
+		<dependency>
   			<groupId>ch.qos.logback</groupId>
   			<artifactId>logback-classic</artifactId>
   			<version>1.1.7</version>
