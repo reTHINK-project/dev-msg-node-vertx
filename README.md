@@ -1,5 +1,5 @@
 
-#vertx.io based Message Node (VertxMN) 
+#vertx.io based Message Node (VertxMN)
 
 ### Build status
 
@@ -46,6 +46,8 @@ Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 * `NODE_PORT`
 * `NODE_REGISTRY_URL`
 * `NODE_GLOBAL_REGISTRY_URL`
+* `NODE_REGISTRY_RETRIES`
+* `NODE_REGISTRY_SSL`
 
 **Note:** In case Docker is not used the `node.config.json` configuration file is used.
 
@@ -151,4 +153,3 @@ Example configuration:
     keyPassphrase: 'rethink'
   }
 }
-

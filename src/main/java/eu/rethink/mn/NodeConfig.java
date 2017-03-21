@@ -38,7 +38,15 @@ public class NodeConfig {
 	int port = 0;
 	
 	String registryUrl = null;
+	boolean registrySSL = false;
+	int registryRetries = 0;
 	String globalRegistryUrl = null;
+	
+	public boolean getRegistrySSL(){ return registrySSL; }
+	public void setRegistrySSL(boolean registrySSL) { this.registrySSL = registrySSL;}
+	
+	public int getRegistryRetries() { return registryRetries; }
+	public void setRegistryRetries(int registryRetries) { this.registryRetries = registryRetries; }
 	
 	public String getSelected() { return selected; }
 	public void setSelected(String selected) { this.selected = selected; }
@@ -155,6 +163,20 @@ public class NodeConfig {
 		    	System.exit(-1);
 		    }
 		    
+		    final String registrySsl = System.getenv("NODE_REGISTRY_SSL");
+		    if (registrySsl == null) {
+		    	System.out.println("[Config] NODE_REGISTRY_SSL variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setRegistrySSL(Boolean.parseBoolean((registrySsl)));
+		    
+		    final String registryRetries = System.getenv("NODE_REGISTRY_RETRIES");
+		    if (registryRetries == null) {
+		    	System.out.println("[Config] NODE_REGISTRY_RETRIES variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setRegistryRetries(Integer.parseInt(registryRetries));
+		    
 		    config.setGlobalRegistryUrl(System.getenv("NODE_GLOBAL_REGISTRY_URL"));
 		    if (config.getGlobalRegistryUrl() == null) {
 		    	System.out.println("[Config] NODE_GLOBAL_REGISTRY_URL variable not found!");
@@ -165,12 +187,12 @@ public class NodeConfig {
 		    e.printStackTrace();
 		    System.exit(-1);
 		}
-		    
+		System.out.println("CONFIG:    " + config.toString() );
 		return config;
 	}
-	
 	@Override
 	public String toString() {
 		return "{ selected: " + selected + ", domain: " + domain + ", port: " + port  + ", registry.url: " + registryUrl + ", globalregistry.url: " + globalRegistryUrl + "}";
 	}
+
 }

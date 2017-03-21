@@ -33,11 +33,16 @@ if (selection !== "env") {
 	//load from config file
 	configSelect = config[selection];
 } else {
+	var retries = Number(process.env.NODE_REGISTRY_RETRIES);
+	var ssl = (process.env.NODE_REGISTRY_SSL === "true");
 	//load from environment variables
 	configSelect = {
 		registry: {
       url: process.env.NODE_REGISTRY_URL,
-      retries: 2
+      retries: retries,
+			ssl: {
+        enabled: ssl
+      }
 		},
 		globalregistry: {
 			url: process.env.NODE_GLOBAL_REGISTRY_URL
