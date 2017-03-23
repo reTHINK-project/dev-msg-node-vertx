@@ -35,6 +35,7 @@ if (selection !== "env") {
 } else {
 	var retries = Number(process.env.NODE_REGISTRY_RETRIES);
 	var ssl = (process.env.NODE_REGISTRY_SSL === "true");
+  var ownCert = (process.env.NODE_REGISTRY_OWN_CERTIFICATES === "true");
   console.log('ACTUAL PATH', __dirname);
 	//load from environment variables
 	if (ssl == false) {
@@ -50,14 +51,7 @@ if (selection !== "env") {
 				url: process.env.NODE_GLOBAL_REGISTRY_URL
 			}
 		};
-	} else {
-		/*
-		NODE_REGISTRY_TRUST_STORE
-		NODE_REGISTRY_TRUST_STORE_PASS
-		NODE_REGISTRY_KEY_STORE
-		NODE_REGISTRY_KEY_STORE_PASS
-		NODE_REGISTRY_KEY_PASS_PHRASE
-		*/
+	} else if(! ownCert) {
 		configSelect = {
 			registry: {
 					url: process.env.NODE_REGISTRY_URL,
@@ -76,7 +70,25 @@ if (selection !== "env") {
 			}
 		};
 
-	}
+	} else {
+    configSelect = {
+      registry: {
+          url: process.env.NODE_REGISTRY_URL,
+        retries: retries,
+        ssl: {
+          enabled: ssl,
+          trustStore: process.env.NODE_REGISTRY_TRUST_STORE,
+          trustStorePass: process.env.NODE_REGISTRY_TRUST_STORE_PASS,
+          keyStore: process.env.NODE_REGISTRY_KEY_STORE,
+          keyStorePass: process.env.NODE_REGISTRY_KEY_STORE_PASS,
+          keyPassphrase: process.env.NODE_REGISTRY_KEY_PASS_PHRASE
+        }
+      },
+      globalregistry: {
+        url: process.env.NODE_GLOBAL_REGISTRY_URL
+      }
+    };
+  }
 
 }
 
