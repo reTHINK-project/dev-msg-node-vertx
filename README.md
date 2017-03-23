@@ -48,6 +48,12 @@ Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 * `NODE_GLOBAL_REGISTRY_URL`
 * `NODE_REGISTRY_RETRIES`
 * `NODE_REGISTRY_SSL`
+* `NODE_REGISTRY_OWN_CERTIFICATES`
+* `NODE_REGISTRY_TRUST_STORE`
+* `NODE_REGISTRY_TRUST_STORE_PASS`
+* `NODE_REGISTRY_KEY_STORE`
+* `NODE_REGISTRY_KEY_STORE_PASS`
+* `NODE_REGISTRY_KEY_PASS_PHRASE`
 
 **Note:** In case Docker is not used the `node.config.json` configuration file is used.
 
