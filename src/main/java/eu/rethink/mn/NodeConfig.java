@@ -38,9 +38,30 @@ public class NodeConfig {
 	int port = 0;
 	
 	String registryUrl = null;
-	boolean registrySSL = false;
 	int registryRetries = 0;
 	String globalRegistryUrl = null;
+	
+	boolean registrySSL = false;
+	String registryTrustStore = null;
+	String registryTrustStorePass = null;
+	String keyStore= null;
+	String keyStorePass = null;
+	String keyPassPhrase = null;
+	
+    public String getRegistryTrustStore() { return registryTrustStore; }
+    public void setRegistryTrustStore(String registryTrustStore) { this.registryTrustStore = registryTrustStore; }
+
+    public String getRegistryTrustStorePass() { return registryTrustStorePass; }
+    public void setRegistryTrustStorePass(String registryTrustStorePass) { this.registryTrustStorePass = registryTrustStorePass; }
+
+    public String getKeyStore() { return keyStore; }
+    public void setKeyStore(String keyStore) { this.keyStore = keyStore; }
+
+    public String getKeyStorePass() { return keyStorePass; }
+    public void setKeyStorePass(String keyStorePass) { this.keyStorePass = keyStorePass; }
+
+    public String getKeyPassPhrase() { return keyPassPhrase; }
+    public void setKeyPassPhrase(String keyPassPhrase) { this.keyPassPhrase = keyPassPhrase; }
 	
 	public boolean getRegistrySSL(){ return registrySSL; }
 	public void setRegistrySSL(boolean registrySSL) { this.registrySSL = registrySSL;}
@@ -182,6 +203,35 @@ public class NodeConfig {
 		    	System.out.println("[Config] NODE_GLOBAL_REGISTRY_URL variable not found!");
 		    	System.exit(-1);
 		    }
+		    
+		    /*config.setRegistryTrustStore(System.getenv("NODE_REGISTRY_TRUST_STORE"));
+		    if (config.getRegistryTrustStore() == null && config.getRegistrySSL()) {
+		    	System.out.println("[Config] NODE_REGISTRY_TRUST_STORE variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setRegistryTrustStorePass(System.getenv("NODE_REGISTRY_TRUST_STORE_PASS"));
+		    if (config.getRegistryTrustStorePass() == null && config.getRegistrySSL()) {
+		    	System.out.println("[Config] NODE_REGISTRY_TRUST_STORE_PASS variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setKeyStore(System.getenv("NODE_REGISTRY_KEY_STORE"));
+		    if (config.getKeyStore() == null && config.getRegistrySSL()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_STORE variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setKeyStorePass(System.getenv("NODE_REGISTRY_KEY_STORE_PASS"));
+		    if (config.getKeyStorePass() == null && config.getRegistrySSL()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_STORE_PASS variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setKeyPassPhrase(System.getenv("NODE_REGISTRY_KEY_PASS_PHRASE"));
+		    if (config.getKeyPassPhrase() == null && config.getRegistrySSL()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_PASS_PHRASE variable not found!");
+		    	System.exit(-1);
+		    }*/
 		    
 		} catch (Exception e) {
 		    e.printStackTrace();

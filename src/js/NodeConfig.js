@@ -25,7 +25,7 @@ var config = require('../../node.config.json');
 
 var selection = process.env.MSG_NODE_CONFIG;
 if (!selection) {
-	selection = "dev";
+  selection = "dev";
 }
 
 var configSelect;
@@ -35,19 +35,49 @@ if (selection !== "env") {
 } else {
 	var retries = Number(process.env.NODE_REGISTRY_RETRIES);
 	var ssl = (process.env.NODE_REGISTRY_SSL === "true");
+  console.log('ACTUAL PATH', __dirname);
 	//load from environment variables
-	configSelect = {
-		registry: {
-      url: process.env.NODE_REGISTRY_URL,
-      retries: retries,
-			ssl: {
-        enabled: ssl
-      }
-		},
-		globalregistry: {
-			url: process.env.NODE_GLOBAL_REGISTRY_URL
-		}
-	};
+	if (ssl == false) {
+		configSelect = {
+			registry: {
+					url: process.env.NODE_REGISTRY_URL,
+				retries: retries,
+				ssl: {
+					enabled: ssl
+				}
+			},
+			globalregistry: {
+				url: process.env.NODE_GLOBAL_REGISTRY_URL
+			}
+		};
+	} else {
+		/*
+		NODE_REGISTRY_TRUST_STORE
+		NODE_REGISTRY_TRUST_STORE_PASS
+		NODE_REGISTRY_KEY_STORE
+		NODE_REGISTRY_KEY_STORE_PASS
+		NODE_REGISTRY_KEY_PASS_PHRASE
+		*/
+		configSelect = {
+			registry: {
+					url: process.env.NODE_REGISTRY_URL,
+				retries: retries,
+				ssl: {
+					enabled: ssl,
+					trustStore: __dirname + '/truststore.jks',
+			    trustStorePass: 'rethink',
+			    keyStore: __dirname + '/connector.jks',
+			    keyStorePass: 'rethink',
+			    keyPassphrase: 'rethink'
+				}
+			},
+			globalregistry: {
+				url: process.env.NODE_GLOBAL_REGISTRY_URL
+			}
+		};
+
+	}
+
 }
 
 
