@@ -62,6 +62,7 @@ class VertxProtoStub {
     this._reOpen = false;
 
     bus.addListener('*', (msg) => {
+      console.log('[VertxProtoStub] outgoing message: ', msg);
       _this._open(() => {
         if (_this._filter(msg)) {
           msg.body.via = this._runtimeProtoStubURL;
