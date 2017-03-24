@@ -1,5 +1,11 @@
-vertx.io based Message Node (VertxMN) [![Build Status](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx.svg?branch=master)](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx)
--------------------------------------
+
+#vertx.io based Message Node (VertxMN) 
+
+### Build status
+
+| Master                                   | Develop                                  |
+| ---------------------------------------- | ---------------------------------------- |
+| [![Build Status](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx.svg?branch=master)](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx) | [![Build Status](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx.svg?branch=develop)](https://travis-ci.org/reTHINK-project/dev-msg-node-vertx)
 
 
 ### Overview

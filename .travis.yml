@@ -1,7 +1,7 @@
 addons:
   hosts:
-    - ua.pt
-    - msg-node.ua.pt
+    - localhost
+    - msg-node.localhost
 language: node_js
 sudo: required
 test: karma start
@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get install maven
   - export JAVA_HOME='/usr/lib/jvm/java-8-oracle/jre'
   - cd ..
-  - git clone https://github.com/reTHINK-project/dev-registry-domain.git
+  - git clone --branch=develop https://github.com/reTHINK-project/dev-registry-domain.git
   - cd dev-registry-domain/server/
   - sudo mvn dependency:resolve
   - sudo mvn verify
