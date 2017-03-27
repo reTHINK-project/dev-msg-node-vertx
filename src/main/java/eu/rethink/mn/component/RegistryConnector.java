@@ -32,7 +32,7 @@ import eu.rethink.mn.pipeline.PipeRegistry;
 
 /**
  * @author micaelpedrosa@gmail.com
- * Intercepts and forwards messages (request and response) to the domain registry.
+ * Intercepts and forwards messages (request and response) to the domain registry. 
  */
 public class RegistryConnector implements IComponent {
 	final String name;
@@ -52,27 +52,15 @@ public class RegistryConnector implements IComponent {
 		System.out.println("[RegistryConnector.handle]" + msg);
 
 		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
-
 			if(event.succeeded()) {
 				//reply: {"123-1":{"catalogAddress":"12345678","guid":"123131241241241","lastUpdate":"2015-11-30"}}
 				final Object val = event.result().body();
-				final JsonObject body = new JsonObject(val.toString());
-				final int code = body.getInteger("code");
-
 				final PipeMessage replyMsg = new PipeMessage();
 				replyMsg.setId(msg.getId());
 				replyMsg.setFrom(msg.getTo());
 				replyMsg.setTo(msg.getFrom());
-				replyMsg.setBody(body);
-
-				switch(code){
-
-					case 200: replyMsg.setReplyCode(ReplyCode.OK); break;
-					case 404: replyMsg.setReplyCode(ReplyCode.NOT_FOUND); break;
-					case 500:
-					default: replyMsg.setReplyCode(ReplyCode.ERROR); break;
-				}
-
+				replyMsg.setBody(new JsonObject(val.toString()));
+				replyMsg.setReplyCode(ReplyCode.OK);
 				ctx.reply(replyMsg);
 			}else {
 				ctx.fail(name, "Error contacting domain registry");

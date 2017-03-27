@@ -1,7 +1,7 @@
 import activate from '../src/js/client/VertxProtoStub';
 
 describe('Listeners', function() {
-  let config = { url: 'wss://msg-node.localhost:9090/ws', runtimeURL: 'runtime://domain-1/listeners' };
+  let config = { url: 'wss://msg-node.ua.pt:9090/ws', runtimeURL: 'runtime://domain-1/listeners' };
   let protoURL = 'hyperty-runtime://sp1/protostub';
 
   it('simple', function(done) {
@@ -77,7 +77,7 @@ describe('Listeners', function() {
     proto.connect();
 
     send({
-      id: 0, type: 'subscribe', from: 'runtime://metrics/test', to: 'domain://msg-node.localhost/sm',
+      id: 0, type: 'subscribe', from: 'runtime://metrics/test', to: 'domain://msg-node.ua.pt/sm',
       body: { subscribe: ['hyper-1', 'hyper-2'] }
     });
 

@@ -24,7 +24,7 @@
 package eu.rethink.mn.pipeline.message;
 
 public enum ReplyCode {
-	OK(200, "OK"), ERROR(500, "Internal Server Error"), NOT_FOUND(404, "Not Found"); 
+	OK(200, "OK"), ERROR(500, "Internal Server Error"); 
 	
 	int code;
 	String desc;
