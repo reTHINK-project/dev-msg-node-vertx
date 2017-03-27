@@ -62,17 +62,12 @@ class VertxProtoStub {
     this._reOpen = false;
 
     bus.addListener('*', (msg) => {
-      console.log('[VertxProtoStub] outgoing message: ', msg);
       _this._open(() => {
         if (_this._filter(msg)) {
-          msg.body.via = this._runtimeProtoStubURL;
-          console.log('[VertxProtoStub: ProtoStub -> MN]', msg);
           _this._sock.send(JSON.stringify(msg));
         }
       });
     });
-
-    _this._sendStatus('created');
   }
 
   /**
@@ -102,20 +97,14 @@ class VertxProtoStub {
   disconnect() {
     let _this = this;
 
-    _this._sendStatus('disconnected');
-
     _this._continuousOpen = false;
     if (_this._sock) {
       _this._sendClose();
     }
   }
 
-  //todo: add documentation
   _sendOpen(callback) {
     let _this = this;
-
-
-    this._sendStatus('in-progress');
 
     _this._id++;
     let msg = {
@@ -138,10 +127,10 @@ class VertxProtoStub {
             _this._runtimeSessionURL = _this._config.runtimeURL + '/' + reply.body.runtimeToken;
           }
 
-          _this._sendStatus('live');
+          _this._sendStatus('connected');
           callback();
         } else {
-          _this._sendStatus('failed', reply.body.desc);
+          _this._sendStatus('disconnected', reply.body.desc);
         }
       }
     };
@@ -172,10 +161,6 @@ class VertxProtoStub {
 
   _sendStatus(value, reason) {
     let _this = this;
-
-    console.log('[VertxProtostub status changed] to ', value);
-
-    _this._state = value;
 
     let msg = {
       type: 'update',
@@ -215,11 +200,8 @@ class VertxProtoStub {
     if (!msg.body) msg.body = {};
 
     msg.body.via = this._runtimeProtoStubURL;
-    console.log('[VertxProtoStub: MN -> ProtoStub]', msg);
     this._bus.postMessage(msg);
   }
-
-  // add documentation
 
   _open(callback) {
     let _this = this;
@@ -244,15 +226,12 @@ class VertxProtoStub {
 
       _this._sock.onmessage = function(e) {
         let msg = JSON.parse(e.data);
-        console.log('[VertxProtoStub: MN -> SOCKET ON MESSAGE]', msg);
         if (msg.from === 'mn:/session') {
           if (_this._sessionCallback) {
             _this._sessionCallback(msg);
           }
         } else {
-          if (_this._filter(msg)) {
-            _this._deliver(msg);
-          }
+          _this._deliver(msg);
         }
       };
 

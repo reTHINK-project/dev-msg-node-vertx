@@ -25,23 +25,23 @@ describe('Listeners', function() {
 
           //send subscribe msg...
           send({
-            id: 1, type: 'subscribe', from: 'runtime:/alice/listeners/sm', to: 'domain://msg-node.localhost/sm',
-            body: { resource: 'resource://localhost/1', subscribe: ['resource://localhost/1', 'resource://localhost/1/changes'] }
+            id: 1, type: 'subscribe', from: 'runtime:/alice/listeners/sm', to: 'domain://msg-node.ua.pt/sm',
+            body: { resource: 'resource://ua.pt/1', subscribe: ['resource://ua.pt/1', 'resource://ua.pt/1/changes'] }
           });
         }
 
         if (seq === 2) {
           expect(msg).to.eql({
-            id: 1, type: 'response', from: 'domain://msg-node.localhost/sm', to: 'runtime:/alice/listeners/sm',
+            id: 1, type: 'response', from: 'domain://msg-node.ua.pt/sm', to: 'runtime:/alice/listeners/sm',
             body: { code: 200, via: protoURL }
           });
 
-          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes' });
+          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1/changes' });
         }
 
         if (seq === 3) {
           expect(msg).to.eql({
-            id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes',
+            id: 2, type: 'ping', from: 'publisher', to: 'resource://ua.pt/1/changes',
             body: { via: protoURL }
           });
 
@@ -56,7 +56,7 @@ describe('Listeners', function() {
     };
 
     let config = {
-      url: 'wss://msg-node.localhost:9090/ws',
+      url: 'wss://msg-node.ua.pt:9090/ws',
       runtimeURL: 'runtime:/alice/listeners'
     };
 

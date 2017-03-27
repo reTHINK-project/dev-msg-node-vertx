@@ -24,7 +24,6 @@
 package eu.rethink.mn.pipeline;
 
 import java.util.Iterator;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,6 @@ public class PipeContext {
 	 * @return RuntimeURL registered in the vertx EventBus.
 	 */
 	public String resolve(String url) {
-		logger.info("RESOLVED: " + url + " - TO " + pipeline.register.urlSpace.get(url));
 		return pipeline.register.urlSpace.get(url);
 	}
 
@@ -96,7 +94,6 @@ public class PipeContext {
 			}
 		} else {
 			final String url = resolve(msg.getTo());
-			logger.info("RESOLVED TO: " + url);
 			if(url != null) {
 				//System.out.println("OUT(" + url + "): " + msg);
 				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
