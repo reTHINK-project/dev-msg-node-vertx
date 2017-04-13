@@ -1,5 +1,5 @@
 
-#vertx.io based Message Node (VertxMN) 
+#vertx.io based Message Node (VertxMN)
 
 ### Build status
 
@@ -46,6 +46,14 @@ Config entry is selected with an environment variable `MSG_NODE_CONFIG`.
 * `NODE_PORT`
 * `NODE_REGISTRY_URL`
 * `NODE_GLOBAL_REGISTRY_URL`
+* `NODE_REGISTRY_RETRIES`
+* `NODE_REGISTRY_SSL`
+* `NODE_REGISTRY_OWN_CERTIFICATES`
+* `NODE_REGISTRY_TRUST_STORE`
+* `NODE_REGISTRY_TRUST_STORE_PASS`
+* `NODE_REGISTRY_KEY_STORE`
+* `NODE_REGISTRY_KEY_STORE_PASS`
+* `NODE_REGISTRY_KEY_PASS_PHRASE`
 
 **Note:** In case Docker is not used the `node.config.json` configuration file is used.
 
@@ -130,3 +138,24 @@ These are implementations of `Handler<PipeContext>`, and are added to the pipeli
 #### Use of PipeContext
 
 Both types receive a `PipeContext` in the **handle** method when a message should be processed by the component. PipeContext gives access to the message with the `getMessage()` method, but also provides other useful methods like:* `next()` method used in Interceptors that order the pipeline to execute the next interceptor. If no other interceptor exits, a delivery is proceeded.* `deliver()` used internally by the pipeline, but can be also used to ignore all other pipeline handlers and deliver the message directly to the component that has the address of "msg.to".* `fail(String from, String error)` interrupts the pipeline flow and sends an error message back to the original "msg.from". The "msg.from" of the reply is configured with the first parameter.* `reply(PipeMessage reply)` does nothing to the pipeline flow and sends a reply back to original resource channel. Other similar and useful methods exists: `replyOK(String from)` and `replyError(String from, String error)`* `disconnect()` order the underlying resource channel to disconnect.
+
+#### Registry Connector configuration
+
+By default **SSL/TLS is disabled** in the Registry Connector.
+In order to enable SSL/TLS in the communication Registry Connector <-> Domain Registry, please refer to the [Domain Registry Connector Manual](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/RegistryConnectorManual.md) and [Certificate Authority Guide](https://github.com/reTHINK-project/dev-registry-domain/blob/master/docs/CertificationManual.md)
+
+Example configuration:
+```
+# Example SSL/TLS config in node.config.json
+"registry": {
+  url: 'https://citysdk.tecnico.ulisboa.pt',
+  retries: 2
+  ssl: {
+    enabled: true,
+    trustStore: 'domain.jks',
+    trustStorePass: 'rethink',
+    keyStore: 'connector.jks',
+    keyStorePass: 'rethink',
+    keyPassphrase: 'rethink'
+  }
+}

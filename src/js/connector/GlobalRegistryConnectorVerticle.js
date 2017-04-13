@@ -21,9 +21,9 @@
 * limitations under the License.
 **/
 
-var config = require(__dirname + '/../NodeConfig');
+var config = require('../NodeConfig');
 
-var GlobalRegistryConnector = require(__dirname + '/registry/GlobalRegistryConnector');
+var GlobalRegistryConnector = require('registry/GlobalRegistryConnector');
 var globalRegistry = new GlobalRegistryConnector(config.globalregistry.url);
 print("[Connectors] Global Registry Connector Loaded");
 

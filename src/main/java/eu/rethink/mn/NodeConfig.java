@@ -40,6 +40,40 @@ public class NodeConfig {
 	String registryUrl = null;
 	String globalRegistryUrl = null;
 	
+	int registryRetries = 0;
+	boolean registrySSL = false;
+	String registryTrustStore = null;
+	String registryTrustStorePass = null;
+	String keyStore= null;
+	String keyStorePass = null;
+	String keyPassPhrase = null;
+	
+	boolean registryOwnCertificates = false;
+	
+    public boolean isRegistryOwnCertificates() { return registryOwnCertificates; }
+    public void setRegistryOwnCertificates(boolean registryOwnCertificates) { this.registryOwnCertificates = registryOwnCertificates; }
+	
+    public String getRegistryTrustStore() { return registryTrustStore; }
+    public void setRegistryTrustStore(String registryTrustStore) { this.registryTrustStore = registryTrustStore; }
+
+    public String getRegistryTrustStorePass() { return registryTrustStorePass; }
+    public void setRegistryTrustStorePass(String registryTrustStorePass) { this.registryTrustStorePass = registryTrustStorePass; }
+
+    public String getKeyStore() { return keyStore; }
+    public void setKeyStore(String keyStore) { this.keyStore = keyStore; }
+
+    public String getKeyStorePass() { return keyStorePass; }
+    public void setKeyStorePass(String keyStorePass) { this.keyStorePass = keyStorePass; }
+
+    public String getKeyPassPhrase() { return keyPassPhrase; }
+    public void setKeyPassPhrase(String keyPassPhrase) { this.keyPassPhrase = keyPassPhrase; }
+	
+	public boolean getRegistrySSL(){ return registrySSL; }
+	public void setRegistrySSL(boolean registrySSL) { this.registrySSL = registrySSL;}
+	
+	public int getRegistryRetries() { return registryRetries; }
+	public void setRegistryRetries(int registryRetries) { this.registryRetries = registryRetries; }
+	
 	public String getSelected() { return selected; }
 	public void setSelected(String selected) { this.selected = selected; }
 
@@ -155,9 +189,60 @@ public class NodeConfig {
 		    	System.exit(-1);
 		    }
 		    
+		    final String registrySsl = System.getenv("NODE_REGISTRY_SSL");
+		    if (registrySsl == null) {
+		    	System.out.println("[Config] NODE_REGISTRY_SSL variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setRegistrySSL(Boolean.parseBoolean((registrySsl)));
+		    
+		    final String registryRetries = System.getenv("NODE_REGISTRY_RETRIES");
+		    if (registryRetries == null) {
+		    	System.out.println("[Config] NODE_REGISTRY_RETRIES variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setRegistryRetries(Integer.parseInt(registryRetries));
+		    
 		    config.setGlobalRegistryUrl(System.getenv("NODE_GLOBAL_REGISTRY_URL"));
 		    if (config.getGlobalRegistryUrl() == null) {
 		    	System.out.println("[Config] NODE_GLOBAL_REGISTRY_URL variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    final String registryOwnCerts = System.getenv("NODE_REGISTRY_OWN_CERTIFICATES");
+		    if (registryOwnCerts == null) {
+		    	System.out.println("[Config] NODE_REGISTRY_OWN_CERTIFICATES variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setRegistryOwnCertificates(Boolean.parseBoolean((registryOwnCerts)));
+		    
+		    
+		    config.setRegistryTrustStore(System.getenv("NODE_REGISTRY_TRUST_STORE"));
+		    if (config.getRegistryTrustStore() == null && config.getRegistrySSL() && config.isRegistryOwnCertificates()) {
+		    	System.out.println("[Config] NODE_REGISTRY_TRUST_STORE variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setRegistryTrustStorePass(System.getenv("NODE_REGISTRY_TRUST_STORE_PASS"));
+		    if (config.getRegistryTrustStorePass() == null && config.getRegistrySSL() && config.isRegistryOwnCertificates()) {
+		    	System.out.println("[Config] NODE_REGISTRY_TRUST_STORE_PASS variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setKeyStore(System.getenv("NODE_REGISTRY_KEY_STORE"));
+		    if (config.getKeyStore() == null && config.getRegistrySSL() && config.isRegistryOwnCertificates()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_STORE variable not found!");
+		    	System.exit(-1);
+		    }
+		    
+		    config.setKeyStorePass(System.getenv("NODE_REGISTRY_KEY_STORE_PASS"));
+		    if (config.getKeyStorePass() == null && config.getRegistrySSL() && config.isRegistryOwnCertificates()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_STORE_PASS variable not found!");
+		    	System.exit(-1);
+		    }
+		    config.setKeyPassPhrase(System.getenv("NODE_REGISTRY_KEY_PASS_PHRASE"));
+		    if (config.getKeyPassPhrase() == null && config.getRegistrySSL() && config.isRegistryOwnCertificates()) {
+		    	System.out.println("[Config] NODE_REGISTRY_KEY_PASS_PHRASE variable not found!");
 		    	System.exit(-1);
 		    }
 		    
@@ -165,12 +250,12 @@ public class NodeConfig {
 		    e.printStackTrace();
 		    System.exit(-1);
 		}
-		    
+		System.out.println("CONFIG:    " + config.toString() );
 		return config;
 	}
-	
 	@Override
 	public String toString() {
 		return "{ selected: " + selected + ", domain: " + domain + ", port: " + port  + ", registry.url: " + registryUrl + ", globalregistry.url: " + globalRegistryUrl + "}";
 	}
+
 }

@@ -65,6 +65,8 @@ class VertxProtoStub {
       console.log('[VertxProtoStub] outgoing message: ', msg);
       _this._open(() => {
         if (_this._filter(msg)) {
+          console.log('[VertxProtoStub] next if needs to be checked/removed!!!!');
+          if (!msg.body) msg.body = {};
           msg.body.via = this._runtimeProtoStubURL;
           console.log('[VertxProtoStub: ProtoStub -> MN]', msg);
           _this._sock.send(JSON.stringify(msg));
@@ -114,8 +116,7 @@ class VertxProtoStub {
   _sendOpen(callback) {
     let _this = this;
 
-
-    this._sendStatus('in-progress');
+    _this._sendStatus('in-progress');
 
     _this._id++;
     let msg = {
@@ -206,6 +207,7 @@ class VertxProtoStub {
   }
 
   _filter(msg) {
+    console.log('ON FILTER', msg ,this._runtimeProtoStubURL);
     if (msg.body && msg.body.via === this._runtimeProtoStubURL)
       return false;
     return true;
@@ -213,7 +215,6 @@ class VertxProtoStub {
 
   _deliver(msg) {
     if (!msg.body) msg.body = {};
-
     msg.body.via = this._runtimeProtoStubURL;
     console.log('[VertxProtoStub: MN -> ProtoStub]', msg);
     this._bus.postMessage(msg);

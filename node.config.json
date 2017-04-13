@@ -1,10 +1,14 @@
 {
+
   "dev": {
     "domain": "localhost",
     "port": "9090",
     "registry": {
-      "url": "http://192.168.99.100:4568",
-      "retries": 2
+      "url": "http://localhost:4567",
+      "retries": 2,
+      "ssl": {
+        "enabled": false
+      }
     },
 	"globalregistry": {
 	  "url": "http://130.149.22.220:5002"

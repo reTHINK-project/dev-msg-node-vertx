@@ -21,9 +21,9 @@
 * limitations under the License.
 **/
 
-var config = require(__dirname + '/../NodeConfig');
+var config = require('../NodeConfig');
 
-var PoliciesConnector = require(__dirname + '/policies/PoliciesConnector');
+var PoliciesConnector = require('policies/PoliciesConnector');
 var policiesConnector = new PoliciesConnector();
 print("[Connectors] Policies Connector Loaded");
 

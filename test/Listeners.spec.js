@@ -20,8 +20,25 @@ describe('Listeners', function() {
         if (seq === 1) {
           expect(msg).to.eql({
             type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
-            body: { value: 'connected' }
+            body: { value: 'created' }
           });
+
+        }
+
+        if (seq === 2) {
+          expect(msg).to.eql({
+              type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
+              body: { value: 'in-progress' }
+            }
+          );
+        }
+
+        if (seq === 3) {
+          expect(msg).to.eql({
+              type: 'update', from: protoURL, to: 'hyperty-runtime://sp1/protostub/123/status',
+              body: { value: 'live' }
+            }
+          );
 
           //send subscribe msg...
           send({
@@ -30,16 +47,17 @@ describe('Listeners', function() {
           });
         }
 
-        if (seq === 2) {
+        if (seq === 4) {
           expect(msg).to.eql({
             id: 1, type: 'response', from: 'domain://msg-node.localhost/sm', to: 'runtime:/alice/listeners/sm',
             body: { code: 200, via: protoURL }
           });
 
-          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes' });
+          send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes'});
         }
 
-        if (seq === 3) {
+        if (seq === 5) {
+
           expect(msg).to.eql({
             id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes',
             body: { via: protoURL }
