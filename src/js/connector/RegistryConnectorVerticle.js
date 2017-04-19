@@ -24,7 +24,27 @@
 var config = require('../NodeConfig');
 
 var RegistryConnector = require('dev-registry-domain/connector');
-var registry = new RegistryConnector(config.registry);
+
+
+var notify = function(err, msg) {
+
+  var notificationAddress = msg.object + "/registration";
+
+  var smMessage = {
+    "id": 4,
+    "type": "update",
+    "from": "domain://registry." + config.domain,
+    "to" : notificationAddress,
+    "body" : {
+      "value" : msg.status,
+      "attribute" : "status"
+    }
+  }
+
+  vertx.eventBus().send(notificationAddress, msg);
+};
+
+var registry = new RegistryConnector(config.registry, notify);
 
 print("[Connectors] Registry Connector Loaded");
 
