@@ -3,8 +3,7 @@
   "version": "0.8.1",
   "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
-  "scripts": {
-    "preinstall": "npm install -g gulp-cli karma-cli",
+  "scripts": { "preinstall": "npm install -g gulp-cli karma-cli",
     "test": "karma start"
   },
   "repository": {
@@ -61,7 +60,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.9.0",
-    "runtime-core": "github:rethink-project/dev-runtime-core#master"
+    "dev-registry-domain": "rethink-project/dev-registry-domain#32-connector-sm",
+    "runtime-core": "github:rethink-project/dev-runtime-core#develop"
   }
 }
