@@ -14,7 +14,7 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
-      'test/**/*.spec.js'
+      'test/**/Listeners.spec.js'
     ],
 
     // list of files to exclude
@@ -72,7 +72,7 @@ module.exports = function(config) {
       }
     },
 
-    // Continuous Integration mode 
+    // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true
   });

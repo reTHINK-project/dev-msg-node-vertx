@@ -52,7 +52,7 @@ describe('Listeners', function() {
             id: 1, type: 'response', from: 'domain://msg-node.localhost/sm', to: 'runtime:/alice/listeners/sm',
             body: { code: 200, via: protoURL }
           });
-
+          
           send({ id: 2, type: 'ping', from: 'publisher', to: 'resource://localhost/1/changes'});
         }
 
