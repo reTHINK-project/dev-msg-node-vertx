@@ -207,9 +207,9 @@ class VertxProtoStub {
   }
 
   _filter(msg) {
-    if (msg.body && msg.body.via === this._runtimeProtoStubURL)
+    if (msg.body && msg.body.via === this._runtimeProtoStubURL) {
       return false;
-    else {
+    } else {
       return true;
     }
 
