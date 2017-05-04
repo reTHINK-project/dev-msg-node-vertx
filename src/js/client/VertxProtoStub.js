@@ -105,8 +105,6 @@ class VertxProtoStub {
   disconnect() {
     let _this = this;
 
-    _this._sendStatus('disconnected');
-
     _this._continuousOpen = false;
     if (_this._sock) {
       _this._sendClose();

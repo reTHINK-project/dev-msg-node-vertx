@@ -14,13 +14,14 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'src/js/client/**/*.js',
-      'test/**/Listeners.spec.js'
+      'test/**/*.spec.js'
     ],
 
     // list of files to exclude
     exclude: [
       'test/**/VertxCluster.spec.js',
-      'test/**/GlobalRegistryConnector.spec.js'
+      'test/**/GlobalRegistryConnector.spec.js',
+      'test/**/Metrics.spec.js'
     ],
 
     // preprocess matching files before serving them to the browser
@@ -74,7 +75,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 
 };
