@@ -47,7 +47,7 @@ describe('Listeners', function() {
 
           send({
             id: 1, type: 'subscribe', from: 'runtime:/alice/listeners/sm', to: 'domain://msg-node.localhost/sm',
-            body: { resource: 'publisher', subscribe: ['publisher'] }
+            body: { resources: ['publisher'] }
           });
         }
 
@@ -90,7 +90,7 @@ describe('Listeners', function() {
           );
           send2({
             id: 1, type: 'subscribe', from: 'runtime:/bob/listeners/sm', to: 'domain://msg-node.localhost/sm',
-            body: { resource: 'resource://localhost/1', subscribe: ['resource://localhost/1', 'resource://localhost/1/changes'] }
+            body: { resources: ['resource://localhost/1', 'resource://localhost/1/changes'] }
           });
         }
 
