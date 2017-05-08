@@ -1,6 +1,6 @@
 {
   "name": "msg-node-protostub",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
   "scripts": {
@@ -62,7 +62,7 @@
   },
   "dependencies": {
 
-    "dev-registry-domain": "rethink-project/dev-registry-domain#develop",
-    "runtime-core": "github:rethink-project/dev-runtime-core#develop"
+    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.8.1",
+    "runtime-core": "github:rethink-project/dev-runtime-core#v0.8.0"
   }
 }
