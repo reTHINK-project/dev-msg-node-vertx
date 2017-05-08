@@ -28,20 +28,25 @@ var RegistryConnector = require('dev-registry-domain/connector');
 
 var notify = function(err, msg) {
 
-  var notificationAddress = msg.object + "/registration";
+  Object.keys(msg.updated).forEach(function (key) {
+    var notificationAddress = key + "/registration";
 
-  var smMessage = {
-    "id": 4,
-    "type": "update",
-    "from": "domain://registry." + config.domain,
-    "to" : notificationAddress,
-    "body" : {
-      "value" : msg.status,
-      "attribute" : "status"
+    var smMessage = {
+      "id": 4,
+      "type": "update",
+      "from": "domain://registry." + config.domain,
+      "to" : notificationAddress,
+      "body" : {
+        "value" : msg.updated[key].status,
+        "attribute" : "status"
+      }
     }
-  }
 
-  vertx.eventBus().send(notificationAddress, msg);
+    print("[REGISTRY CONNECTOR] Notify update " + notificationAddress);
+
+    vertx.eventBus().send(notificationAddress, msg);
+  });
+
 };
 
 var registry = new RegistryConnector(config.registry, notify);
