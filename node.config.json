@@ -1,13 +1,17 @@
 {
+
   "dev": {
-    "domain": "ua.pt",
+    "domain": "localhost",
     "port": "9090",
     "registry": {
       "url": "http://localhost:4567",
-      "retries": 2
+      "retries": 2,
+      "ssl": {
+        "enabled": false
+      }
     },
 	"globalregistry": {
-	  "url": "http://130.149.22.133:5002"
+	  "url": "http://130.149.22.220:5002"
 	}
   },
 
@@ -18,7 +22,7 @@
       "url": "http://localhost:4567"
     },
 	"globalregistry": {
-	  "url": "http://130.149.22.133:5002"
+	  "url": "http://130.149.22.220:5002"
 	}
   }
 }

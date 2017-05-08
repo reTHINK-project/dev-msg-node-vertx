@@ -20,7 +20,8 @@ module.exports = function(config) {
     // list of files to exclude
     exclude: [
       'test/**/VertxCluster.spec.js',
-      'test/**/GlobalRegistryConnector.spec.js'
+      'test/**/GlobalRegistryConnector.spec.js',
+      'test/**/Metrics.spec.js'
     ],
 
     // preprocess matching files before serving them to the browser

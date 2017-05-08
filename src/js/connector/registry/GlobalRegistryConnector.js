@@ -24,9 +24,9 @@
 var GlobalRegistryConnector = function(globalregistryURL) {
 
   if(engine.factory.engineName.contains("Nashorn")) {
-    var RequestWrapper = require(__dirname + '/java-request');
+    var RequestWrapper = require('java-request');
   }else {
-    var RequestWrapper = require(__dirname + '/js-request');
+    var RequestWrapper = require('js-request');
   }
 
   this._request = new RequestWrapper();
