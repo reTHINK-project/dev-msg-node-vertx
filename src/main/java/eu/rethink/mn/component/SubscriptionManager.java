@@ -53,7 +53,7 @@ public class SubscriptionManager implements IComponent {
 		final JsonObject body = msg.getBody();
 		System.out.println("SubscriptionManager: " + msg);
 		
-		final JsonArray addressList = body.getJsonArray("subscribe");
+		final JsonArray addressList = body.getJsonArray("resources");
 		
 		if(addressList != null) {
 			//subscribe to a list of addresses
@@ -74,7 +74,7 @@ public class SubscriptionManager implements IComponent {
 				ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
 			}
 		} else {
-			ctx.replyError(name, "No mandatory field 'body.subscribe'");
+			ctx.replyError(name, "No mandatory field 'body.resources'");
 		}
 	}
 }

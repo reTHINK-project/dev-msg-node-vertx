@@ -78,7 +78,7 @@ describe('Listeners', function() {
 
     send({
       id: 0, type: 'subscribe', from: 'runtime://metrics/test', to: 'domain://msg-node.localhost/sm',
-      body: { subscribe: ['hyper-1', 'hyper-2'] }
+      body: { resources: ['hyper-1', 'hyper-2'] }
     });
 
   });
