@@ -42,9 +42,9 @@ var notify = function(err, msg) {
       }
     }
 
-    print("[REGISTRY CONNECTOR] Notify update " + notificationAddress);
+    console.log("[REGISTRY CONNECTOR] Notify update " + notificationAddress, 'smMessage->', smMessage);
 
-    vertx.eventBus().send(notificationAddress, msg);
+    vertx.eventBus().send(notificationAddress, JSON.stringify(smMessage));
   });
 
 };
@@ -57,7 +57,6 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
   print("[Registry-Connector][Received]: " + message.body());
 
   var msg = JSON.parse(message.body());
-
   var callback = function(msg) {
       return message.reply(msg);
   };
