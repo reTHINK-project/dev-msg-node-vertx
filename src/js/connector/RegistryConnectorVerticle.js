@@ -45,6 +45,7 @@ var notify = function(err, msg) {
     console.log("[REGISTRY CONNECTOR] Notify update " + notificationAddress, 'smMessage->', smMessage);
 
     vertx.eventBus().send(notificationAddress, JSON.stringify(smMessage));
+
   });
 
 };
