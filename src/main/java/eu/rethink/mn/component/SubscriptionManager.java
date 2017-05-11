@@ -54,27 +54,49 @@ public class SubscriptionManager implements IComponent {
 		System.out.println("SubscriptionManager: " + msg);
 		
 		final JsonArray addressList = body.getJsonArray("resources");
+		final JsonArray addressList2 = body.getJsonArray("subscribe");
 		
-		if(addressList != null) {
-			//subscribe to a list of addresses
-			if(msg.getType().equals("subscribe")) {
-				for(Object address: addressList) {
-					ctx.getSession().addListener(address.toString());
-				}
-				
-				ctx.replyOK(name);
-			} else if(msg.getType().equals("unsubscribe")) {
-				//unsubscribe from a list of addresses
-				for(Object address: addressList) {
-					ctx.getSession().removeListener(address.toString());
-				}
-				
-				ctx.replyOK(name);
-			} else {
-				ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
-			}
+		if(addressList != null && addressList2 == null) {
+			
+			addToAddressList(ctx, addressList);
+			
+		} else if (addressList == null && addressList2 != null) {
+			
+			addToAddressList(ctx, addressList2);
+			
+		}else if (addressList != null && addressList2 != null) {
+			
+			ctx.replyError(name, "You cant use field body.resources' and 'body.subscribe' at the same time");
+			
 		} else {
-			ctx.replyError(name, "No mandatory field 'body.resources'");
+			
+			ctx.replyError(name, "No mandatory field 'body.resources' or 'body.subscribe'");
+			
 		}
+	}
+	
+	public void addToAddressList(PipeContext ctx, JsonArray addressList) {
+		final PipeMessage msg = ctx.getMessage();
+		final JsonObject body = msg.getBody();
+		final JsonArray subscribeList = addressList;
+		
+		//subscribe to a list of addresses
+		if(msg.getType().equals("subscribe")) {
+			for(Object address: subscribeList) {
+				ctx.getSession().addListener(address.toString());
+			}
+			
+			ctx.replyOK(name);
+		} else if(msg.getType().equals("unsubscribe")) {
+			//unsubscribe from a list of addresses
+			for(Object address: subscribeList) {
+				ctx.getSession().removeListener(address.toString());
+			}
+			
+			ctx.replyOK(name);
+		} else {
+			ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
+		}
+		
 	}
 }
