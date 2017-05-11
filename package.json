@@ -62,7 +62,7 @@
   },
   "dependencies": {
 
-    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.9.0",
+    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.9.1",
     "runtime-core": "github:rethink-project/dev-runtime-core#master"
   }
 }
