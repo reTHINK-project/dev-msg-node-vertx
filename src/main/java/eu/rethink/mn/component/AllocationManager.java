@@ -85,9 +85,15 @@ public class AllocationManager implements IComponent {
 		}  else if(msg.getType().equals("delete")) {
 			//process JSON msg releasing an address
 			final String resource = body.getString("resource");
-
-			deallocate(ctx, resource);
-
+			final JsonArray childrenResourcesList = body.getJsonArray("childrenResources");
+			if (resource != null) {
+				deallocate(ctx, resource);
+			} else {
+				for(Object childrenResource: childrenResourcesList) {
+					deallocate(ctx, childrenResource.toString());
+				}
+			}
+			
 			ctx.replyOK(name);
 		}
 	}
