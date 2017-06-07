@@ -46,44 +46,46 @@ public class AllocationManager implements IComponent {
 	final PipeRegistry register;
 
 	final String baseURL;
-	
+
 	public AllocationManager(PipeRegistry register) {
 		this.register = register;
 		this.name = "domain://msg-node." + register.getDomain()  + "/address-allocation";
 		this.baseURL = "://" + register.getDomain() + "/";
 	}
-	
+
 	@Override
 	public String getName() { return name; }
-	
+
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
 		final JsonObject body = msg.getBody();
-		
+		System.out.println("New message on address-allocation");
+
 		if(msg.getType().equals("create")) {
 			//process JSON msg requesting a number of available addresses
 			final JsonObject msgBodyValue = body.getJsonObject("value");
 			final String scheme = body.getString("scheme");
-			
+
 			int number = msgBodyValue.getInteger("number", 5);
 			final List<String> allocated = allocate(ctx, scheme, number);
-		
+
 			final PipeMessage reply = new PipeMessage();
 			reply.setId(msg.getId());
 			reply.setFrom(name);
 			reply.setTo(msg.getFrom());
 			reply.setReplyCode(ReplyCode.OK);
-			
+
 			final JsonObject value = new JsonObject();
 			value.put("allocated", new JsonArray(allocated));
-			
+
 			reply.getBody().put("value", value);
-			
+
 			ctx.reply(reply);
-			
+
 		}  else if(msg.getType().equals("delete")) {
 			//process JSON msg releasing an address
+			System.out.println("deallocating");
 			final String resource = body.getString("resource");
 			final JsonArray childrenResourcesList = body.getJsonArray("childrenResources");
 			if (resource != null) {
@@ -93,7 +95,7 @@ public class AllocationManager implements IComponent {
 					deallocate(ctx, childrenResource.toString());
 				}
 			}
-			
+
 			ctx.replyOK(name);
 		}
 	}
@@ -109,7 +111,7 @@ public class AllocationManager implements IComponent {
 			} else {
 				url = scheme + baseURL + UUID.randomUUID().toString();
 			}
-			
+
 			if(ctx.getSession().allocate(url)) {
 				list.add(url);
 				i++;
@@ -120,6 +122,7 @@ public class AllocationManager implements IComponent {
 	}
 
 	private void deallocate(PipeContext ctx, String url) {
+		System.out.println("Deallocating url " + url);
 		ctx.getSession().deallocate(url);
 	}
 }
