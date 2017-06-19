@@ -39,7 +39,7 @@ public class TransitionPipeHandler implements Handler<PipeContext> {
 		
 		//search for unregistered hyperties...
 		//TODO: should it be verified (security risk of registering a listener for not owned hyperties)
-		if (from.startsWith("hyperty")) {
+		if (!from.startsWith("hyperty-runtime") && from.startsWith("hyperty")) {
 			if (ctx.resolve(from) == null) {
 				System.out.println("T-HYPERTY: " + from);
 				ctx.getSession().allocate(from);
