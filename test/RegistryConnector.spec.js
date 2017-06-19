@@ -17,7 +17,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost', to: 'hyper-1',
 						body: { code: 200, via: protoURL }
 					});
 
@@ -34,7 +34,7 @@ describe('RegistryConnector', function() {
 		let proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.localhost/',
+			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.localhost',
 			body: {
 				value: {
 					user: 'user://google.com/testuser10',
@@ -60,7 +60,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost', to: 'hyper-1',
 						body: { code: 404, via: protoURL, description: 'Not Found' }
 					});
 
@@ -77,7 +77,7 @@ describe('RegistryConnector', function() {
 		proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.localhost/',
+			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.localhost',
 			body: {
 				auth: false,
 				resource: 'user://google.com/testuser10',

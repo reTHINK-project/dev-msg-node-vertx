@@ -40,7 +40,7 @@ public class RegistryConnector implements IComponent {
 
 	public RegistryConnector(PipeRegistry register) {
 		this.register = register;
-		this.name = "domain://registry." + register.getDomain()  + "/";
+		this.name = "domain://registry." + register.getDomain();
 	}
 
 	@Override
