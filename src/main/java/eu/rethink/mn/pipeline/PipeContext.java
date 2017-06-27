@@ -62,7 +62,7 @@ public class PipeContext {
 	}
 
 	PipeContext(Pipeline pipeline, PipeResource resource, Iterator<Handler<PipeContext>> iter, PipeMessage msg) {
-		//System.out.println("IN: " + msg);
+		logger.info("IN: " + msg);
 		logger.info("IN: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
 
 		this.pipeline = pipeline;
@@ -98,12 +98,10 @@ public class PipeContext {
 			final String url = resolve(msg.getTo());
 			logger.info("RESOLVED TO: " + url);
 			if(url != null) {
-				//System.out.println("OUT(" + url + "): " + msg);
 				logger.info("OUT: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
 
 				register.getEventBus().send(url, msg.toString());
 			} else {
-				//System.out.println("PUBLISH(" + msg.getTo() + "): " + msg);
 				logger.info("PUBLISH: (id: {}, type: {}, from: {}, to: {})", msg.getId(), msg.getType(), msg.getFrom(), msg.getTo());
 
 				register.getEventBus().publish(msg.getTo(), msg.toString());
@@ -117,7 +115,6 @@ public class PipeContext {
 	public void reply(PipeMessage reply) {
 		reply.setType(PipeMessage.REPLY);
 
-		//System.out.println("REPLY: " + reply);
 		logger.info("REPLY: (id: {}, type: {}, from: {}, to: {})", reply.getId(), reply.getType(), reply.getFrom(), reply.getTo());
 
 		resource.reply(reply);

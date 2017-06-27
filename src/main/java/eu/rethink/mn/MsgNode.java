@@ -47,12 +47,15 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.JksOptions;
 import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author micaelpedrosa@gmail.com
  * Main class to start the msg-node server
  */
 public class MsgNode extends AbstractVerticle {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
 
 	public static void main(String[] args) {
 		final NodeConfig config = readConfig();
@@ -69,7 +72,7 @@ public class MsgNode extends AbstractVerticle {
                     DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
                     vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
                     vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
-										vertx.deployVerticle("js:./src/js/connector/PoliciesConnectorVerticle.js", verticleOptions);
+					vertx.deployVerticle("js:./src/js/connector/PoliciesConnectorVerticle.js", verticleOptions);
 				} else {
 					System.exit(-1);
 				}
