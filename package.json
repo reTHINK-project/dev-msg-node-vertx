@@ -3,8 +3,7 @@
   "version": "0.8.1",
   "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
-  "scripts": {
-    "preinstall": "npm install -g gulp-cli karma-cli",
+  "scripts": { "preinstall": "npm install -g gulp-cli karma-cli",
     "test": "karma start"
   },
   "repository": {
