@@ -28,41 +28,43 @@ import eu.rethink.mn.pipeline.Pipeline;
 import eu.rethink.mn.pipeline.PipeResource;
 import eu.rethink.mn.pipeline.message.PipeMessage;
 import io.vertx.core.http.HttpServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author micaelpedrosa@gmail.com
  * Initialize the link beetween HttpServer and Pipeline. Used to create resources for every WS connection.
  */
 public class WebSocketServer {
-	
-	public static void init(HttpServer server, Pipeline pipeline) {		
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
+	public static void init(HttpServer server, Pipeline pipeline) {
 		server.websocketHandler(ws -> {
 			if(!ws.uri().equals("/ws")) {
 				ws.reject();
-				out.println("RESOURCE-OPEN-REJECTED");
+				logger.info("RESOURCE-OPEN-REJECTED");
 				return;
 			}
-			
+
 			final StringBuilder sb = new StringBuilder();
-			
-			out.println("RESOURCE-OPEN");
+
+			logger.info("RESOURCE-OPEN");
 			final PipeResource resource = pipeline.createResource(
 				ws.textHandlerID(),
 				close -> ws.close(),
 				reply -> ws.writeFinalTextFrame(reply)
 			);
-			
+
 			ws.frameHandler(frame -> {
 				sb.append(frame.textData());
-				
+
 				if (frame.isFinal()) {
 					resource.processMessage(new PipeMessage(sb.toString()));
 					sb.setLength(0);
 				}
 			});
-						
+
 			ws.closeHandler(handler -> {
-				out.println("RESOURCE-CLOSE");
+				logger.info("RESOURCE-CLOSE");
 			});
 		});
 	}

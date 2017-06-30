@@ -29,18 +29,21 @@ import eu.rethink.mn.pipeline.message.PipeMessage;
 import eu.rethink.mn.pipeline.message.ReplyCode;
 import io.vertx.core.json.JsonObject;
 import eu.rethink.mn.pipeline.PipeRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author micaelpedrosa@gmail.com
  * Intercepts and forwards messages (request and response) to the domain registry.
  */
 public class RegistryConnector implements IComponent {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
 	final String name;
 	final PipeRegistry register;
 
 	public RegistryConnector(PipeRegistry register) {
 		this.register = register;
-		this.name = "domain://registry." + register.getDomain()  + "/";
+		this.name = "domain://registry." + register.getDomain();
 	}
 
 	@Override
@@ -49,7 +52,7 @@ public class RegistryConnector implements IComponent {
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
-		System.out.println("[RegistryConnector.handle]" + msg);
+		logger.info("[RegistryConnector.handle]" + msg);
 
 		register.getEventBus().send("mn:/registry-connector", msg.getJson().encode(), event -> {
 

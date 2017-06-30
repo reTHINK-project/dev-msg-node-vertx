@@ -3,9 +3,10 @@ import activate from '../src/js/client/VertxProtoStub';
 
 describe('RegistryConnector', function() {
 	let protoURL = 'hyperty-runtime://sp1/protostub/123';
+	let hyper1 = 'hyperty://hyper-1'
 	let config = {
 		url: 'wss://msg-node.localhost:9090/ws',
-		runtimeURL: 'runtime:/alice1'
+		runtimeURL: 'hyperty-runtime://alice1'
 	};
 
 	it('create user', function(done) {
@@ -17,7 +18,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost', to: hyper1,
 						body: { code: 200, via: protoURL }
 					});
 
@@ -34,7 +35,7 @@ describe('RegistryConnector', function() {
 		let proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'create', from: "hyper-1", to: 'domain://registry.localhost/',
+			id: 2, type: 'create', from: hyper1, to: 'domain://registry.localhost',
 			body: {
 				value: {
 					user: 'user://google.com/testuser10',
@@ -60,7 +61,7 @@ describe('RegistryConnector', function() {
 
 				if (msg.id === 2) {
 					expect(msg).to.eql({
-						id: 2, type: 'response', from: 'domain://registry.localhost/', to: 'hyper-1',
+						id: 2, type: 'response', from: 'domain://registry.localhost', to: hyper1,
 						body: { code: 404, via: protoURL, description: 'Not Found' }
 					});
 
@@ -77,7 +78,7 @@ describe('RegistryConnector', function() {
 		proto = activate(protoURL, bus, config).activate;
 
 		send({
-			id: 2, type: 'read', from: 'hyper-1', to: 'domain://registry.localhost/',
+			id: 2, type: 'read', from: hyper1, to: 'domain://registry.localhost',
 			body: {
 				auth: false,
 				resource: 'user://google.com/testuser10',
