@@ -24,7 +24,32 @@
 var config = require('../NodeConfig');
 
 var RegistryConnector = require('dev-registry-domain/connector');
-var registry = new RegistryConnector(config.registry);
+
+
+var notify = function(err, msg) {
+
+  Object.keys(msg.updated).forEach(function (key) {
+    var notificationAddress = key + "/registration";
+
+    var smMessage = {
+      "id": 4,
+      "type": "update",
+      "from": "domain://registry." + config.domain,
+      "to" : notificationAddress,
+      "body" : {
+        "value" : msg.updated[key].status,
+        "attribute" : "status"
+      }
+    }
+
+    console.log("[REGISTRY CONNECTOR] Notify update " + notificationAddress, 'smMessage->', smMessage);
+
+    vertx.eventBus().send(notificationAddress, JSON.stringify(smMessage));
+  });
+
+};
+
+var registry = new RegistryConnector(config.registry, notify);
 
 print("[Connectors] Registry Connector Loaded");
 
@@ -32,7 +57,6 @@ vertx.eventBus().consumer("mn:/registry-connector", function (message) {
   print("[Registry-Connector][Received]: " + message.body());
 
   var msg = JSON.parse(message.body());
-
   var callback = function(msg) {
       return message.reply(msg);
   };

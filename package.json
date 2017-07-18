@@ -1,6 +1,6 @@
 {
   "name": "msg-node-protostub",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Message Node builded based on Java and vertx",
   "main": "src/main.js",
   "scripts": {
@@ -18,7 +18,8 @@
   ],
   "author": "reThink Project",
   "license": "ISC",
-  "bugs": { "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
+  "bugs": {
+    "url": "https://github.com/reTHINK-project/dev-msg-node-vertx/issues"
   },
   "homepage": "https://github.com/reTHINK-project/core-framework#readme",
   "devDependencies": {
@@ -61,7 +62,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "rethink-project/dev-registry-domain#R0.9.0",
-    "runtime-core": "github:rethink-project/dev-runtime-core#master"
+    "dev-registry-domain": "github:rethink-project/dev-registry-domain#R1.0.0",
+    "runtime-core": "github:rethink-project/dev-runtime-core#v0.9.0"
   }
 }
