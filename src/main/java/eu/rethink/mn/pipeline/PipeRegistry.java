@@ -34,12 +34,17 @@ import java.util.Map;
 
 import eu.rethink.mn.IComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author micaelpedrosa@gmail.com
  * Needed information for the pipeline.
  * Registered components, sessions, and cluster aware data.
  */
 public class PipeRegistry {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
+
 	final EventBus eb;
 	final ClusterManager mgr;
 
@@ -72,14 +77,14 @@ public class PipeRegistry {
 			@Override
 			public void encodeToWire(Buffer buffer, PipeContext ctx) {
 				final String msg = ctx.getMessage().toString();
-				System.out.println("encodeToWire: " + msg);
+				logger.info("encodeToWire: " + msg);
 				buffer.appendString(msg);
 			}
 
 			@Override
 			public PipeContext decodeFromWire(int pos, Buffer buffer) {
 				final String msg = buffer.getString(0, buffer.length() -1 );
-				System.out.println("decodeFromWire: " + msg);
+				logger.info("decodeFromWire: " + msg);
 				return null; //not needed in this architecture
 			}
 		});
@@ -126,9 +131,9 @@ public class PipeRegistry {
 	public PipeSession getSession(String runtimeSessionURL) {
 		return sessions.get(runtimeSessionURL);
 	}
-	
+
 	public PipeSession getSessionByRuntime(String runtimeURL) {
-		
+
 		PipeSession session = null;
 
 		for (Map.Entry<String, PipeSession> e : sessions.entrySet()) {
@@ -136,7 +141,7 @@ public class PipeRegistry {
 				session = sessions.get(e.getKey());
 			}
 		}
-		
+
 		return session;
 
 	}

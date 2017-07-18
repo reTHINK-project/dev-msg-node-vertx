@@ -32,27 +32,32 @@ import java.util.Set;
 
 import io.vertx.core.eventbus.MessageConsumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author micaelpedrosa@gmail.com
  * Session data and associated actions for a resource connection.
  * NOTE: there is room for improvements here. PipeResource and PipeSession can be simplified in one class.
- * But some care should be taken because of the cluster architecture. 
+ * But some care should be taken because of the cluster architecture.
  */
 public class PipeSession {
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
+
 	final PipeRegistry registry;
 	final String runtimeSessionURL;
 	String resourceUID = null;
-	
+
 	final Map<String, MessageConsumer<Object>> consumers = new HashMap<>();
 	final Set<String> urls = new HashSet<>(); //unique URL's registered in registry.urlSpace
-	
+
 	public String getRuntimeSessionURL() { return runtimeSessionURL; }
-	
+
 	PipeSession(PipeRegistry registry, String runtimeSessionURL) {
 		this.registry = registry;
 		this.runtimeSessionURL = runtimeSessionURL;
 	}
-	
+
 	/** Allocate a new URL address for a Hyperty or Object.
 	 * @param url HypertyURL or ObjectURL
 	 * @return true if succeeded
@@ -63,19 +68,19 @@ public class PipeSession {
 
 		addURL(url);
 
-		out.println("ALLOCATE(" + runtimeSessionURL + "): " + url);
+		logger.info("ALLOCATE(" + runtimeSessionURL + "): " + url);
 		return true;
 	}
-	
+
 	/** DeAllocate a URL address for a Hyperty or Object.
 	 * @param url HypertyURL or ObjectURL
 	 */
 	public void deallocate(String url) {
-		out.println("DEALLOCATE(" + runtimeSessionURL + "): " + url);
+		logger.info("DEALLOCATE(" + runtimeSessionURL + "): " + url);
 		removeURL(url);
 	}
 
-	/** Attach an address listener to the current resource. 
+	/** Attach an address listener to the current resource.
 	 * Any message to this address should reach the Resource client.
 	 * @param address Any address
 	 * @return true if succeeded
@@ -84,54 +89,53 @@ public class PipeSession {
 		if(consumers.containsKey(address)) {
 			return false;
 		}
-		
+
 		final MessageConsumer<Object> value = registry.getEventBus().consumer(address, msg -> {
 			registry.getEventBus().send(resourceUID, msg.body());
 		});
-		
+
 		consumers.put(address, value);
-		
-		out.println("ADD-LISTENER(" + runtimeSessionURL + "): " + address);
+		logger.info("ADD-LISTENER(" + runtimeSessionURL + "): " + address);
 		return true;
 	}
-	
+
 	/** Detach an address listener.
 	 * @param address Any address
 	 */
 	public void removeListener(String address) {
-		out.println("REMOVE-LISTENER(" + runtimeSessionURL + "): " + address);
-		
+		logger.info("REMOVE-LISTENER(" + runtimeSessionURL + "): " + address);
+
 		final MessageConsumer<Object> value = consumers.remove(address);
 		if (value != null) {
 			value.unregister();
 		}
 	}
-	
+
 	void close() {
 		registry.sessions.remove(runtimeSessionURL);
 
 		for (String url: urls) {
 			registry.urlSpace.remove(url);
 		}
-		
+
 		for (MessageConsumer<Object> value: consumers.values()) {
 			value.unregister();
 		}
-		
+
 		// consumers.clear(); or urls.clear(); no need to do this, session will be discarded
 	}
-	
+
 	void bindToResourceUID(String resourceUID) {
 		this.resourceUID = resourceUID;
 		addURL(runtimeSessionURL);
 		addListener(runtimeSessionURL);
 	}
-	
+
 	void addURL(String url) {
 		registry.urlSpace.put(url, runtimeSessionURL);
 		urls.add(url);
 	}
-	
+
 	void removeURL(String url) {
 		urls.remove(url);
 		registry.urlSpace.remove(url);

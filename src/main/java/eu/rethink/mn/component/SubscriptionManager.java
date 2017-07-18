@@ -29,6 +29,8 @@ import eu.rethink.mn.IComponent;
 import eu.rethink.mn.pipeline.PipeContext;
 import eu.rethink.mn.pipeline.PipeRegistry;
 import eu.rethink.mn.pipeline.message.PipeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author micaelpedrosa@gmail.com
@@ -38,65 +40,66 @@ import eu.rethink.mn.pipeline.message.PipeMessage;
 public class SubscriptionManager implements IComponent {
 	final String name;
 	final PipeRegistry register;
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
 
 	public SubscriptionManager(PipeRegistry register) {
 		this.register = register;
 		this.name = "domain://msg-node." + register.getDomain()  + "/sm";
 	}
-	
+
 	@Override
 	public String getName() { return name; }
-	
+
 	@Override
 	public void handle(PipeContext ctx) {
 		final PipeMessage msg = ctx.getMessage();
 		final JsonObject body = msg.getBody();
-		System.out.println("SubscriptionManager: " + msg);
-		
+	  logger.info("SubscriptionManager: " + msg);
+
 		final JsonArray addressList = body.getJsonArray("resources");
 		final JsonArray addressList2 = body.getJsonArray("subscribe");
-		
+
 		if(addressList != null && addressList2 == null) {
-			
+
 			addToAddressList(ctx, addressList);
-			
+
 		} else if (addressList == null && addressList2 != null) {
-			
+
 			addToAddressList(ctx, addressList2);
-			
+
 		}else if (addressList != null && addressList2 != null) {
-			
+
 			ctx.replyError(name, "You cant use field body.resources' and 'body.subscribe' at the same time");
-			
+
 		} else {
-			
+
 			ctx.replyError(name, "No mandatory field 'body.resources' or 'body.subscribe'");
-			
+
 		}
 	}
-	
+
 	public void addToAddressList(PipeContext ctx, JsonArray addressList) {
 		final PipeMessage msg = ctx.getMessage();
 		final JsonObject body = msg.getBody();
 		final JsonArray subscribeList = addressList;
-		
+
 		//subscribe to a list of addresses
 		if(msg.getType().equals("subscribe")) {
 			for(Object address: subscribeList) {
 				ctx.getSession().addListener(address.toString());
 			}
-			
+
 			ctx.replyOK(name);
 		} else if(msg.getType().equals("unsubscribe")) {
 			//unsubscribe from a list of addresses
 			for(Object address: subscribeList) {
 				ctx.getSession().removeListener(address.toString());
 			}
-			
+
 			ctx.replyOK(name);
 		} else {
 			ctx.replyError(name, "Unrecognized type '" + msg.getType() + "'");
 		}
-		
+
 	}
 }

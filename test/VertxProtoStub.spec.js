@@ -365,4 +365,93 @@ describe('VertxProtoStub', function() {
 
   });
 
+  it('Deallocate', function(done) {
+    let protoURL = 'hyperty-runtime://sp1/protostub/123';
+    let protoURL2 = 'hyperty-runtime://sp1/protostub/1234';
+
+    let send;
+    let send2;
+
+    let proto;
+    let proto2;
+
+    let seq = 0;
+    let seq2 = 0;
+
+    let firstURL;
+    let secondURL;
+
+    let bus = {
+      postMessage: (msg) => {
+        console.log('BUS 1 POSTMESSAGE(',seq,') ->', msg);
+        if (msg.body.value === 'live') {
+          send({
+            id: 1, type: 'create', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/address-allocation',
+            body: { value: { number: 2 } }
+          });
+        }
+
+        if (seq === 3) {
+
+          expect(msg).to.eql({id: 1, type: 'response', from: 'domain://msg-node.localhost/address-allocation', to: 'runtime:/alice/registry/allocation', body: msg.body});
+          expect(msg.body.code).to.eql(200);
+          expect(msg.body.value.allocated).to.have.length(2);
+
+          firstURL = msg.body.value.allocated[0];
+          secondURL = msg.body.value.allocated[1];
+          console.log('URLs allocated', firstURL, secondURL);
+          send2({
+            id: 2, type: 'delete', from: 'runtime:/alice/registry/allocation', to: 'domain://msg-node.localhost/address-allocation',
+            body: { childrenResources: [firstURL, secondURL] }
+          });
+        }
+
+
+        seq++;
+      },
+
+      addListener: (url, callback) => {
+        send = callback;
+      }
+    };
+
+    let bus2 = {
+      postMessage: (msg) => {
+        console.log('BUS 2 POSTMESSAGE(',seq2,') ->', msg);
+        if (seq2 === 3) {
+          expect(msg).to.eql(
+            {id: 2, from: 'domain://msg-node.localhost/address-allocation',
+                    to: 'runtime:/alice/registry/allocation',
+                    body: { code: 200, via: 'hyperty-runtime://sp1/protostub/1234'}, type: 'response'});
+          done();
+        }
+
+
+
+
+        seq2++;
+      },
+
+      addListener: (url2, callback) => {
+        send2 = callback;
+      }
+    };
+
+    let config = {
+      url: 'wss://msg-node.localhost:9090/ws',
+      runtimeURL: 'runtime:/alice2'
+    };
+    let config2 = {
+      url: 'wss://msg-node.localhost:9090/ws',
+      runtimeURL: 'runtime:/bob2'
+    };
+
+    proto = activate(protoURL, bus, config).instance;
+    proto2 = activate(protoURL2, bus2, config2).instance;
+    proto2.connect();
+    proto.connect();
+
+  });
+
+
 });

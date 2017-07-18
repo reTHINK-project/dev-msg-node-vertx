@@ -1,7 +1,7 @@
 
 #vertx.io based Message Node (VertxMN)
 
-### Build status
+### Build status 
 
 | Master                                   | Develop                                  |
 | ---------------------------------------- | ---------------------------------------- |
@@ -22,7 +22,7 @@ One of the responsibilities of Message Nodes in the reTHINK architecture is to p
 
 There is a need to have the domain registry running and configured. However, there is no specific initiation sequence. The procedures to achieve this are described in the following section.
 
-### User View
+### User View 
 
 This chapter provides instructions for the setup, configuration and operation of the Vertx Message Node as a docker container. The Docker file is already available in the repository.
 

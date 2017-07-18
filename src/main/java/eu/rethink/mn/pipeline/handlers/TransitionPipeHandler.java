@@ -25,27 +25,31 @@ package eu.rethink.mn.pipeline.handlers;
 
 import io.vertx.core.Handler;
 import eu.rethink.mn.pipeline.PipeContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author micaelpedrosa@gmail.com
  * Message interceptor for inter-domain routing
  */
 public class TransitionPipeHandler implements Handler<PipeContext> {
-	public static String NAME = "mn:/transition"; 
+	public static String NAME = "mn:/transition";
+	static final Logger logger = LoggerFactory.getLogger("BROKER");
 
 	@Override
 	public void handle(PipeContext ctx) {
 		final String from = ctx.getMessage().getFrom();
-		
+		String scheme = from.split("://")[0];
+		System.out.println("Scheme:" + scheme + "\nFrom:" + from);
 		//search for unregistered hyperties...
 		//TODO: should it be verified (security risk of registering a listener for not owned hyperties)
-		if (from.startsWith("hyperty")) {
+		if (!from.startsWith("hyperty-runtime") && from.startsWith("hyperty")) { 
 			if (ctx.resolve(from) == null) {
-				System.out.println("T-HYPERTY: " + from);
+				logger.info("T-HYPERTY: " + from);
 				ctx.getSession().allocate(from);
 			}
 		}
-		
+
 		ctx.next();
 	}
 
