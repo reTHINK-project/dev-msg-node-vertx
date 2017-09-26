@@ -62,7 +62,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "github:rethink-project/dev-registry-domain#expires-limit-fix",
+    "dev-registry-domain": "github:rethink-project/dev-registry-domain#develop",
     "runtime-core": "github:rethink-project/dev-runtime-core#develop"
   }
 }
