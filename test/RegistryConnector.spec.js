@@ -43,7 +43,12 @@ describe('RegistryConnector', function() {
 					expires: 3600,
 					descriptor: 'hyperty-catalogue://localhost/.well-known/hyperty/hyper-1',
 					dataSchemes: ['test'],
-					resources:['test1', 'test2']
+					resources:['test1', 'test2'],
+					schema : 'test',
+					name: 'name',
+					reporter: 'reporter',
+					status:'live',
+					runtime:'runtime'
 				}
 			}
 		});
