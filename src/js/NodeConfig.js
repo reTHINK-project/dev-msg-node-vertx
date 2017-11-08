@@ -40,6 +40,7 @@ if (selection !== "env") {
 	//load from environment variables
 	if (ssl == false) {
 		configSelect = {
+      domain: process.env.NODE_DOMAIN,
 			registry: {
 					url: process.env.NODE_REGISTRY_URL,
 				retries: retries,
@@ -53,6 +54,7 @@ if (selection !== "env") {
 		};
 	} else if(! ownCert) {
 		configSelect = {
+      domain: process.env.NODE_DOMAIN,
 			registry: {
 					url: process.env.NODE_REGISTRY_URL,
 				retries: retries,
@@ -72,6 +74,7 @@ if (selection !== "env") {
 
 	} else {
     configSelect = {
+      domain: process.env.NODE_DOMAIN,
       registry: {
           url: process.env.NODE_REGISTRY_URL,
         retries: retries,
