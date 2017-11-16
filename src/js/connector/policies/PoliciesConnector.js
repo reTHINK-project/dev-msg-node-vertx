@@ -28,7 +28,7 @@ var PoliciesConnector = function() {
 };
 
 PoliciesConnector.prototype.authorise = function(message, callback) {
-  callback(this.pep.authoriseSync(JSON.parse(message.body())));
+  callback(this.pep.authorise(JSON.parse(message.body())));
 };
 
 PoliciesConnector.prototype.addPolicy = function(policy) {
