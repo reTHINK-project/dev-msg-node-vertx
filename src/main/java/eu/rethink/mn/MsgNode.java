@@ -144,7 +144,8 @@ public class MsgNode extends AbstractVerticle {
 		final HttpServerOptions httpOptions = new HttpServerOptions()
 			.setTcpKeepAlive(true)
 			.setSsl(true)
-			.setKeyStoreOptions(jksOptions);
+			.setKeyStoreOptions(jksOptions)
+			.setMaxWebsocketFrameSize(6553600);
 
 
 		final HttpServer server = vertx.createHttpServer(httpOptions);
