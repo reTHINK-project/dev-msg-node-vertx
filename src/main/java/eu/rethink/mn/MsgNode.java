@@ -72,7 +72,7 @@ public class MsgNode extends AbstractVerticle {
                     DeploymentOptions verticleOptions = new DeploymentOptions().setWorker(true);
                     vertx.deployVerticle("js:./src/js/connector/RegistryConnectorVerticle.js", verticleOptions);
                     vertx.deployVerticle("js:./src/js/connector/GlobalRegistryConnectorVerticle.js", verticleOptions);
-					vertx.deployVerticle("js:./src/js/connector/PoliciesConnectorVerticle.js", verticleOptions);
+										vertx.deployVerticle("js:./src/js/connector/PoliciesConnectorVerticle.js", verticleOptions);
 				} else {
 					System.exit(-1);
 				}
