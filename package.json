@@ -60,7 +60,7 @@
     "test": "test"
   },
   "dependencies": {
-    "dev-registry-domain": "github:rethink-project/dev-registry-domain#R1.0.1",
-    "runtime-core": "github:rethink-project/dev-runtime-core#v0.10.1"
+    "dev-registry-domain": "github:rethink-project/dev-registry-domain#R1.1.0",
+    "runtime-core": "github:rethink-project/dev-runtime-core#v0.11.0"
   }
 }
