@@ -49,6 +49,9 @@ import io.vertx.core.spi.cluster.ClusterManager;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
 
 /**
  * @author micaelpedrosa@gmail.com
@@ -147,18 +150,45 @@ public class MsgNode extends AbstractVerticle {
 			.setKeyStoreOptions(jksOptions)
 			.setMaxWebsocketFrameSize(6553600);
 
+		
+		/*
+		 * Testing vert.x endPoint rest to use as contactPoint of smartIOT
+		 */
+		
+		Router router = Router.router(vertx);
+		router.route().handler(BodyHandler.create());
+	    router.post("/requestpub").handler(this::handleRequestPub);
 
-		final HttpServer server = vertx.createHttpServer(httpOptions);
-		server.requestHandler(req -> {
-			//just a land page to test connection
-			System.out.println("HTTP-PING");
-			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
-		});
-
-
+	    final HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
+//		final HttpServer server = vertx.createHttpServer(httpOptions);
+//		server.requestHandler(req -> {
+//			//just a land page to test connection
+//			System.out.println("HTTP-PING");
+//			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
+//		});
+//
+//
 		WebSocketServer.init(server, pipeline);
 		server.listen(config.getPort());
-		System.out.println("[Message-Node] Running with config: " + config);
+//		System.out.println("[Message-Node] Running with config: " + config);
+		
+
+		
 	}
+	
+	private void handleRequestPub(RoutingContext routingContext) {
+		
+		System.out.println("ENDPOINT POST RECEIVED DATA"+ routingContext.getBodyAsString().toString());
+
+//		JsonObject obj = new JsonObject(routingContext.getBodyAsString().toString());
+//		String address = obj.getString("address");
+//		System.out.println("JSON IN:" + routingContext.getBodyAsString() + "\n" + "address:" + address);
+//
+//
+//	    String data = obj.getJsonObject("data").toString();
+//	    System.out.println("CAN BE Publish in:" +  address + "   Data:"+ data);
+	    routingContext.response().end();
+	    //vertx.eventBus().publish(address, data);
+	 }
 
 }
