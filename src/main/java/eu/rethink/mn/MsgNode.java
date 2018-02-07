@@ -52,6 +52,13 @@ import org.slf4j.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.MultiMap;
 
 /**
  * @author micaelpedrosa@gmail.com
@@ -155,9 +162,27 @@ public class MsgNode extends AbstractVerticle {
 		 * Testing vert.x endPoint rest to use as contactPoint of smartIOT
 		 */
 		
+		Set<String> allowedHeaders = new HashSet<>();
+	    allowedHeaders.add("x-requested-with");
+	    allowedHeaders.add("Access-Control-Allow-Origin");
+	    allowedHeaders.add("origin");
+	    allowedHeaders.add("Content-Type");
+	    allowedHeaders.add("accept");
+	    allowedHeaders.add("cache-control");
+	    allowedHeaders.add("version");
+	    allowedHeaders.add("Accept-Encoding");
+	    allowedHeaders.add("USER-AGENT");
+	    allowedHeaders.add("CONTENT-LENGTH");
+	    
+
+	    Set<HttpMethod> allowedMethods = new HashSet<>();
+	    allowedMethods.add(HttpMethod.GET);
+	    allowedMethods.add(HttpMethod.POST);
+	
 		Router router = Router.router(vertx);
+		router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
 		router.route().handler(BodyHandler.create());
-	    router.post("/requestpub").handler(this::handleRequestPub);
+		router.post("/requestpub").handler(this::handleRequestPub);
 
 	    final HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
 //		final HttpServer server = vertx.createHttpServer(httpOptions);
@@ -187,8 +212,21 @@ public class MsgNode extends AbstractVerticle {
 //
 //	    String data = obj.getJsonObject("data").toString();
 //	    System.out.println("CAN BE Publish in:" +  address + "   Data:"+ data);
-	    routingContext.response().end();
+	    //routingContext.response().end();
 	    //vertx.eventBus().publish(address, data);
+	    
+	    
+	    
+	      HttpServerResponse httpServerResponse = routingContext.response();
+	      httpServerResponse.setChunked(true);
+	      MultiMap headers = routingContext.request().headers();
+	      for (String key : headers.names()) {
+	        httpServerResponse.write(key + ": ");
+	        httpServerResponse.write(headers.get(key));
+	        httpServerResponse.write("<br>");
+	      }
+	      httpServerResponse.putHeader("Content-Type", "application/text").end("Success");
+	    
 	 }
 
 }
