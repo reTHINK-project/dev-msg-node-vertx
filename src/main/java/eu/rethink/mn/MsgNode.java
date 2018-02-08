@@ -68,6 +68,7 @@ public class MsgNode extends AbstractVerticle {
 	static final Logger logger = LoggerFactory.getLogger("BROKER");
 
 	public static void main(String[] args) {
+		
 		final NodeConfig config = readConfig();
 		try {
 			final ClusterManager mgr = new HazelcastClusterManager();
@@ -174,7 +175,6 @@ public class MsgNode extends AbstractVerticle {
 	    allowedHeaders.add("USER-AGENT");
 	    allowedHeaders.add("CONTENT-LENGTH");
 	    
-
 	    Set<HttpMethod> allowedMethods = new HashSet<>();
 	    allowedMethods.add(HttpMethod.GET);
 	    allowedMethods.add(HttpMethod.POST);
@@ -183,50 +183,35 @@ public class MsgNode extends AbstractVerticle {
 		router.route().handler(CorsHandler.create("*").allowedHeaders(allowedHeaders).allowedMethods(allowedMethods));
 		router.route().handler(BodyHandler.create());
 		router.post("/requestpub").handler(this::handleRequestPub);
-
+		router.get("/*").handler(this::handleGetRoot);
+		
 	    final HttpServer server = vertx.createHttpServer(httpOptions).requestHandler(router::accept);
-//		final HttpServer server = vertx.createHttpServer(httpOptions);
-//		server.requestHandler(req -> {
-//			//just a land page to test connection
-//			System.out.println("HTTP-PING");
-//			req.response().putHeader("content-type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
-//		});
-//
-//
-		WebSocketServer.init(server, pipeline);
-		server.listen(config.getPort());
-//		System.out.println("[Message-Node] Running with config: " + config);
-		
 
-		
+		WebSocketServer.init(server, pipeline);
+		server.listen(config.getPort());		
 	}
-	
 	private void handleRequestPub(RoutingContext routingContext) {
 		
-		System.out.println("ENDPOINT POST RECEIVED DATA"+ routingContext.getBodyAsString().toString());
-
-//		JsonObject obj = new JsonObject(routingContext.getBodyAsString().toString());
-//		String address = obj.getString("address");
-//		System.out.println("JSON IN:" + routingContext.getBodyAsString() + "\n" + "address:" + address);
-//
-//
-//	    String data = obj.getJsonObject("data").toString();
-//	    System.out.println("CAN BE Publish in:" +  address + "   Data:"+ data);
-	    //routingContext.response().end();
-	    //vertx.eventBus().publish(address, data);
-	    
-	    
-	    
-	      HttpServerResponse httpServerResponse = routingContext.response();
-	      httpServerResponse.setChunked(true);
-	      MultiMap headers = routingContext.request().headers();
-	      for (String key : headers.names()) {
-	        httpServerResponse.write(key + ": ");
-	        httpServerResponse.write(headers.get(key));
-	        httpServerResponse.write("<br>");
-	      }
-	      httpServerResponse.putHeader("Content-Type", "application/text").end("Success");
-	    
+		System.out.println("ENDPOINT POST RECEIVED DATA -> "+ routingContext.getBodyAsString().toString());    
+		HttpServerResponse httpServerResponse = routingContext.response();
+		httpServerResponse.setChunked(true);
+		MultiMap headers = routingContext.request().headers();
+		for (String key : headers.names()) {
+			httpServerResponse.write(key + ": ");
+			httpServerResponse.write(headers.get(key));
+			httpServerResponse.write("<br>");
+		}
+		httpServerResponse.putHeader("Content-Type", "application/text").end("Success");   
 	 }
-
+	private void handleGetRoot(RoutingContext routingContext) {
+		HttpServerResponse httpServerResponse = routingContext.response();
+		httpServerResponse.setChunked(true);
+		MultiMap headers = routingContext.request().headers();
+		for (String key : headers.names()) {
+			httpServerResponse.write(key + ": ");
+			httpServerResponse.write(headers.get(key));
+			httpServerResponse.write("<br>");
+		}
+		httpServerResponse.putHeader("Content-Type", "text/html").end("<html><body><h1>Hello</h1></body></html>");
+	}
 }
